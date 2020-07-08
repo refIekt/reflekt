@@ -15,7 +15,8 @@ gem install reflekt
 
 In your [config](https://github.com/rubyconfig/config) YAML add:  
 ```yaml  
-reflekt: true  
+reflekt:
+  enabled: true
 ```  
 
 Don't forget to set `reflekt: false` in your production config.  
@@ -31,10 +32,25 @@ Use the application as usual and test results will start showing up in the `refl
 
 ## Configuration
 
-If you don't want Reflekt testing particular methods such as those that delete data, add:
+You'll likely want to stop Reflekt testing methods that delete data or output directly to the UI. Only "no undo" actions like deletion, sending email and the final rendering of the UI need to be disabled.
+
+In your class add:
 
 ```ruby
 dont_reflekt :method_name
+```
+
+By default Reflekt is opt-out but you can configure it to be opt-in:
+
+```yaml
+reflekt:
+  [...]
+  opt_in: true
+```
+
+Then instead of `dont_reflekt` use `reflekt`:
+```ruby
+reflekt :method_name
 ```
 
 ## How it works  

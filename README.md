@@ -64,5 +64,5 @@ Conceptual differences between TDD and RDD:
 
 ## QA
 
-**Q.** Can I use it alongside test driven development too?
+**Q.** Can I use it alongside test driven development too?  
 **A.** Yes!

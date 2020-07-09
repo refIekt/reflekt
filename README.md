@@ -1,16 +1,22 @@
 # Reflekt  
 
-*Reflection powered automatic testing*.  
+*Reflection-driven development.*  
 
-Test driven development is *fine* but it's not perfect. Tests often check for a golden path that works, when errors actually happen when the code or user does something unexpected. And with automated testing humans still have to write the tests.
+Test-driven development is fine but it's not perfect. Tests often check for a golden path that works, when errors actually happen when the code or user does something unexpected. And with automated testing humans still have to write the tests.
 
-**Reflekt** writes the tests for you, and tests in the negative for situations that you wouldn't have noticed. It works out of the box with no extra coding required. You can use it alongside test driven development too.
+**Reflekt** writes the tests for you, and tests in the negative for situations that you wouldn't have noticed. It works out of the box with no extra coding required. Because Reflekt tests your objects as they are used in the normal flow of the application, you get real world test results.
+
+Consider this logic:  
+1. Tests often check that things work (in the positive)  
+2. Errors happen when things break (in the negative)  
+3. Tests should check more often for the negative  
+4. This can be automated
 
 ## Installation  
 
 Install:  
 ```  
-gem install reflekt  
+gem install reflekt
 ```  
 
 In your [config](https://github.com/rubyconfig/config) YAML add:  
@@ -19,11 +25,11 @@ reflekt:
   enabled: true
 ```  
 
-Don't forget to set `reflekt: false` in your production config.  
+Don't forget to set `enabled: false` in your production config.  
 
 ## Usage  
 
-Inside your class add:  
+Inside a class that you want to test add:  
 ```ruby  
 prepend Reflekt
 ```  
@@ -32,7 +38,7 @@ Use the application as usual and test results will start showing up in the `refl
 
 ## Configuration
 
-You'll likely want to stop Reflekt testing methods that delete data or output directly to the UI. Only "no undo" actions like deletion, sending email and the final rendering of the UI need to be disabled.
+You can configure Reflekt to not call "no undo" methods like deletion and sending email:
 
 In your class add:
 
@@ -40,32 +46,23 @@ In your class add:
 dont_reflekt :method_name
 ```
 
-By default Reflekt is opt-out but you can configure it to be opt-in:
+Also consider disabling Reflekt on methods that do the final rendering to the UI, to avoid a visual mess of duplicated elements.
 
-```yaml
-reflekt:
-  [...]
-  opt_in: true
-```
+## How it works
 
-Then instead of `dont_reflekt` use `reflekt`:
-```ruby
-reflekt :method_name
-```
+When a method is called in the usual flow of an application, Reflekt runs multiple simulations with different values on that method to see if it can break things, before handing back control to the method to perform its usual task.
 
-## How it works  
+## Comparison
 
-When a method is called in the usual flow of an application, Reflekt  runs multiple simulations with different values on the same method to see if it can break things, before handing back control to the method to perform its task as usual.
+Conceptual differences between TDD and RDD:
 
-Because Reflekt tests your objects as they are used in the normal flow of the application, you get real world test results. It's not some external tool that periodically queries your app's API under a particular set of circumstances.
+|                   | Test-Driven Development                  | Reflection-Driven Development                     |
+--------------------|------------------------------------------|---------------------------------------------------|
+| **Granularity**   | Tests either PASS or FAIL.               | Tests are averaged into a PASS RATE.              |
+| **Replication**   | Tests run externally on a new structure. | Tests run internally on the real world structure. |
+| **Feedback loop** | Tests run periodically.                  | Tests run in real time.                           |
 
-## Why?  
+## QA
 
-Consider this logic:  
-1. Tests often check that things work (in the positive)  
-2. Errors happen when things break (in the negative)  
-3. Tests should check more often for the negative  
-4. This can be automated  
-
-**Rambling / Poetry:**
-Test driven development is a carrot and a stick approach where the tests tell you where to go while beating you with a stick. Let the code be your carrot and Reflekt be your stick :)  
+**Q.** Can I use it alongside test driven development too?
+**A.** Yes!

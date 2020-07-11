@@ -43,7 +43,7 @@ You can configure Reflekt to not call "no undo" methods like deletion and sendin
 In your class add:
 
 ```ruby
-dont_reflekt :method_name
+deflekt :method_name
 ```
 
 Also consider disabling Reflekt on methods that do the final rendering to the UI, to avoid a visual mess of duplicated elements.

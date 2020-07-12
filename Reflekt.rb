@@ -21,7 +21,7 @@ module Reflekt
 
         # When method called in flow.
         unless @reflekt_clone == nil
-          unless self.class.method_deflekted?(method)
+          unless self.class.deflekted?(method)
             # Reflekt on method.
             @reflekt_clone.send(method, *args)
           end
@@ -41,7 +41,7 @@ module Reflekt
 
   end
 
-  # Access class methods in the instance's singleton class.
+  # Prepend Klass to the instance's singleton class.
   def self.prepended(base)
     base.singleton_class.prepend(Klass)
   end
@@ -59,7 +59,7 @@ module Reflekt
       @@deflekted_methods.add(method)
     end
 
-    def method_deflekted?(method)
+    def deflekted?(method)
       return true if @@deflekted_methods.include?(method)
       false
     end

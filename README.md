@@ -58,6 +58,7 @@ Conceptual differences between TDD and RDD:
 
 |                   | Test-Driven Development                  | Reflection-Driven Development                     |
 --------------------|------------------------------------------|---------------------------------------------------|
+| **Automation**    | Tests are defined manually.              | Tests are defined automatically.                  |
 | **Granularity**   | Tests either PASS or FAIL.               | Tests are averaged into a PASS RATE.              |
 | **Replication**   | Tests run externally on a new structure. | Tests run internally on the real world structure. |
 | **Feedback loop** | Tests run periodically.                  | Tests run in real time.                           |

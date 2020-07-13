@@ -1,5 +1,7 @@
 # Reflekt  
 
+<img src="./Assets/Logo.svg" width="100" raw=true style="margin-left: 10px;" align="right" />
+
 *Reflection-driven development.*  
 
 Test-driven development is fine but it's not perfect. Tests often check for a golden path that works, when errors actually happen when the code or user does something unexpected. And with automated testing humans still have to write the tests.

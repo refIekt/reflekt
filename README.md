@@ -8,12 +8,6 @@ Test-driven development is fine but it's not perfect. Tests often check for a go
 
 **Reflekt** writes the tests for you, and tests in the negative for situations that you wouldn't have noticed. It works out of the box with no extra coding required. Because Reflekt tests your objects as they are used in the normal flow of the application, you get real world test results.
 
-Consider this logic:  
-1. Tests often check that things work (in the positive)  
-2. Errors happen when things break (in the negative)  
-3. Tests should check more often for the negative  
-4. This can be automated
-
 ## Installation  
 
 Install:  
@@ -64,6 +58,12 @@ Conceptual differences between TDD and RDD:
 | **Granularity**   | Tests either PASS or FAIL.               | Tests are averaged into a PASS RATE.              |
 | **Replication**   | Tests run externally on a new structure. | Tests run internally on the real world structure. |
 | **Feedback loop** | Tests run periodically.                  | Tests run in real time.                           |
+
+Consider this logic:  
+1. Tests often check that things work (in the positive)  
+2. Errors happen when things break (in the negative)  
+3. Tests should check more often for the negative  
+4. This can be automated
 
 ## QA
 

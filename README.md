@@ -1,6 +1,6 @@
 # Reflekt  
 
-<img src="./Assets/Logo.svg" width="100" raw=true style="margin-left: 10px;" align="right" />
+<img src="./Assets/Logo.svg" width="200" raw=true style="margin-left: 10px;" align="right" />
 
 *Reflection-driven development.*  
 

@@ -52,7 +52,7 @@ When a method is called in the usual flow of an application, Reflekt runs multip
 
 Conceptual differences between TDD and RDD:
 
-|                   | Test-driven Development                  | Reflection-driven Development                     |
+|                   | Test-driven development                  | Reflection-driven development                     |
 --------------------|------------------------------------------|---------------------------------------------------|
 | **Automation**    | Tests are defined manually.              | Tests are defined automatically.                  |
 | **Granularity**   | Tests either PASS or FAIL.               | Tests are averaged into a PASS RATE.              |

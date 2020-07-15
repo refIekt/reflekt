@@ -11,19 +11,24 @@ require 'set'
 
 module Reflekt
 
-  @reflekt_clone = nil
+  @@clone_count = 5
 
   def initialize(*args)
+
+    @reflekt_forked = false
+    @reflekt_clones = []
 
     # Override methods.
     self.class.instance_methods(false).each do |method|
       self.define_singleton_method(method) do |*args|
 
         # When method called in flow.
-        unless @reflekt_clone == nil
+        if @reflekt_forked
           unless self.class.deflekted?(method)
             # Reflekt on method.
-            @reflekt_clone.send(method, *args)
+            @reflekt_clones.each do |clone|
+              reflekt_action(clone, method, *args)
+            end
           end
         end
 
@@ -36,8 +41,42 @@ module Reflekt
     # Continue contructor flow.
     super
 
-    # Clone methods.
-    @reflekt_clone = self.clone
+    # Create forks.
+    reflekt_fork()
+
+  end
+
+  def reflekt_fork()
+
+    @@clone_count.times do |clone|
+      @reflekt_clones << self.clone
+    end
+
+    @reflekt_forked = true
+
+  end
+
+  def reflekt_action(clone, method, *args)
+
+    # Create new arguments.
+    new_args = []
+    args.each do |arg|
+      case arg
+      when Integer
+        new_args << rand(9999)
+      else
+        new_args << arg
+      end
+    end
+
+    # Action method with new arguments.
+    begin
+      clone.send(method, *new_args)
+    rescue StandardError => error
+      p error
+    else
+      puts "Success."
+    end
 
   end
 

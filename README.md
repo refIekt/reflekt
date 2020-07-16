@@ -48,7 +48,9 @@ Also consider disabling Reflekt on methods that do the final rendering to the UI
 
 When a method is called in the usual flow of an application, Reflekt runs multiple simulations with different values on that method to see if it can break things, before handing back control to the method to perform its usual task.
 
-<img src="./Assets/Flow.svg" raw=true style="max-width: 500px;" align="center"/>
+<p align="center">
+  <img src="./Assets/Flow.svg" raw=true width="500" style="margin-left: auto; margin-right: auto;"/>
+</p>
 
 ## Comparison
 

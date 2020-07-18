@@ -21,7 +21,7 @@ reflekt:
   enabled: true
 ```  
 
-Don't forget to set `enabled: false` in your production config.  
+Don't forget to set `enabled: false` in your production config.
 
 ## Usage  
 

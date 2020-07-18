@@ -1,4 +1,6 @@
-# Reflekt  
+# Reflekt
+
+[![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/)
 
 <img src="./Assets/Logo.svg" width="200" raw=true style="margin-left: 10px;" align="right" />
 

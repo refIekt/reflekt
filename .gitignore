@@ -1,1 +1,8 @@
+# Gems.
+*.gem
+
+# Mac.
+.DS_Store
+
+# Editors.
 .idea*

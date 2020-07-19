@@ -14,18 +14,16 @@ Test-driven development is fine but it's not perfect. Tests often check for a go
 
 ## Installation  
 
-Install:  
+Run:  
 ```  
 gem install reflekt
 ```  
 
-In your [config](https://github.com/rubyconfig/config) YAML add:  
+Enable per environment. In your [config](https://github.com/rubyconfig/config) YAML add:  
 ```yaml  
 reflekt:
   enabled: true
 ```  
-
-Don't forget to set `enabled: false` in your production config.
 
 ## Usage  
 

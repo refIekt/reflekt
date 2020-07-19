@@ -90,11 +90,11 @@ module Reflekt
     @@deflekted_methods = Set.new
 
     ##
-    # Don't reflekt every method.
+    # Skip a method.
     #
     # method - A symbol representing the method name.
     ##
-    def deflekt(method)
+    def reflekt_skip(method)
       @@deflekted_methods.add(method)
     end
 

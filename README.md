@@ -2,6 +2,8 @@
 
 [![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/)
 
+( **Ruby** | [JS](https://github.com/maedi/reflekt-js) )
+
 <img src="./Assets/Logo.svg" width="200" raw=true style="margin-left: 10px;" align="right" />
 
 *Reflection-driven development.*  
@@ -36,12 +38,12 @@ Use the application as usual and test results will start showing up in the `refl
 
 ## Configuration
 
-You can configure Reflekt to not call "no undo" methods like deletion and sending email:
+You can configure Reflekt to skip "no undo" methods like deletion and sending email:
 
 In your class add:
 
 ```ruby
-deflekt :method_name
+reflekt_skip :method_name
 ```
 
 Also consider disabling Reflekt on methods that do the final rendering to the UI, to avoid a visual mess of duplicated elements.

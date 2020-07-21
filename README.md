@@ -12,18 +12,24 @@ Test-driven development is fine but it's not perfect. Tests often check for a go
 
 **Reflekt** writes the tests for you, and tests in the negative for situations that you wouldn't have noticed. It works out of the box with no extra coding required. Because Reflekt tests your objects as they are used in the normal flow of the application, you get real world test results.
 
-## Installation  
+## Installation
 
-Run:  
+In your Gemfile add:
+```ruby
+group :development do
+  gem "reflekt"
+end
 ```  
+
+Then run:
+```
+bundle install
+```
+
+Or:
+```
 gem install reflekt
-```  
-
-Enable per environment. In your [config](https://github.com/rubyconfig/config) YAML add:  
-```yaml  
-reflekt:
-  enabled: true
-```  
+```
 
 ## Usage  
 

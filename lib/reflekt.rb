@@ -1,4 +1,5 @@
 require 'set'
+require_relative 'rehash/rehash.rb'
 
 ################################################################################
 # REFLEKT

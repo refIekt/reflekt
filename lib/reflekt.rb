@@ -81,9 +81,19 @@ module Reflekt
 
   end
 
+  private
+
+  def self.setup_klass()
+    @@db = Rehash.new(:file_system, '/Users/maedi/dev/NGrammer/db.json')
+    @@db.defaults({items: []})
+    return true
+  end
+
   # Prepend Klass to the instance's singleton class.
   def self.prepended(base)
     base.singleton_class.prepend(Klass)
+
+    @@setup ||= setup_klass
   end
 
   module Klass

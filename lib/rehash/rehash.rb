@@ -1,9 +1,10 @@
+require 'oj'
 require_relative 'adapters/FileSystem.rb'
 
 class Rehash
 
-  def initialize(adapter = :file_system, file)
-    @adapter = self.send(adapter)
+  def initialize(adapter = :file_system, filepath)
+    @adapter = self.send(adapter, filepath)
   end
 
   def defaults(hash)
@@ -19,8 +20,8 @@ class Rehash
 
   private
 
-  def file_system
-    FileSystem.new(file)
+  def file_system(filepath)
+    FileSystem.new(filepath)
   end
 
 end

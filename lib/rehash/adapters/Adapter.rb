@@ -1,8 +1,7 @@
 class Adapter
 
-  def initialize(source, default_value = {})
+  def initialize(source)
     @source = source
-    @default_value = default_value
   end
 
 end

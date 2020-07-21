@@ -10,7 +10,7 @@ class FileSystem < Adapter
 
   def write(json)
 
-    p json
+    Oj.to_file(@source, json)
 
   end
 

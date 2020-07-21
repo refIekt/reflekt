@@ -1,5 +1,6 @@
 # Gems.
-*.gem
+/.bundle/
+/pkg/
 
 # Mac.
 .DS_Store

@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    reflekt (0.1.0)
+      oj
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    oj (3.10.7)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  reflekt!
+
+BUNDLED WITH
+   2.1.4

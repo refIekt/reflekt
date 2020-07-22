@@ -83,17 +83,27 @@ module Reflekt
 
   private
 
-  def self.setup_klass()
-    @@db = Rehash.new(:file_system, '/Users/maedi/dev/NGrammer/db.json')
-    @@db.defaults({items: []})
-    return true
-  end
-
   # Prepend Klass to the instance's singleton class.
   def self.prepended(base)
     base.singleton_class.prepend(Klass)
 
     @@setup ||= setup_klass
+  end
+
+  # Setup Klass.
+  def self.setup_klass()
+
+    # Create "reflections" directory in current execution path.
+    # TODO: Allow global config override of path.
+    dir_path = File.join(Dir.pwd, 'reflections')
+    unless Dir.exist? dir_path
+      Dir.mkdir(dir_path)
+    end
+
+    @@db = Rehash.new(:file_system, dir_path + '/db.json')
+    @@db.defaults({items: []})
+
+    return true
   end
 
   module Klass

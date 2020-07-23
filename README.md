@@ -38,7 +38,7 @@ Inside a class that you want to test add:
 prepend Reflekt
 ```  
 
-Use the application as usual and test results will start showing up in the `reflekt/results` folder.
+Use the application as usual and test results will start showing up in the `reflections` folder.
 
 ## Configuration
 

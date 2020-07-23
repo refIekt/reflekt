@@ -16,9 +16,7 @@ Test-driven development is fine but it's not perfect. Tests often check for a go
 
 In your Gemfile add:
 ```ruby
-group :development do
-  gem "reflekt"
-end
+gem "reflekt"
 ```  
 
 Then run:

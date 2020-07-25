@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '0.1.0'
+  spec.version     = '0.1.1'
   spec.date        = '2020-07-18'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmailcom'

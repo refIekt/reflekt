@@ -1,5 +1,5 @@
 require 'set'
-require_relative 'rehash/rehash.rb'
+require 'rowdb'
 
 ################################################################################
 # REFLEKT
@@ -100,7 +100,7 @@ module Reflekt
       Dir.mkdir(dir_path)
     end
 
-    @@db = Rehash.new(:file_system, dir_path + '/db.json')
+    @@db = Rowdb.new(:file_system, dir_path + '/db.json')
     @@db.defaults({items: []})
 
     return true

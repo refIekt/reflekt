@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.homepage    = 'https://github.com/maedi/reflekt'
   spec.license     = 'MPL-2.0'
 
-  spec.files         = ["lib/reflekt.rb", "lib/rehash/rehash.rb", "lib/rehash/adapters/FileSystem.rb"]
+  spec.files         = ["lib/reflekt.rb"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "oj"

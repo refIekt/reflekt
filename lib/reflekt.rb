@@ -1,10 +1,17 @@
 require 'set'
+
+# Production.
 require 'rowdb'
+
+# Development.
+#require_relative '../../rowdb/lib/rowdb.rb'
+#require_relative '../../rowdb/lib/adapters/Adapter.rb'
+#require_relative '../../rowdb/lib/adapters/FileSystem.rb'
 
 ################################################################################
 # REFLEKT
 #
-# Must be defined before the class it's included in.
+# Usage. Prepend to the class like so:
 #
 #   class ExampleClass
 #     prepend Reflekt
@@ -94,13 +101,13 @@ module Reflekt
   def self.setup_klass()
 
     # Create "reflections" directory in current execution path.
-    # TODO: Allow global config override of path.
+    # TODO: Allow override of path via global config.
     dir_path = File.join(Dir.pwd, 'reflections')
     unless Dir.exist? dir_path
       Dir.mkdir(dir_path)
     end
 
-    @@db = Rowdb.new(:file_system, dir_path + '/db.json')
+    @@db = Rowdb.new(dir_path + '/db.json')
     @@db.defaults({items: []})
 
     return true

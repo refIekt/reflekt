@@ -30,5 +30,5 @@ rake install
 ## Release
 
 ```
-rake release
+gem push <package>
 ```

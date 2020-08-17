@@ -71,14 +71,14 @@ When a method is called in the usual flow of an application, Reflekt runs multip
 
 ## Comparison
 
-Conceptual differences between TDD and RDD:
+Conceptual differences between testing methodologies:
 
-|                   | Test-driven development                  | Reflection-driven development                     |
---------------------|------------------------------------------|---------------------------------------------------|
-| **Automation**    | Tests are defined manually.              | Tests are defined automatically.                  |
-| **Granularity**   | Tests either PASS or FAIL.               | Tests are averaged into a PASS RATE.              |
-| **Replication**   | Tests run externally on a new structure. | Tests run internally on the real world structure. |
-| **Feedback loop** | Tests run periodically.                  | Tests run in real time.                           |
+|                   | Unit testing.           | Generative testing.               | Reflective testing.                  |
+--------------------|-------------------------|-----------------------------------|--------------------------------------|
+| **Automation**    | Tests defined manually. | Tests defined semi-automatically. | Tests defined automatically.         |
+| **Granularity**   | Tests PASS or FAIL.     | Tests PASS or FAIL.               | Tests averaged into a PASS RATE.     |
+| **Replication**   | Tests run externally.   | Tests run externally.             | Tests run internally in normal flow. |
+| **Feedback loop** | Tests run periodically. | Tests run periodically.           | Tests run in real time.              |
 
 Consider this logic:  
 1. Tests often check that things work (in the positive)  

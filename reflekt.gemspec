@@ -14,7 +14,6 @@ Gem::Specification.new do |spec|
   spec.files         = ["lib/reflekt.rb"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "oj"
   spec.add_dependency "rowdb"
 
 end

@@ -1,16 +1,36 @@
 # Reflekt
 
-[![MPLv2 License](https://img.shields.io/badge/license-MPLv2-blue.svg?style=flat-square)](https://www.mozilla.org/MPL/2.0/)
+<p align="center">
 
-( **Ruby** | [JS](https://github.com/maedi/reflekt-js) )
+  <img src="./Assets/Logo.svg" raw=true width="200" style="margin-left: auto; margin-right: auto;"/>
 
-<img src="./Assets/Logo.svg" width="200" raw=true style="margin-left: 10px;" align="right" />
+</p>
+<p align="center">
 
-*Reflection-driven development.*  
+  <a href="https://www.mozilla.org/MPL/2.0/" alt="MPLv2 License">
+    <img src="https://img.shields.io/badge/license-MPLv2-blue.svg" />
+  </a>
+  <a href="https://rubygems.org/gems/reflekt">
+    <img src="https://badge.fury.io/rb/reflekt.svg" alt="Gem Version" />
+  </a>
+
+</p>
+
+*Reflective testing.*  
 
 Test-driven development is fine but it's not perfect. Tests often check for a golden path that works, when errors actually happen when the code or user does something unexpected. And with automated testing humans still have to write the tests.
 
 **Reflekt** writes the tests for you, and tests in the negative for situations that you wouldn't have noticed. It works out of the box with no extra coding required. Because Reflekt tests your objects as they are used in the normal flow of the application, you get real world test results.
+
+
+## Usage  
+
+Inside a class that you want to test add:  
+```ruby  
+prepend Reflekt
+```  
+
+Use the application as usual and test results will start showing up in the `reflections` folder.
 
 ## Installation
 
@@ -28,15 +48,6 @@ Or:
 ```
 gem install reflekt
 ```
-
-## Usage  
-
-Inside a class that you want to test add:  
-```ruby  
-prepend Reflekt
-```  
-
-Use the application as usual and test results will start showing up in the `reflections` folder.
 
 ## Configuration
 

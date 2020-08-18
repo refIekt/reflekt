@@ -25,26 +25,31 @@ Test-driven development is fine but it's not perfect. Tests often check for a go
 
 ## Usage  
 
-Inside a class that you want to test add:  
-```ruby  
-prepend Reflekt
+Add `prepend Reflekt` inside a class:
+```ruby
+class ExampleClass
+  prepend Reflekt
 ```  
 
 Use the application as usual and test results will start showing up in the `reflections` folder.
 
 ## Installation
 
-In your Gemfile add:
+**Bundler:**
+
+In Gemfile add:
 ```ruby
 gem "reflekt"
 ```  
 
-Then run:
+In terminal run:
 ```
 bundle install
 ```
 
-Or:
+**RubyGems:**
+
+In terminal run:
 ```
 gem install reflekt
 ```

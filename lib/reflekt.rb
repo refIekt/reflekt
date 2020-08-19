@@ -37,6 +37,8 @@ module Reflekt
             @reflekt_clones.each do |clone|
               reflekt_action(clone, method, *args)
             end
+            # Save results.
+            @@db.write()
           end
         end
 
@@ -80,11 +82,23 @@ module Reflekt
     # Action method with new arguments.
     begin
       clone.send(method, *new_args)
+      # Build reflection.
+      reflection = {
+        "time" => Time.now.to_i,
+        "class" => clone.class.to_s,
+        "method" => method.to_s,
+      }
+    # When error.
     rescue StandardError => error
-      p error
+      reflection["status"] = "error"
+      reflection["error"] = error
+    # When success.
     else
-      puts "Success."
+      reflection["status"] = "success"
     end
+    # Save reflection.
+    @@db.get('reflections')
+        .push(reflection)
 
   end
 
@@ -100,15 +114,25 @@ module Reflekt
   # Setup Klass.
   def self.setup_klass()
 
+    # Receive configuration from host application.
+    $ENV ||= {}
+    $ENV[:reflekt] ||= $ENV[:reflekt] = {}
+
+    # Create "reflections" directory in configured path.
+    if $ENV[:reflekt][:output_path]
+      dir_path = File.join($ENV[:reflekt][:output_path], 'reflections')
     # Create "reflections" directory in current execution path.
-    # TODO: Allow override of path via global config.
-    dir_path = File.join(Dir.pwd, 'reflections')
+    else
+      dir_path = File.join(Dir.pwd, 'reflections')
+    end
+
     unless Dir.exist? dir_path
       Dir.mkdir(dir_path)
     end
 
+    # Create database.
     @@db = Rowdb.new(dir_path + '/db.json')
-    @@db.defaults({items: []})
+    @@db.defaults({"reflections" => []})
 
     return true
   end

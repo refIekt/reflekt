@@ -1,22 +1,18 @@
 # Reflekt
 
 <p align="center">
-
   <img src="./Assets/Logo.svg" raw=true width="200" style="margin-left: auto; margin-right: auto;"/>
-
 </p>
 <p align="center">
-
   <a href="https://www.mozilla.org/MPL/2.0/" alt="MPLv2 License">
     <img src="https://img.shields.io/badge/license-MPLv2-blue.svg" />
   </a>
   <a href="https://rubygems.org/gems/reflekt">
     <img src="https://badge.fury.io/rb/reflekt.svg" alt="Gem Version" />
   </a>
-
 </p>
 
-*Reflective testing.*  
+*Reflective testing.*
 
 Test-driven development is fine but it's not perfect. Tests often check for a golden path that works, when errors actually happen when the code or user does something unexpected. And with automated testing humans still have to write the tests.
 

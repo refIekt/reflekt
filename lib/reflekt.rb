@@ -68,6 +68,9 @@ module Reflekt
 
   def reflekt_action(clone, method, *args)
 
+    class_name = clone.class.to_s
+    method_name = method.to_s
+
     # Create new arguments.
     new_args = []
     args.each do |arg|
@@ -82,11 +85,10 @@ module Reflekt
     # Action method with new arguments.
     begin
       clone.send(method, *new_args)
+
       # Build reflection.
       reflection = {
         "time" => Time.now.to_i,
-        "class" => clone.class.to_s,
-        "method" => method.to_s,
       }
     # When error.
     rescue StandardError => error
@@ -96,8 +98,9 @@ module Reflekt
     else
       reflection["status"] = "success"
     end
+
     # Save reflection.
-    @@db.get('reflections')
+    @@db.get("#{class_name}.#{method_name}")
         .push(reflection)
 
   end

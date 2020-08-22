@@ -38,12 +38,16 @@ module Reflekt
 
             # Render results.
             @@reflekt_json = File.read("#{@@reflekt_output_path}/db.json")
-            template = File.read("#{@@reflekt_path}/template.html.erb")
+            template = File.read("#{@@reflekt_path}/web/template.html.erb")
             rendered = ERB.new(template).result(binding)
-
-            # Write results.
             File.open("#{@@reflekt_output_path}/index.html", 'w+') do |f|
               f.write rendered
+            end
+
+            # Add libraries.
+            alpinejs = File.read("#{@@reflekt_path}/web/alpine.js")
+            File.open("#{@@reflekt_output_path}/alpine.js", 'w+') do |f|
+              f.write alpinejs
             end
 
           end

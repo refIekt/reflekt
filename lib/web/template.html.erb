@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Reflekt</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <link rel="shortcut icon" href="">
+  </head>
+  <body>
+
+    <script>
+
+      function getReflections() {
+
+        var reflections = JSON.parse(<%= @@reflekt_json %>);
+        var results = {};
+
+        if ('reflekt' in reflections) {
+          delete(reflections.reflekt);
+        }
+
+        // Classes.
+        for ([class_id, class_value] of Object.entries(reflections)) {
+
+          // Class pass rate.
+          results[class_id] = {
+            'stats': {
+              'pass_rate': undefined,
+              'test_count': 0,
+              'pass_count': 0
+            },
+            'methods': {}
+          };
+
+          // Methods.
+          for ([method_id, method] of Object.entries(class_value)) {
+
+            // Method pass rate.
+            var pass_count = method.reduce(function(obj, v) {
+              obj[v.status] = (obj[v.status] || 0) + 1;
+              return obj;
+            }, {});
+
+            results[class_id]['methods'][method_id] = {
+              'stats': {
+                'pass_rate': (pass_count['success'] / method.length) * 100,
+                'test_count': method.length,
+                'pass_count': pass_count['success']
+              }
+            };
+
+            // Class pass rate.
+            results[class_id]['stats']['test_count'] += method.length;
+            results[class_id]['stats']['pass_count'] += pass_count['success'];
+
+          }
+
+          // Class pass rate.
+          var class_stats = results[class_id]['stats'];
+          class_stats['pass_rate'] = (class_stats['pass_count'] / class_stats['test_count']) * 100;
+        }
+
+        return { refs: results };
+      }
+
+    </script>
+
+    <div x-data="getReflections()">
+
+      <ul>
+
+        <template x-for="[class_id, klass] in Object.entries(getReflections()['refs'])" :key="class_id">
+          <li>
+            <div x-text="class_id"></div>
+            <div x-text="klass.stats.pass_rate"></div>
+
+            <div>
+              <template x-for="[method_id, method] in Object.entries(klass['methods'])" :key="method_id">
+                <div class="method">
+                  <div x-text="method_id"></div>
+                  <div x-text="method.stats.pass_rate"></div>
+                </div>
+              </template>
+            </div>
+          </li>
+        </template>
+
+      </ul>
+
+    </div>
+
+    <script src="alpine.js"></script>
+
+  </body>
+</html>

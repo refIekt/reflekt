@@ -6,8 +6,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
   </head>
   <body>
 
@@ -44,23 +46,37 @@
               return obj;
             }, {});
 
+            var pass_rate = (pass_count['pass'] / method.length) * 100;
             results[class_id]['methods'][method_id] = {
               'stats': {
-                'pass_rate': (pass_count['success'] / method.length) * 100,
+                'pass_rate': pass_rate,
                 'test_count': method.length,
-                'pass_count': pass_count['success']
+                'pass_count': pass_count['pass']
               }
             };
+            if (pass_rate == 100) {
+              results[class_id]['methods'][method_id]['status'] = 'pass';
+            }
+            else if (pass_rate < 100) {
+              results[class_id]['methods'][method_id]['status'] = 'fail';
+            }
 
             // Class pass rate.
             results[class_id]['stats']['test_count'] += method.length;
-            results[class_id]['stats']['pass_count'] += pass_count['success'];
+            results[class_id]['stats']['pass_count'] += pass_count['pass'];
 
           }
 
           // Class pass rate.
           var class_stats = results[class_id]['stats'];
-          class_stats['pass_rate'] = (class_stats['pass_count'] / class_stats['test_count']) * 100;
+          var pass_rate = (class_stats['pass_count'] / class_stats['test_count']) * 100;
+          class_stats['pass_rate'] = pass_rate;
+          if (pass_rate == 100) {
+            results[class_id]['status'] = 'pass';
+          }
+          else if (pass_rate < 100) {
+            results[class_id]['status'] = 'fail';
+          }
         }
 
         return { refs: results };
@@ -68,23 +84,41 @@
 
     </script>
 
-    <div x-data="getReflections()">
+    <div class="container" x-data="getReflections()">
 
-      <ul>
+      <div id="header">
+        <svg id="logo" enable-background="new 0 0 500 500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+          <path d="m307.5 80.5h-115l-57.5 205h230z" fill="#0047d0"/>
+          <path d="m178 76.5-53.1-44-117.9 139 116 112z" fill="#d04800"/>
+          <path d="m190.4 467.5h115l57.5-168h-229z" fill="#0047d0" opacity=".7"/>
+          <path d="m177 467.5-81-85-92-197 115 113z" fill="#d04800" opacity=".7"/>
+          <g fill="#008c33"><path d="m322 76.5 53.1-44 118 139-116 112z"/><path d="m320 467.5 84-85 92-197-117 113z" opacity=".7"/></g>
+        </svg>
+      </div>
 
+      <ul class="panels">
         <template x-for="[class_id, klass] in Object.entries(getReflections()['refs'])" :key="class_id">
-          <li>
-            <div x-text="class_id"></div>
-            <div x-text="klass.stats.pass_rate"></div>
 
-            <div>
-              <template x-for="[method_id, method] in Object.entries(klass['methods'])" :key="method_id">
-                <div class="method">
-                  <div x-text="method_id"></div>
-                  <div x-text="method.stats.pass_rate"></div>
-                </div>
-              </template>
+          <li class="panel">
+
+            <div class="reflection class" x-bind:class="` ${ klass.status } `">
+              <h2 x-text="` ${class_id}() `"></h2>
+              <div class="stats">
+                <div class="stat" x-text="` ${klass.stats.pass_rate}% `"></div>
+              </div>
             </div>
+
+            <ul class="reflections methods">
+              <template x-for="[method_id, method] in Object.entries(klass['methods'])" :key="method_id">
+                <li class="reflection method" x-bind:class="` ${ method.status } `">
+                  <h3 x-text="` ${method_id}() `"></h3>
+                  <div class="stats">
+                    <div class="stat" x-text="` ${method.stats.pass_rate}% `"></div>
+                  </div>
+                </li>
+              </template>
+            </ul>
+
           </li>
         </template>
 

@@ -1,0 +1,76 @@
+body {
+  padding: 0.5rem;
+  background: #C9D2E6;
+  font-family: 'Roboto', sans-serif;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 2rem;
+  background: white;
+}
+
+#header {
+
+}
+
+#logo {
+  display: block;
+  margin: 0 auto;
+  max-width: 100px;
+}
+
+ul.panels,
+ul.reflections {
+  padding-left: 0;
+}
+
+li.panel {
+  list-style: none;
+  padding: 1rem;
+  border: 5px solid #dadcdc;
+}
+
+/* Reflection. */
+.reflection {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  color: white;
+  background: #A9B6D2;
+}
+.reflection.class {
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+.reflection.class h2 {
+  margin: 0;
+}
+
+.reflection.method {
+  padding: 2rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Stats. */
+.stats {
+  margin-left: auto;
+}
+.stat {
+  color: #efefef;
+  font-size: 3.5rem;
+  font-family: 'Merriweather', serif;
+}
+.method .stat {
+  font-size: 2.5rem;
+}
+
+/* State. */
+.reflection.pass {
+  background: #008C32;
+}
+.reflection.fail {
+  background: #D04700;
+}

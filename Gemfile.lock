@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    reflekt (0.3.1)
+    reflekt (0.4.0)
       rowdb
 
 GEM

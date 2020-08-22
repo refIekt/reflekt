@@ -1,12 +1,6 @@
 require 'set'
-
-# Production.
+require 'erb'
 require 'rowdb'
-
-# Development.
-#require_relative '../../rowdb/lib/rowdb.rb'
-#require_relative '../../rowdb/lib/adapters/Adapter.rb'
-#require_relative '../../rowdb/lib/adapters/FileSystem.rb'
 
 ################################################################################
 # REFLEKT
@@ -19,7 +13,7 @@ require 'rowdb'
 
 module Reflekt
 
-  @@clone_count = 5
+  @@reflekt_clone_count = 5
 
   def initialize(*args)
 
@@ -33,12 +27,25 @@ module Reflekt
         # When method called in flow.
         if @reflekt_forked
           unless self.class.deflekted?(method)
+
             # Reflekt on method.
             @reflekt_clones.each do |clone|
               reflekt_action(clone, method, *args)
             end
+
             # Save results.
-            @@db.write()
+            @@reflekt_db.write()
+
+            # Render results.
+            @@reflekt_json = File.read("#{@@reflekt_output_path}/db.json")
+            template = File.read("#{@@reflekt_path}/template.html.erb")
+            rendered = ERB.new(template).result(binding)
+
+            # Write results.
+            File.open("#{@@reflekt_output_path}/index.html", 'w+') do |f|
+              f.write rendered
+            end
+
           end
         end
 
@@ -58,7 +65,7 @@ module Reflekt
 
   def reflekt_fork()
 
-    @@clone_count.times do |clone|
+    @@reflekt_clone_count.times do |clone|
       @reflekt_clones << self.clone
     end
 
@@ -100,8 +107,8 @@ module Reflekt
     end
 
     # Save reflection.
-    @@db.get("#{class_name}.#{method_name}")
-        .push(reflection)
+    @@reflekt_db.get("#{class_name}.#{method_name}")
+                .push(reflection)
 
   end
 
@@ -111,31 +118,33 @@ module Reflekt
   def self.prepended(base)
     base.singleton_class.prepend(Klass)
 
-    @@setup ||= setup_klass
+    @@reflekt_setup ||= reflekt_setup_klass
   end
 
   # Setup Klass.
-  def self.setup_klass()
+  def self.reflekt_setup_klass()
 
     # Receive configuration from host application.
     $ENV ||= {}
     $ENV[:reflekt] ||= $ENV[:reflekt] = {}
 
+    @@reflekt_path = File.dirname(File.realpath(__FILE__))
+
     # Create "reflections" directory in configured path.
     if $ENV[:reflekt][:output_path]
-      dir_path = File.join($ENV[:reflekt][:output_path], 'reflections')
+      @@reflekt_output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
     # Create "reflections" directory in current execution path.
     else
-      dir_path = File.join(Dir.pwd, 'reflections')
+      @@reflekt_output_path = File.join(Dir.pwd, 'reflections')
     end
 
-    unless Dir.exist? dir_path
-      Dir.mkdir(dir_path)
+    unless Dir.exist? @@reflekt_output_path
+      Dir.mkdir(@@reflekt_output_path)
     end
 
     # Create database.
-    @@db = Rowdb.new(dir_path + '/db.json')
-    @@db.defaults({"reflections" => []})
+    @@reflekt_db = Rowdb.new(@@reflekt_output_path + '/db.json')
+    @@reflekt_db.defaults({ :reflekt => { :api_version => 1 }}).write()
 
     return true
   end

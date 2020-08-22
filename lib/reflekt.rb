@@ -44,10 +44,16 @@ module Reflekt
               f.write rendered
             end
 
-            # Add libraries.
+            # Add JS.
             alpinejs = File.read("#{@@reflekt_path}/web/alpine.js")
             File.open("#{@@reflekt_output_path}/alpine.js", 'w+') do |f|
               f.write alpinejs
+            end
+
+            # Add CSS.
+            stylesheet = File.read("#{@@reflekt_path}/web/style.css")
+            File.open("#{@@reflekt_output_path}/style.css", 'w+') do |f|
+              f.write stylesheet
             end
 
           end
@@ -101,13 +107,13 @@ module Reflekt
       reflection = {
         "time" => Time.now.to_i,
       }
-    # When error.
+    # When fail.
     rescue StandardError => error
       reflection["status"] = "error"
       reflection["error"] = error
-    # When success.
+    # When pass.
     else
-      reflection["status"] = "success"
+      reflection["status"] = "pass"
     end
 
     # Save reflection.
@@ -118,15 +124,15 @@ module Reflekt
 
   private
 
-  # Prepend Klass to the instance's singleton class.
   def self.prepended(base)
-    base.singleton_class.prepend(Klass)
+    # Prepend class methods to the instance's singleton class.
+    base.singleton_class.prepend(SingletonClassMethods)
 
-    @@reflekt_setup ||= reflekt_setup_klass
+    @@reflekt_setup ||= reflekt_setup_class
   end
 
-  # Setup Klass.
-  def self.reflekt_setup_klass()
+  # Setup class.
+  def self.reflekt_setup_class()
 
     # Receive configuration from host application.
     $ENV ||= {}
@@ -153,9 +159,10 @@ module Reflekt
     return true
   end
 
-  module Klass
+  module SingletonClassMethods
 
     @@deflekted_methods = Set.new
+    @@deflekted_methods.add(:send)
 
     ##
     # Skip a method.

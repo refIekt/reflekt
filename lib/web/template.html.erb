@@ -18,6 +18,7 @@
       function getReflections() {
 
         var reflections = JSON.parse(<%= @@reflekt_json %>);
+        console.log(reflections);
         var results = {};
 
         if ('reflekt' in reflections) {

@@ -21,7 +21,7 @@ module Reflekt
     @reflekt_clones = []
 
     # Limit the amount of clones that can be created per instance.
-    # A method called 30,000 times doesn't need that many reflections.
+    # A method called thousands of times doesn't need that many reflections.
     @reflekt_limit = 5
     @reflekt_count = 0
 
@@ -43,25 +43,7 @@ module Reflekt
               # Save results.
               @@reflekt_db.write()
 
-              # Render results.
-              @@reflekt_json = File.read("#{@@reflekt_output_path}/db.json")
-              template = File.read("#{@@reflekt_path}/web/template.html.erb")
-              rendered = ERB.new(template).result(binding)
-              File.open("#{@@reflekt_output_path}/index.html", 'w+') do |f|
-                f.write rendered
-              end
-
-              # Add JS.
-              alpinejs = File.read("#{@@reflekt_path}/web/alpine.js")
-              File.open("#{@@reflekt_output_path}/alpine.js", 'w+') do |f|
-                f.write alpinejs
-              end
-
-              # Add CSS.
-              stylesheet = File.read("#{@@reflekt_path}/web/style.css")
-              File.open("#{@@reflekt_output_path}/style.css", 'w+') do |f|
-                f.write stylesheet
-              end
+              reflekt_render()
 
             end
             @reflekt_count = @reflekt_count + 1
@@ -127,8 +109,31 @@ module Reflekt
     end
 
     # Save reflection.
-    @@reflekt_db.get("#{class_name}.#{method_name}")
-                .push(reflection)
+    @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection)
+
+  end
+
+  def reflekt_render()
+
+    # Render results.
+    @@reflekt_json = File.read("#{@@reflekt_output_path}/db.json")
+    template = File.read("#{@@reflekt_path}/web/template.html.erb")
+    rendered = ERB.new(template).result(binding)
+    File.open("#{@@reflekt_output_path}/index.html", 'w+') do |f|
+      f.write rendered
+    end
+
+    # Add JS.
+    alpinejs = File.read("#{@@reflekt_path}/web/alpine.js")
+    File.open("#{@@reflekt_output_path}/alpine.js", 'w+') do |f|
+      f.write alpinejs
+    end
+
+    # Add CSS.
+    stylesheet = File.read("#{@@reflekt_path}/web/style.css")
+    File.open("#{@@reflekt_output_path}/style.css", 'w+') do |f|
+      f.write stylesheet
+    end
 
   end
 

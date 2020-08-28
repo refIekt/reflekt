@@ -96,9 +96,8 @@ module Reflekt
       clone.send(method, *new_args)
 
       # Build reflection.
-      reflection = {
-        "time" => Time.now.to_i,
-      }
+      reflection = { "time" => Time.now.to_i }
+
     # When fail.
     rescue StandardError => error
       reflection["status"] = "error"
@@ -124,9 +123,9 @@ module Reflekt
     end
 
     # Add JS.
-    alpinejs = File.read("#{@@reflekt_path}/web/alpine.js")
+    javascript = File.read("#{@@reflekt_path}/web/alpine.js")
     File.open("#{@@reflekt_output_path}/alpine.js", 'w+') do |f|
-      f.write alpinejs
+      f.write javascript
     end
 
     # Add CSS.

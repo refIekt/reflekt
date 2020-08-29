@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset="utf-8">
     <title>Reflekt</title>
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Reflective testing results.">
+    <meta name="author" content="Maedi Prichard">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet">
   </head>
+
   <body>
 
     <script>
 
+      const STATUS = "s";
+      const PASS = "p";
+      const FAIL = "f";
+
       function getReflections() {
 
         var reflections = JSON.parse(<%= @@reflekt_json %>);
+        console.log("REFLECTIONS:");
         console.log(reflections);
         var results = {};
 
@@ -43,16 +50,16 @@
 
             // Method pass rate.
             var pass_count = method.reduce(function(obj, v) {
-              obj[v.status] = (obj[v.status] || 0) + 1;
+              obj[v[STATUS]] = (obj[v[STATUS]] || 0) + 1;
               return obj;
             }, {});
 
-            var pass_rate = (pass_count['pass'] / method.length) * 100;
+            var pass_rate = (pass_count[PASS] / method.length) * 100;
             results[class_id]['methods'][method_id] = {
               'stats': {
                 'pass_rate': pass_rate,
                 'test_count': method.length,
-                'pass_count': pass_count['pass']
+                'pass_count': pass_count[PASS]
               }
             };
             if (pass_rate == 100) {
@@ -64,7 +71,7 @@
 
             // Class pass rate.
             results[class_id]['stats']['test_count'] += method.length;
-            results[class_id]['stats']['pass_count'] += pass_count['pass'];
+            results[class_id]['stats']['pass_count'] += pass_count[PASS];
 
           }
 
@@ -98,14 +105,14 @@
       </div>
 
       <ul class="panels">
-        <template x-for="[class_id, klass] in Object.entries(getReflections()['refs'])" :key="class_id">
+        <template x-for="[class_id, klass] in Object.entries(refs)" :key="class_id">
 
           <li class="panel">
 
             <div class="reflection class" x-bind:class="` ${ klass.status } `">
               <h2 x-text="` ${class_id}() `"></h2>
               <div class="stats">
-                <div class="stat" x-text="` ${klass.stats.pass_rate}% `"></div>
+                <div class="stat" x-text="` ${klass.stats.pass_rate.toFixed(2)}% `"></div>
               </div>
             </div>
 
@@ -114,7 +121,7 @@
                 <li class="reflection method" x-bind:class="` ${ method.status } `">
                   <h3 x-text="` ${method_id}() `"></h3>
                   <div class="stats">
-                    <div class="stat" x-text="` ${method.stats.pass_rate}% `"></div>
+                    <div class="stat" x-text="` ${method.stats.pass_rate.toFixed(2)}% `"></div>
                   </div>
                 </li>
               </template>
@@ -130,4 +137,5 @@
     <script src="alpine.js"></script>
 
   </body>
+
 </html>

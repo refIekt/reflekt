@@ -13,6 +13,11 @@ require 'rowdb'
 
 module Reflekt
 
+  REFLEKT_STATUS = "s"
+  REFLEKT_PASS = "p"
+  REFLEKT_FAIL = "f"
+  REFLEKT_MESSAGE = "m"
+
   @@reflekt_clone_count = 5
 
   def initialize(*args)
@@ -99,12 +104,12 @@ module Reflekt
       reflection = { "time" => Time.now.to_i }
 
     # When fail.
-    rescue StandardError => error
-      reflection["status"] = "error"
-      reflection["error"] = error
+  rescue StandardError => message
+      reflection[REFLEKT_STATUS] = REFLEKT_MESSAGE
+      reflection[REFLEKT_MESSAGE] = message
     # When pass.
     else
-      reflection["status"] = "pass"
+      reflection[REFLEKT_STATUS] = REFLEKT_PASS
     end
 
     # Save reflection.

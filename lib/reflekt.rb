@@ -13,9 +13,10 @@ require 'rowdb'
 
 module Reflekt
 
-  REFLEKT_STATUS = "s"
-  REFLEKT_PASS = "p"
-  REFLEKT_FAIL = "f"
+  REFLEKT_TIME    = "t"
+  REFLEKT_STATUS  = "s"
+  REFLEKT_PASS    = "p"
+  REFLEKT_FAIL    = "f"
   REFLEKT_MESSAGE = "m"
 
   @@reflekt_clone_count = 5
@@ -101,7 +102,7 @@ module Reflekt
       clone.send(method, *new_args)
 
       # Build reflection.
-      reflection = { "time" => Time.now.to_i }
+      reflection = { REFLEKT_TIME => Time.now.to_i }
 
     # When fail.
   rescue StandardError => message

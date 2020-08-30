@@ -142,11 +142,42 @@
 
                   <ul class="reflections">
                     <template x-for="[reflection_id, reflection] in Object.entries(reflections[class_id][method_id])">
-                      <li class="individual-reflection">
-                        <div class="time" x-text="reflection.t"></div>
-                        <div class="input" x-text="reflection.i"></div>
-                        <div class="output" x-text="reflection.o"></div>
+
+                      <li class="reflection">
+
+                        <div class="time" x-text="`${new Date(reflection.t * 1000).getFullYear()}/${new Date(reflection.t * 1000).getMonth() + 1}/${new Date(reflection.t * 1000).getDate()} ${new Date(reflection.t * 1000).getHours()}:${new Date(reflection.t * 1000).getMinutes()}:${new Date(reflection.t * 1000).getSeconds()}`"></div>
+
+                        <template x-for="[input_id, input] in Object.entries(reflection.i)">
+
+                          <div class="info">
+                            <h4>Input</h4>
+                            <div class="info-items">
+                              <div class="info-item">
+                                <strong>Type:</strong><div class="input" x-text="input.T"></div>
+                              </div>
+                              <template x-if="input.c != undefined">
+                                <div class="info-item">
+                                  <strong>Count:</strong><div class="input" x-text="input.c"></div>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+
+                        </template>
+
+                        <div class="info">
+                          <h4>Output</h4>
+                          <div class="info-items">
+                            <div class="info-item">
+                              <strong>Type:</strong><div class="output" x-text="reflection.o.T"></div>
+                            </div>
+                            <div class="info-item">
+                              <strong>Count:</strong><div class="output" x-text="reflection.o.c"></div>
+                            </div>
+                          </div>
+                        </div>
                       </li>
+
                     </template>
                   </ul>
 

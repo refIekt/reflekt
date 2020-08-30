@@ -13,11 +13,15 @@ require 'rowdb'
 
 module Reflekt
 
+  # Reflection keys.
   REFLEKT_TIME    = "t"
+  REFLEKT_INPUT   = "i"
+  REFLEKT_OUTPUT  = "o"
   REFLEKT_STATUS  = "s"
+  REFLEKT_MESSAGE = "m"
+  # Reflection values.
   REFLEKT_PASS    = "p"
   REFLEKT_FAIL    = "f"
-  REFLEKT_MESSAGE = "m"
 
   @@reflekt_clone_count = 5
 
@@ -86,23 +90,29 @@ module Reflekt
     class_name = clone.class.to_s
     method_name = method.to_s
 
+    # TODO: Create control fork. Get good value. Check against it.
+
     # Create new arguments that are deviations on inputted type.
-    new_args = []
+    input = []
     args.each do |arg|
       case arg
       when Integer
-        new_args << rand(9999)
+        input << rand(9999)
       else
-        new_args << arg
+        input << arg
       end
     end
 
     # Action method with new arguments.
     begin
-      clone.send(method, *new_args)
+      output = clone.send(method, *input)
 
       # Build reflection.
-      reflection = { REFLEKT_TIME => Time.now.to_i }
+      reflection = {
+        REFLEKT_TIME => Time.now.to_i,
+        REFLEKT_INPUT => input,
+        REFLEKT_OUTPUT => output
+      }
 
     # When fail.
   rescue StandardError => message

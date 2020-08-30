@@ -17,11 +17,17 @@
 
     <script>
 
-      const STATUS = "s";
-      const PASS = "p";
-      const FAIL = "f";
+      // Reflection keys.
+      const TIME    = "t";
+      const INPUT   = "i";
+      const OUTPUT  = "o";
+      const STATUS  = "s";
+      const MESSAGE = "m";
+      // Reflection values.
+      const PASS    = "p";
+      const FAIL    = "f";
 
-      function getReflections() {
+      function getData() {
 
         var reflections = JSON.parse(<%= @@reflekt_json %>);
         console.log("REFLECTIONS:");
@@ -87,12 +93,15 @@
           }
         }
 
-        return { refs: results };
+        return {
+          reflections: reflections,
+          results: results
+        };
       }
 
     </script>
 
-    <div class="container" x-data="getReflections()">
+    <div class="container" x-data="getData()">
 
       <div id="header">
         <svg id="logo" enable-background="new 0 0 500 500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
@@ -100,29 +109,45 @@
           <path d="m178 76.5-53.1-44-117.9 139 116 112z" fill="#d04800"/>
           <path d="m190.4 467.5h115l57.5-168h-229z" fill="#0047d0" opacity=".7"/>
           <path d="m177 467.5-81-85-92-197 115 113z" fill="#d04800" opacity=".7"/>
-          <g fill="#008c33"><path d="m322 76.5 53.1-44 118 139-116 112z"/><path d="m320 467.5 84-85 92-197-117 113z" opacity=".7"/></g>
+          <g fill="#008c33"><path d="m322 76.5 53.1-44 118 139-116 112z"/>
+            <path d="m320 467.5 84-85 92-197-117 113z" opacity=".7"/>
+          </g>
         </svg>
       </div>
 
-      <ul class="panels">
-        <template x-for="[class_id, klass] in Object.entries(refs)" :key="class_id">
+      <ul class="classes">
+        <template x-for="[class_id, klass] in Object.entries(results)" :key="class_id">
 
-          <li class="panel">
+          <li class="class-container">
 
-            <div class="reflection class" x-bind:class="` ${ klass.status } `">
+            <div class="status-row class" x-bind:class="` ${ klass.status } `">
               <h2 x-text="` ${class_id}() `"></h2>
               <div class="stats">
                 <div class="stat" x-text="` ${klass.stats.pass_rate.toFixed(2)}% `"></div>
               </div>
             </div>
 
-            <ul class="reflections methods">
+            <ul class="methods">
               <template x-for="[method_id, method] in Object.entries(klass['methods'])" :key="method_id">
-                <li class="reflection method" x-bind:class="` ${ method.status } `">
-                  <h3 x-text="` ${method_id}() `"></h3>
-                  <div class="stats">
-                    <div class="stat" x-text="` ${method.stats.pass_rate.toFixed(2)}% `"></div>
+                <li class="method-container">
+
+                  <div class="status-row method" x-bind:class="` ${ method.status } `">
+                    <h3 x-text="` ${method_id}() `"></h3>
+                    <div class="stats">
+                      <div class="stat" x-text="` ${method.stats.pass_rate.toFixed(2)}% `"></div>
+                    </div>
                   </div>
+
+                  <ul class="reflections">
+                    <template x-for="[reflection_id, reflection] in Object.entries(reflections[class_id][method_id])">
+                      <li class="individual-reflection">
+                        <div class="time" x-text="reflection.t"></div>
+                        <div class="input" x-text="reflection.i"></div>
+                        <div class="output" x-text="reflection.o"></div>
+                      </li>
+                    </template>
+                  </ul>
+
                 </li>
               </template>
             </ul>

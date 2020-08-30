@@ -96,6 +96,7 @@ module Reflekt
 
     # Create new arguments that are deviations on inputted type.
     input = []
+
     args.each do |arg|
       case arg
       when Integer
@@ -131,13 +132,23 @@ module Reflekt
   end
 
   ##
-  # Normalize input.
+  # Normalize inputs.
   #
-  # @param The actual input.
-  # @return A generic input representation.
+  # @param The actual inputs.
+  # @return A generic inputs representation.
   ##
-  def reflekt_normalize_input(input)
-    input
+  def reflekt_normalize_input(args)
+    inputs = []
+    args.each do |arg|
+      input = {
+        REFLEKT_TYPE => arg.class.to_s
+      }
+      if (arg.class == Array)
+        input[REFLEKT_COUNT] = arg.count
+      end
+      inputs << input
+    end
+    inputs
   end
 
   ##

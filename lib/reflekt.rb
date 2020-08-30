@@ -17,6 +17,8 @@ module Reflekt
   REFLEKT_TIME    = "t"
   REFLEKT_INPUT   = "i"
   REFLEKT_OUTPUT  = "o"
+  REFLEKT_TYPE    = "T"
+  REFLEKT_COUNT   = "c"
   REFLEKT_STATUS  = "s"
   REFLEKT_MESSAGE = "m"
   # Reflection values.
@@ -110,8 +112,8 @@ module Reflekt
       # Build reflection.
       reflection = {
         REFLEKT_TIME => Time.now.to_i,
-        REFLEKT_INPUT => input,
-        REFLEKT_OUTPUT => output
+        REFLEKT_INPUT => reflekt_normalize_input(input),
+        REFLEKT_OUTPUT => reflekt_normalize_output(output)
       }
 
     # When fail.
@@ -126,6 +128,32 @@ module Reflekt
     # Save reflection.
     @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection)
 
+  end
+
+  ##
+  # Normalize input.
+  #
+  # @param The actual input.
+  # @return A generic input representation.
+  ##
+  def reflekt_normalize_input(input)
+    input
+  end
+
+  ##
+  # Normalize output.
+  #
+  # @param The actual output.
+  # @return A generic output representation.
+  ##
+  def reflekt_normalize_output(output)
+    if (output.class == Array || output.class == Hash)
+      return {
+        REFLEKT_TYPE => output.class.to_s,
+        REFLEKT_COUNT => output.count
+      }
+    end
+    output
   end
 
   def reflekt_render()

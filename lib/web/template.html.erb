@@ -122,25 +122,25 @@
 
           <li class="class-container">
 
-            <div class="status-row class" x-bind:class="` ${ klass.status } `">
-              <h2 x-text="` ${class_id}() `"></h2>
+            <div class="status-row class" x-bind:class="`${klass.status}`" @click="klass['show'] = !klass['show']" :aria-expanded="klass['show'] ? 'true' : 'false'" :class="{ 'active': klass['show'] }">
+              <h2 x-text="`${class_id}()`"></h2>
               <div class="stats">
-                <div class="stat" x-text="` ${klass.stats.pass_rate.toFixed(2)}% `"></div>
+                <div class="stat" x-text="`${klass.stats.pass_rate.toFixed(2)}%`"></div>
               </div>
             </div>
 
-            <ul class="methods">
+            <ul class="methods" x-show="klass['show']">
               <template x-for="[method_id, method] in Object.entries(klass['methods'])" :key="method_id">
                 <li class="method-container">
 
-                  <div class="status-row method" x-bind:class="` ${ method.status } `">
-                    <h3 x-text="` ${method_id}() `"></h3>
+                  <div class="status-row method" x-bind:class="`${method.status}`" @click="method['show'] = !method['show']" :aria-expanded="method['show'] ? 'true' : 'false'" :class="{ 'active': method['show'] }">
+                    <h3 x-text="`${method_id}()`"></h3>
                     <div class="stats">
-                      <div class="stat" x-text="` ${method.stats.pass_rate.toFixed(2)}% `"></div>
+                      <div class="stat" x-text="`${method.stats.pass_rate.toFixed(2)}%`"></div>
                     </div>
                   </div>
 
-                  <ul class="reflections">
+                  <ul class="reflections" x-show="method['show']">
                     <template x-for="[reflection_id, reflection] in Object.entries(reflections[class_id][method_id])">
 
                       <li class="reflection">

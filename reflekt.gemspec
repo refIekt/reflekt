@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '0.7.1'
+  spec.version     = '0.7.2'
   spec.date        = '2020-07-22'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmailcom'
@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
     "lib/reflekt.rb",
     "lib/web/template.html.erb",
     "lib/web/style.css",
-    "lib/web/alpine.js"
+    "lib/web/script.js"
   ]
   spec.require_paths = ["lib"]
 

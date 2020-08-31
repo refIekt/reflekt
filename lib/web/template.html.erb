@@ -22,7 +22,8 @@
       const INPUT   = "i";
       const OUTPUT  = "o";
       const TYPE    = "T";
-      const COUNT   = "c";
+      const COUNT   = "C";
+      const VALUE   = "V";
       const STATUS  = "s";
       const MESSAGE = "m";
       // Reflection values.
@@ -155,9 +156,14 @@
                               <div class="info-item">
                                 <strong>Type:</strong><div class="input" x-text="input.T"></div>
                               </div>
-                              <template x-if="input.c != undefined">
+                              <template x-if="input.V != undefined">
                                 <div class="info-item">
-                                  <strong>Count:</strong><div class="input" x-text="input.c"></div>
+                                  <strong>Value:</strong><pre><div class="output" x-text="input.V"></div></pre>
+                                </div>
+                              </template>
+                              <template x-if="input.C != undefined">
+                                <div class="info-item">
+                                  <strong>Count:</strong><div class="input" x-text="input.C"></div>
                                 </div>
                               </template>
                             </div>
@@ -171,8 +177,13 @@
                             <div class="info-item">
                               <strong>Type:</strong><div class="output" x-text="reflection.o.T"></div>
                             </div>
+                            <template x-if="reflection.o.C != undefined">
+                              <div class="info-item">
+                                <strong>Count:</strong><div class="output" x-text="reflection.o.C"></div>
+                              </div>
+                            </template>
                             <div class="info-item">
-                              <strong>Count:</strong><div class="output" x-text="reflection.o.c"></div>
+                              <strong>Value:</strong><pre><div class="output" x-text="reflection.o.V"></div></pre>
                             </div>
                           </div>
                         </div>
@@ -192,7 +203,7 @@
 
     </div>
 
-    <script src="alpine.js"></script>
+    <script src="script.js"></script>
 
   </body>
 

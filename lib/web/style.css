@@ -134,3 +134,6 @@ li.method-container {
 .info-item strong {
   padding-bottom: 0.1rem;
 }
+.info-item pre {
+  margin: 0;
+}

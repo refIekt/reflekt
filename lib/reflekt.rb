@@ -18,7 +18,8 @@ module Reflekt
   REFLEKT_INPUT   = "i"
   REFLEKT_OUTPUT  = "o"
   REFLEKT_TYPE    = "T"
-  REFLEKT_COUNT   = "c"
+  REFLEKT_COUNT   = "C"
+  REFLEKT_VALUE   = "V"
   REFLEKT_STATUS  = "s"
   REFLEKT_MESSAGE = "m"
   # Reflection values.
@@ -134,14 +135,15 @@ module Reflekt
   ##
   # Normalize inputs.
   #
-  # @param The actual inputs.
-  # @return A generic inputs representation.
+  # @param args - The actual inputs.
+  # @return - A generic inputs representation.
   ##
   def reflekt_normalize_input(args)
     inputs = []
     args.each do |arg|
       input = {
-        REFLEKT_TYPE => arg.class.to_s
+        REFLEKT_TYPE => arg.class.to_s,
+        REFLEKT_VALUE => reflekt_normalize_value(arg)
       }
       if (arg.class == Array)
         input[REFLEKT_COUNT] = arg.count
@@ -154,17 +156,37 @@ module Reflekt
   ##
   # Normalize output.
   #
-  # @param The actual output.
-  # @return A generic output representation.
+  # @param output - The actual output.
+  # @return - A generic output representation.
   ##
   def reflekt_normalize_output(output)
+
+    o = {
+      REFLEKT_TYPE => output.class.to_s,
+      REFLEKT_VALUE => reflekt_normalize_value(output)
+    }
+
     if (output.class == Array || output.class == Hash)
-      return {
-        REFLEKT_TYPE => output.class.to_s,
-        REFLEKT_COUNT => output.count
-      }
+      o[REFLEKT_COUNT] = output.count
+    elsif (output.class == TrueClass || output.class == FalseClass)
+      o[REFLEKT_TYPE] = :Boolean
     end
-    output
+
+    return o
+
+  end
+
+  def reflekt_normalize_value(value)
+
+    unless value.nil?
+      value = value.to_s.gsub(/\r?\n/, " ").to_s
+      if value.length >= 30
+        value = value[0, value.rindex(/\s/,30)].rstrip() + '...'
+      end
+    end
+
+    return value
+
   end
 
   def reflekt_render()
@@ -178,8 +200,8 @@ module Reflekt
     end
 
     # Add JS.
-    javascript = File.read("#{@@reflekt_path}/web/alpine.js")
-    File.open("#{@@reflekt_output_path}/alpine.js", 'w+') do |f|
+    javascript = File.read("#{@@reflekt_path}/web/script.js")
+    File.open("#{@@reflekt_output_path}/script.js", 'w+') do |f|
       f.write javascript
     end
 
@@ -235,7 +257,7 @@ module Reflekt
     ##
     # Skip a method.
     #
-    # method - A symbol representing the method name.
+    # @param method - A symbol representing the method name.
     ##
     def reflekt_skip(method)
       @@deflekted_methods.add(method)

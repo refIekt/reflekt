@@ -1,0 +1,22 @@
+graph TB
+
+  subgraph "Object A"
+    oa("Method A")
+  end
+  subgraph "Object B"
+    oa-- Execute -->ob("Method B")
+  end
+
+  subgraph "Object A Clone"
+    oa-- Reflect -->ca("Method A")
+  end
+  subgraph "Object B Clone"
+    ob-- Reflect -->obc("Method B")
+  end
+  subgraph "Object B Clone"
+    ca-- Reflect -->cb("Method B")
+  end
+
+  obc --> obcr{"Method B Reflection"}
+  cb --> cbr{"Method A Reflection"}
+  ob -- Execute --> oce[("Completed Execution")]

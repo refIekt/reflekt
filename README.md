@@ -86,7 +86,7 @@ Consider this logic:
 3. Tests should check more often for the negative  
 4. This can be automated
 
-## QA
+## FAQ
 
 **Q.** Can I use it alongside test driven development too?  
 **A.** Yes!

@@ -1,6 +1,9 @@
 require 'set'
 require 'erb'
 require 'rowdb'
+require 'Execution'
+require 'Reflection'
+require 'ReflectionTree'
 
 ################################################################################
 # REFLEKT
@@ -26,31 +29,34 @@ module Reflekt
   REFLEKT_PASS    = "p"
   REFLEKT_FAIL    = "f"
 
-  @@reflekt_clone_count = 5
+  @@reflection_count = 1
 
   def initialize(*args)
 
-    @reflekt_forked = false
+    @reflekt_constructed = false
     @reflekt_clones = []
 
-    # Limit the amount of clones that can be created per instance.
+    # Limit the amount of reflections that can be created per instance.
     # A method called thousands of times doesn't need that many reflections.
-    @reflekt_limit = 5
-    @reflekt_count = 0
+    @reflection_limit = 5
+    @reflected_count = 0
 
     # Override methods.
     self.class.instance_methods(false).each do |method|
       self.define_singleton_method(method) do |*args|
 
-        # When method called in flow.
-        if @reflekt_forked
+        # Get execution.
+        execution = @@reflekt_tree.get_execution(self, args)
 
-          if @reflekt_count < @reflekt_limit
+        # Reflect.
+        if execution.reflect? && @reflekt_constructed
+
+          if @reflected_count < @reflection_limit
             unless self.class.deflekted?(method)
 
-              # Reflekt on method.
-              @reflekt_clones.each do |clone|
-                reflekt_action(clone, method, *args)
+              # Reflect on method.
+              @@reflection_count.times do
+                reflekt_action(self.clone, method, *args)
               end
 
               # Save results.
@@ -58,33 +64,39 @@ module Reflekt
 
               reflekt_render()
 
+              @@reflekt_tree.display
+
             end
-            @reflekt_count = @reflekt_count + 1
+            @reflected_count = @reflected_count + 1
           end
 
         end
 
-        # Continue method flow.
-        super *args
+        # Execute.
+        unless execution.executed?
+          execution.executed = true
+          super *args
+        end
+
       end
 
     end
 
-    # Continue contructor flow.
+    # Construct object.
     super
 
-    # Create forks.
-    reflekt_fork()
+    # Construct reflekt.
+    reflekt_construct()
 
   end
 
-  def reflekt_fork()
+  def reflekt_construct()
 
-    @@reflekt_clone_count.times do |clone|
+    @@reflection_count.times do |clone|
       @reflekt_clones << self.clone
     end
 
-    @reflekt_forked = true
+    @reflekt_constructed = true
 
   end
 
@@ -118,7 +130,7 @@ module Reflekt
         REFLEKT_OUTPUT => reflekt_normalize_output(output)
       }
 
-    # When fail.
+  # When fail.
   rescue StandardError => message
       reflection[REFLEKT_STATUS] = REFLEKT_MESSAGE
       reflection[REFLEKT_MESSAGE] = message
@@ -225,20 +237,24 @@ module Reflekt
   # Setup class.
   def self.reflekt_setup_class()
 
-    # Receive configuration from host application.
+    # Receive configuration.
     $ENV ||= {}
     $ENV[:reflekt] ||= $ENV[:reflekt] = {}
 
+    # Set configuration.
     @@reflekt_path = File.dirname(File.realpath(__FILE__))
 
-    # Create "reflections" directory in configured path.
+    # Create reflection tree.
+    @@reflekt_tree = ReflectionTree.new(@@reflection_count)
+
+    # Build reflections directory.
     if $ENV[:reflekt][:output_path]
       @@reflekt_output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
-    # Create "reflections" directory in current execution path.
+    # Build reflections directory in current execution path.
     else
       @@reflekt_output_path = File.join(Dir.pwd, 'reflections')
     end
-
+    # Create reflections directory.
     unless Dir.exist? @@reflekt_output_path
       Dir.mkdir(@@reflekt_output_path)
     end
@@ -269,7 +285,7 @@ module Reflekt
     end
 
     def reflekt_limit(amount)
-      @reflekt_limit = amount
+      @reflection_limit = amount
     end
 
   end

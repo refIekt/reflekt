@@ -3,7 +3,7 @@ require 'erb'
 require 'rowdb'
 require 'Execution'
 require 'Reflection'
-require 'ReflectionTree'
+require 'ShadowStack'
 
 ################################################################################
 # REFLEKT
@@ -45,28 +45,30 @@ module Reflekt
     self.class.instance_methods(false).each do |method|
       self.define_singleton_method(method) do |*args|
 
-        # Get execution.
-        execution = @@reflekt_tree.get_execution(self, args)
+        # Get current or next execution.
+        execution = @@reflekt_stack.peek()
+        if execution.nil? || execution.executed?
+          execution = @@reflekt_stack.push(self, @@reflection_count)
+        end
 
         # Reflect.
-        if execution.reflect? && @reflekt_constructed
-
+        if execution.reflect? && @reflekt_constructed && !self.class.reflekt_skipped?(method)
           if @reflected_count < @reflection_limit
-            unless self.class.deflekted?(method)
 
-              # Reflect on method.
-              @@reflection_count.times do
-                reflekt_action(self.clone, method, *args)
-              end
-
-              # Save results.
-              @@reflekt_db.write()
-
-              reflekt_render()
-
-              @@reflekt_tree.display
-
+            # Reflect on method.
+            @@reflection_count.times do
+              reflection = Reflection.new(execution)
+              reflection_hash = reflection.reflect(method, *args)
+              @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection_hash)
             end
+
+            # Save results.
+            @@reflekt_db.write()
+
+            reflekt_render()
+
+            #@@reflekt_stack.display
+
             @reflected_count = @reflected_count + 1
           end
 
@@ -97,50 +99,6 @@ module Reflekt
     end
 
     @reflekt_constructed = true
-
-  end
-
-  def reflekt_action(clone, method, *args)
-
-    class_name = clone.class.to_s
-    method_name = method.to_s
-
-    # TODO: Create control fork. Get good value. Check against it.
-
-    # Create new arguments that are deviations on inputted type.
-    input = []
-
-    args.each do |arg|
-      case arg
-      when Integer
-        input << rand(9999)
-      else
-        input << arg
-      end
-    end
-
-    # Action method with new arguments.
-    begin
-      output = clone.send(method, *input)
-
-      # Build reflection.
-      reflection = {
-        REFLEKT_TIME => Time.now.to_i,
-        REFLEKT_INPUT => reflekt_normalize_input(input),
-        REFLEKT_OUTPUT => reflekt_normalize_output(output)
-      }
-
-  # When fail.
-  rescue StandardError => message
-      reflection[REFLEKT_STATUS] = REFLEKT_MESSAGE
-      reflection[REFLEKT_MESSAGE] = message
-    # When pass.
-    else
-      reflection[REFLEKT_STATUS] = REFLEKT_PASS
-    end
-
-    # Save reflection.
-    @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection)
 
   end
 
@@ -245,7 +203,7 @@ module Reflekt
     @@reflekt_path = File.dirname(File.realpath(__FILE__))
 
     # Create reflection tree.
-    @@reflekt_tree = ReflectionTree.new(@@reflection_count)
+    @@reflekt_stack = ShadowStack.new()
 
     # Build reflections directory.
     if $ENV[:reflekt][:output_path]
@@ -268,7 +226,7 @@ module Reflekt
 
   module SingletonClassMethods
 
-    @@deflekted_methods = Set.new
+    @@reflekt_skipped_methods = Set.new
 
     ##
     # Skip a method.
@@ -276,11 +234,11 @@ module Reflekt
     # @param method - A symbol representing the method name.
     ##
     def reflekt_skip(method)
-      @@deflekted_methods.add(method)
+      @@reflekt_skipped_methods.add(method)
     end
 
-    def deflekted?(method)
-      return true if @@deflekted_methods.include?(method)
+    def reflekt_skipped?(method)
+      return true if @@reflekt_skipped_methods.include?(method)
       false
     end
 

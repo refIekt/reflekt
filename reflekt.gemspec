@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
     "lib/reflekt.rb",
     "lib/Execution.rb",
     "lib/Reflection.rb",
-    "lib/ReflectionTree.rb",
+    "lib/ShadowStack.rb",
     "lib/web/template.html.erb",
     "lib/web/style.css",
     "lib/web/script.js"

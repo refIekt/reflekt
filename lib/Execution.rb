@@ -1,17 +1,18 @@
 class Execution
 
+  attr_accessor :object
   attr_accessor :executed
-  attr_accessor :reflections
   attr_accessor :child
+  attr_accessor :reflections
 
-  def initialize(object, args, reflection_count)
+  def initialize(object, reflection_count)
 
+    @object = object
     @object_id = object.object_id
-    @args = args
+    @child = nil
 
     @executed = false
     @reflections = Array.new(reflection_count)
-    @child = nil
 
   end
 

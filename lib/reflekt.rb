@@ -8,6 +8,11 @@ require 'ShadowStack'
 ################################################################################
 # REFLEKT
 #
+# An Execution is created each time a method is called.
+# Multiple Refections are created per Execution.
+# These Reflections run through their own execution stack on cloned objects.
+# Then the flow is returned to the original method and Execution is moved on.
+#
 # Usage. Prepend to the class like so:
 #
 #   class ExampleClass
@@ -16,146 +21,72 @@ require 'ShadowStack'
 
 module Reflekt
 
-  # Reflection keys.
-  REFLEKT_TIME    = "t"
-  REFLEKT_INPUT   = "i"
-  REFLEKT_OUTPUT  = "o"
-  REFLEKT_TYPE    = "T"
-  REFLEKT_COUNT   = "C"
-  REFLEKT_VALUE   = "V"
-  REFLEKT_STATUS  = "s"
-  REFLEKT_MESSAGE = "m"
-  # Reflection values.
-  REFLEKT_PASS    = "p"
-  REFLEKT_FAIL    = "f"
-
-  @@reflection_count = 1
+  @@reflekt_reflect_amount = 1
+  @@reflected_count = 0
 
   def initialize(*args)
 
-    @reflekt_constructed = false
+    @reflekt_processed = false
     @reflekt_clones = []
 
     # Limit the amount of reflections that can be created per instance.
     # A method called thousands of times doesn't need that many reflections.
     @reflection_limit = 5
-    @reflected_count = 0
 
     # Override methods.
     self.class.instance_methods(false).each do |method|
       self.define_singleton_method(method) do |*args|
 
-        # Get current or next execution.
+        # Get current execution.
         execution = @@reflekt_stack.peek()
-        if execution.nil? || execution.executed?
-          execution = @@reflekt_stack.push(self, @@reflection_count)
+        if execution.nil? || execution.has_finished_reflecting?
+          execution = @@reflekt_stack.push(self, @@reflekt_reflect_amount)
         end
 
         # Reflect.
-        if execution.reflect? && @reflekt_constructed && !self.class.reflekt_skipped?(method)
-          if @reflected_count < @reflection_limit
+        if execution.has_empty_reflections? && !self.class.reflekt_skipped?(method)
+          if @@reflected_count < @reflection_limit
 
-            # Reflect on method.
-            @@reflection_count.times do
-              reflection = Reflection.new(execution)
-              reflection_hash = reflection.reflect(method, *args)
-              @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection_hash)
+            # The first method call in the Execution starts the Reflection.
+            # Subsequent method calls execute as normal on cloned objects.
+            unless execution.is_reflecting?
+              execution.is_reflecting = true
+
+              # Create multiple reflections.
+              execution.reflections.each do |reflection|
+
+                reflection = Reflection.new(execution)
+                reflection = reflection.reflect(method, *args)
+                # TODO: reflection.result()
+
+                class_name = execution.object.class.to_s
+                method_name = method.to_s
+                @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection)
+
+              end
+
+              @@reflected_count = @@reflected_count + 1
+
+              # Save results.
+              @@reflekt_db.write()
+
+              reflekt_render()
+
+              #@@reflekt_stack.display
             end
-
-            # Save results.
-            @@reflekt_db.write()
-
-            reflekt_render()
-
-            #@@reflekt_stack.display
-
-            @reflected_count = @reflected_count + 1
           end
 
         end
 
-        # Execute.
-        unless execution.executed?
-          execution.executed = true
-          super *args
-        end
+        # Execute method.
+        super *args
 
       end
 
     end
 
-    # Construct object.
+    # Continue initialization.
     super
-
-    # Construct reflekt.
-    reflekt_construct()
-
-  end
-
-  def reflekt_construct()
-
-    @@reflection_count.times do |clone|
-      @reflekt_clones << self.clone
-    end
-
-    @reflekt_constructed = true
-
-  end
-
-  ##
-  # Normalize inputs.
-  #
-  # @param args - The actual inputs.
-  # @return - A generic inputs representation.
-  ##
-  def reflekt_normalize_input(args)
-    inputs = []
-    args.each do |arg|
-      input = {
-        REFLEKT_TYPE => arg.class.to_s,
-        REFLEKT_VALUE => reflekt_normalize_value(arg)
-      }
-      if (arg.class == Array)
-        input[REFLEKT_COUNT] = arg.count
-      end
-      inputs << input
-    end
-    inputs
-  end
-
-  ##
-  # Normalize output.
-  #
-  # @param output - The actual output.
-  # @return - A generic output representation.
-  ##
-  def reflekt_normalize_output(output)
-
-    o = {
-      REFLEKT_TYPE => output.class.to_s,
-      REFLEKT_VALUE => reflekt_normalize_value(output)
-    }
-
-    if (output.class == Array || output.class == Hash)
-      o[REFLEKT_COUNT] = output.count
-    elsif (output.class == TrueClass || output.class == FalseClass)
-      o[REFLEKT_TYPE] = :Boolean
-    end
-
-    return o
-
-  end
-
-  def reflekt_normalize_value(value)
-
-    unless value.nil?
-      value = value.to_s.gsub(/\r?\n/, " ").to_s
-      if value.length >= 30
-        value = value[0, value.rindex(/\s/,30)].rstrip() + '...'
-      end
-    end
-
-    return value
 
   end
 

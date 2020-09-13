@@ -1,9 +1,9 @@
 class Execution
 
   attr_accessor :object
-  attr_accessor :executed
   attr_accessor :child
   attr_accessor :reflections
+  attr_accessor :is_reflecting
 
   def initialize(object, reflection_count)
 
@@ -11,17 +11,32 @@ class Execution
     @object_id = object.object_id
     @child = nil
 
-    @executed = false
     @reflections = Array.new(reflection_count)
+    @is_reflecting = false
 
   end
 
-  def reflect?
+  def has_empty_reflections?
     @reflections.include? nil
   end
 
-  def executed?
-    @executed
+  ##
+  # Is the Execution currently reflecting methods?
+  ##
+  def is_reflecting?
+    @is_reflecting
+  end
+
+  def has_finished_reflecting?
+    if has_empty_reflections?
+      return false
+    end
+    @reflections.each do |reflection|
+      if reflection.is_finished?
+        return true
+      end
+    end
+    return false
   end
 
 end

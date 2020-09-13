@@ -1,5 +1,18 @@
 class Reflection
 
+  # Reflection keys.
+  REFLEKT_TIME    = "t"
+  REFLEKT_INPUT   = "i"
+  REFLEKT_OUTPUT  = "o"
+  REFLEKT_TYPE    = "T"
+  REFLEKT_COUNT   = "C"
+  REFLEKT_VALUE   = "V"
+  REFLEKT_STATUS  = "s"
+  REFLEKT_MESSAGE = "m"
+  # Reflection values.
+  REFLEKT_PASS    = "p"
+  REFLEKT_FAIL    = "f"
+
   attr_accessor :clone
 
   def initialize(execution)
@@ -8,6 +21,12 @@ class Reflection
     @clone = execution.object.clone
     @clone_id = nil
 
+    @is_finished = false
+
+  end
+
+  def is_finished?
+    @is_finished
   end
 
   ##
@@ -19,9 +38,6 @@ class Reflection
   # @return - A reflection hash.
   ##
   def reflect(method, *args)
-
-    class_name = @clone.class.to_s
-    method_name = method.to_s
 
     # TODO: Create control fork. Get good value. Check against it.
 
@@ -44,8 +60,8 @@ class Reflection
       # Build reflection.
       reflection = {
         REFLEKT_TIME => Time.now.to_i,
-        REFLEKT_INPUT => reflekt_normalize_input(input),
-        REFLEKT_OUTPUT => reflekt_normalize_output(output)
+        REFLEKT_INPUT => normalize_input(input),
+        REFLEKT_OUTPUT => normalize_output(output)
       }
 
     # When fail.
@@ -56,6 +72,65 @@ class Reflection
     else
       reflection[REFLEKT_STATUS] = REFLEKT_PASS
     end
+
+    is_finished = true
+
+  end
+
+  ##
+  # Normalize inputs.
+  #
+  # @param args - The actual inputs.
+  # @return - A generic inputs representation.
+  ##
+  def normalize_input(args)
+    inputs = []
+    args.each do |arg|
+      input = {
+        REFLEKT_TYPE => arg.class.to_s,
+        REFLEKT_VALUE => normalize_value(arg)
+      }
+      if (arg.class == Array)
+        input[REFLEKT_COUNT] = arg.count
+      end
+      inputs << input
+    end
+    inputs
+  end
+
+  ##
+  # Normalize output.
+  #
+  # @param input - The actual output.
+  # @return - A generic output representation.
+  ##
+  def normalize_output(input)
+
+    output = {
+      REFLEKT_TYPE => input.class.to_s,
+      REFLEKT_VALUE => normalize_value(output)
+    }
+
+    if (input.class == Array || input.class == Hash)
+      output[REFLEKT_COUNT] = input.count
+    elsif (input.class == TrueClass || input.class == FalseClass)
+      output[REFLEKT_TYPE] = :Boolean
+    end
+
+    return output
+
+  end
+
+  def normalize_value(value)
+
+    unless value.nil?
+      value = value.to_s.gsub(/\r?\n/, " ").to_s
+      if value.length >= 30
+        value = value[0, value.rindex(/\s/,30)].rstrip() + '...'
+      end
+    end
+
+    return value
 
   end
 

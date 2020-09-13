@@ -15,6 +15,10 @@ class ShadowStack
     @top
   end
 
+  def base()
+    @bottom
+  end
+
   ##
   # Push Execution.
   #

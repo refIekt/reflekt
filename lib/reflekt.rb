@@ -39,9 +39,16 @@ module Reflekt
 
         # Get current execution.
         execution = @@reflekt_stack.peek()
+        # Create new execution when stack empty or past execution done reflecting.
         if execution.nil? || execution.has_finished_reflecting?
           execution = @@reflekt_stack.push(self, @@reflekt_reflect_amount)
         end
+
+        p '-------------------'
+        p execution.object_id
+        p execution.object.class.to_s
+        p method
+        p execution.has_finished_reflecting?
 
         # Reflect.
         if execution.has_empty_reflections? && !self.class.reflekt_skipped?(method)

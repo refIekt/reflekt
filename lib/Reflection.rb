@@ -32,6 +32,8 @@ class Reflection
   ##
   # Reflect on a method.
   #
+  # Creates a shadow execution stack.
+  #
   # @param method - The name of the method.
   # @param *args - The method arguments.
   #

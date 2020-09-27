@@ -36,7 +36,8 @@ class ShadowStack
     if @bottom.nil?
       @bottom = execution
     else
-      @top.child = execution
+      execution.child = @top
+      @top.parent = execution
     end
 
     # Place new execution at the top of the stack.
@@ -50,8 +51,8 @@ class ShadowStack
 
   def display_execution_tree(execution)
     p execution
-    unless execution.child == nil
-      display_execution_tree(execution.child)
+    unless execution.parent == nil
+      display_execution_tree(execution.parent)
     end
   end
 

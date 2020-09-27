@@ -1,6 +1,7 @@
 class Execution
 
   attr_accessor :object
+  attr_accessor :parent
   attr_accessor :child
   attr_accessor :reflections
   attr_accessor :is_reflecting
@@ -9,6 +10,7 @@ class Execution
 
     @object = object
     @object_id = object.object_id
+    @parent = nil
     @child = nil
 
     @reflections = Array.new(reflection_count)

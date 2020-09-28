@@ -33,12 +33,7 @@ class Execution
     if has_empty_reflections?
       return false
     end
-    @reflections.each do |reflection|
-      if reflection.is_finished?
-        return true
-      end
-    end
-    return false
+    return true
   end
 
 end

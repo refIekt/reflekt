@@ -27,10 +27,7 @@ class ShadowStack
   #
   # @return Execution - The new execution.
   ##
-  def push(object, reflection_count)
-
-    # Create execution.
-    execution = Execution.new(object, reflection_count)
+  def push(execution)
 
     # Reference previous execution.
     if @bottom.nil?

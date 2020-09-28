@@ -18,15 +18,13 @@ class Reflection
   def initialize(execution)
 
     @execution = execution
+
+    # Clone the execution's object.
     @clone = execution.object.clone
     @clone_id = nil
 
-    @is_finished = false
+    @output = nil
 
-  end
-
-  def is_finished?
-    @is_finished
   end
 
   ##
@@ -40,8 +38,6 @@ class Reflection
   # @return - A reflection hash.
   ##
   def reflect(method, *args)
-
-    # TODO: Create control fork. Get good value. Check against it.
 
     # Create new arguments that are deviations on inputted type.
     input = []
@@ -57,7 +53,7 @@ class Reflection
 
     # Action method with new arguments.
     begin
-      output = @clone.send(method, *input)
+      @output = @clone.send(method, *input)
 
       # Build reflection.
       reflection = {
@@ -74,8 +70,6 @@ class Reflection
     else
       reflection[REFLEKT_STATUS] = REFLEKT_PASS
     end
-
-    is_finished = true
 
   end
 

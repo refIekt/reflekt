@@ -2,6 +2,7 @@ class Execution
 
   attr_accessor :object
   attr_accessor :caller_id
+  attr_accessor :caller_class
   attr_accessor :parent
   attr_accessor :child
   attr_accessor :reflections
@@ -11,6 +12,7 @@ class Execution
 
     @object = object
     @caller_id = object.object_id
+    @caller_class = object.class
     @parent = nil
     @child = nil
 

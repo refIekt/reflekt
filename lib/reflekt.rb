@@ -21,7 +21,7 @@ require 'ShadowStack'
 
 module Reflekt
 
-  @@reflekt_reflect_amount = 1
+  @@reflekt_reflect_amount = 2
 
   def initialize(*args)
 
@@ -55,13 +55,6 @@ module Reflekt
           execution = Execution.new(self, @@reflekt_reflect_amount)
           @@reflekt_stack.push(execution)
 
-          p '-------------------'
-          p execution.caller_id
-          p execution.object_id
-          p execution.object.class.to_s
-          p method
-          p '-------------------'
-
         end
 
         # Reflect.
@@ -70,19 +63,24 @@ module Reflekt
         if execution.has_empty_reflections? && !execution.is_reflecting?
           execution.is_reflecting = true
 
-          # Create multiple reflections.
-          # TODO: Create control fork. Get good value. Check against it.
+          # Multiple reflections per execution.
           execution.reflections.each_with_index do |value, index|
 
-            reflection = Reflection.new(execution)
+            # Flag first reflection is a control.
+            is_control = false
+            is_control = true if index == 0
+
+            # Create reflection.
+            reflection = Reflection.new(execution, method, is_control)
             execution.reflections[index] = reflection
 
-            reflection_result = reflection.reflect(method, *args)
-            # TODO: reflection.result()
+            # Execute reflection.
+            reflection.reflect(*args)
 
-            class_name = execution.object.class.to_s
+            # Add result.
+            class_name = execution.caller_class.to_s
             method_name = method.to_s
-            @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection_result)
+            @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection.result())
 
           end
 

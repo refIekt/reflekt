@@ -1,28 +1,33 @@
 class Reflection
 
-  # Reflection keys.
-  REFLEKT_TIME    = "t"
-  REFLEKT_INPUT   = "i"
-  REFLEKT_OUTPUT  = "o"
-  REFLEKT_TYPE    = "T"
-  REFLEKT_COUNT   = "C"
-  REFLEKT_VALUE   = "V"
-  REFLEKT_STATUS  = "s"
-  REFLEKT_MESSAGE = "m"
-  # Reflection values.
-  REFLEKT_PASS    = "p"
-  REFLEKT_FAIL    = "f"
+  # Keys.
+  TIME    = "t"
+  INPUT   = "i"
+  OUTPUT  = "o"
+  TYPE    = "T"
+  COUNT   = "C"
+  VALUE   = "V"
+  STATUS  = "s"
+  MESSAGE = "m"
+  # Values.
+  PASS    = "p"
+  FAIL    = "f"
 
   attr_accessor :clone
 
-  def initialize(execution)
+  def initialize(execution, method, is_control)
 
     @execution = execution
+    @method = method
+    @is_control = is_control
 
     # Clone the execution's object.
     @clone = execution.object.clone
     @clone_id = nil
 
+    # Result.
+    @status = nil
+    @time = Time.now.to_i
     @input = []
     @output = nil
 
@@ -38,38 +43,46 @@ class Reflection
   #
   # @return - A reflection hash.
   ##
-  def reflect(method, *args)
+  def reflect(*args)
 
-    # Create new arguments that are deviations on inputted type.
-    args.each do |arg|
-      case arg
-      when Integer
-        @input << rand(9999)
-      else
-        @input << arg
+    # Reflect on real world arguments.
+    if @is_control
+      @input = *args
+    # Reflect on deviated arguments.
+    else
+      args.each do |arg|
+        case arg
+        when Integer
+          @input << rand(9999)
+        else
+          @input << arg
+        end
       end
     end
 
     # Action method with new arguments.
     begin
-      @output = @clone.send(method, *@input)
-
-      # Build reflection.
-      reflection = {
-        REFLEKT_TIME => Time.now.to_i,
-        REFLEKT_INPUT => normalize_input(@input),
-        REFLEKT_OUTPUT => normalize_output(@output)
-      }
-
+      @output = @clone.send(@method, *@input)
     # When fail.
     rescue StandardError => message
-      reflection[REFLEKT_STATUS] = REFLEKT_MESSAGE
-      reflection[REFLEKT_MESSAGE] = message
+      @status = MESSAGE
+      @message = message
     # When pass.
     else
-      reflection[REFLEKT_STATUS] = REFLEKT_PASS
+      @status = PASS
     end
 
+  end
+
+  def result()
+    # Build reflection.
+    reflection = {
+      TIME => @time,
+      STATUS => @status,
+      INPUT => normalize_input(@input),
+      OUTPUT => normalize_output(@output),
+      MESSAGE => @message
+    }
   end
 
   ##
@@ -82,11 +95,11 @@ class Reflection
     inputs = []
     args.each do |arg|
       input = {
-        REFLEKT_TYPE => arg.class.to_s,
-        REFLEKT_VALUE => normalize_value(arg)
+        TYPE => arg.class.to_s,
+        VALUE => normalize_value(arg)
       }
       if (arg.class == Array)
-        input[REFLEKT_COUNT] = arg.count
+        input[COUNT] = arg.count
       end
       inputs << input
     end
@@ -102,14 +115,14 @@ class Reflection
   def normalize_output(input)
 
     output = {
-      REFLEKT_TYPE => input.class.to_s,
-      REFLEKT_VALUE => normalize_value(output)
+      TYPE => input.class.to_s,
+      VALUE => normalize_value(input)
     }
 
     if (input.class == Array || input.class == Hash)
-      output[REFLEKT_COUNT] = input.count
+      output[COUNT] = input.count
     elsif (input.class == TrueClass || input.class == FalseClass)
-      output[REFLEKT_TYPE] = :Boolean
+      output[TYPE] = :Boolean
     end
 
     return output

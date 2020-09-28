@@ -25,13 +25,12 @@ module Reflekt
 
   def initialize(*args)
 
-    @reflekt_forked = false
     @reflekt_clones = []
 
     # Limit the amount of reflections that can be created per instance.
     # A method called thousands of times doesn't need that many reflections.
-    @reflection_count = 0
-    @reflection_limit = 5
+    @@reflection_count = 0
+    @@reflection_limit = 5
 
     # Get instance methods.
     self.class.instance_methods(false).each do |method|
@@ -39,69 +38,61 @@ module Reflekt
       # Don't process skipped methods.
       next if self.class.reflekt_skipped?(method)
 
-      # Re-define method.
+      # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
         # Don't reflect when limit reached.
-        return if @reflection_count > @reflection_limit
+        @@reflection_count = @@reflection_count + 1
+        #return if @@reflection_count >= @@reflection_limit
 
-        # When method called in flow.
-        if @reflekt_forked
+        # Get current execution.
+        execution = @@reflekt_stack.peek()
 
-          # Get current execution.
-          execution = @@reflekt_stack.peek()
+        # When stack empty or past execution done reflecting.
+        if execution.nil? || execution.has_finished_reflecting?
 
-          # When stack empty or past execution done reflecting.
-          if execution.nil? || execution.has_finished_reflecting?
-            
-            unless execution.nil?
-              p execution.has_finished_reflecting?
-            end
+          # Create execution.
+          execution = Execution.new(self, @@reflekt_reflect_amount)
+          @@reflekt_stack.push(execution)
 
-            # Create execution.
-            execution = Execution.new(self, @@reflekt_reflect_amount)
-            @@reflekt_stack.push(execution)
+          p '-------------------'
+          p execution.caller_id
+          p execution.object_id
+          p execution.object.class.to_s
+          p method
+          p '-------------------'
 
-            p '-------------------'
-            p execution.object_id
-            p execution.object.class.to_s
-            p method
-            p '-------------------'
+        end
 
-          end
+        # Reflect.
+        # The first method call in the Execution creates a Reflection.
+        # Subsequent method calls are shadow executions on cloned objects.
+        if execution.has_empty_reflections? && !execution.is_reflecting?
+          execution.is_reflecting = true
 
-          # Reflect.
-          # The first method call in the Execution creates a Reflection.
-          # Subsequent method calls are shadow executions on cloned objects.
-          if execution.has_empty_reflections? && !execution.is_reflecting?
-            execution.is_reflecting = true
+          # Create multiple reflections.
+          # TODO: Create control fork. Get good value. Check against it.
+          execution.reflections.each_with_index do |value, index|
 
-            # Create multiple reflections.
-            # TODO: Create control fork. Get good value. Check against it.
-            execution.reflections.each_with_index do |value, index|
+            reflection = Reflection.new(execution)
+            execution.reflections[index] = reflection
 
-              reflection = Reflection.new(execution)
-              execution.reflections[index] = reflection
+            reflection_result = reflection.reflect(method, *args)
+            # TODO: reflection.result()
 
-              reflection_result = reflection.reflect(method, *args)
-              # TODO: reflection.result()
-
-              class_name = execution.object.class.to_s
-              method_name = method.to_s
-              @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection_result)
-
-            end
-
-            @reflection_count = @reflection_count + 1
-
-            # Save results.
-            @@reflekt_db.write()
-
-            # Render results.
-            reflekt_render()
+            class_name = execution.object.class.to_s
+            method_name = method.to_s
+            @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection_result)
 
           end
 
+          # Save results.
+          @@reflekt_db.write()
+
+          # Render results.
+          reflekt_render()
+
+          execution.is_reflecting = false
         end
 
         # Continue execution / shadow execution.
@@ -110,8 +101,6 @@ module Reflekt
       end
 
     end
-
-    @reflekt_forked = true
 
     # Continue initialization.
     super
@@ -207,7 +196,7 @@ module Reflekt
     end
 
     def reflekt_limit(amount)
-      @reflection_limit = amount
+      @@reflection_limit = amount
     end
 
   end

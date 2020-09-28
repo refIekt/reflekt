@@ -1,6 +1,7 @@
 class Execution
 
   attr_accessor :object
+  attr_accessor :caller_id
   attr_accessor :parent
   attr_accessor :child
   attr_accessor :reflections
@@ -9,7 +10,7 @@ class Execution
   def initialize(object, reflection_count)
 
     @object = object
-    @object_id = object.object_id
+    @caller_id = object.object_id
     @parent = nil
     @child = nil
 
@@ -30,6 +31,9 @@ class Execution
   end
 
   def has_finished_reflecting?
+    if is_reflecting?
+      return false
+    end
     if has_empty_reflections?
       return false
     end

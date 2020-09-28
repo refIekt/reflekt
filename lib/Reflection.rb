@@ -23,6 +23,7 @@ class Reflection
     @clone = execution.object.clone
     @clone_id = nil
 
+    @input = []
     @output = nil
 
   end
@@ -40,26 +41,24 @@ class Reflection
   def reflect(method, *args)
 
     # Create new arguments that are deviations on inputted type.
-    input = []
-
     args.each do |arg|
       case arg
       when Integer
-        input << rand(9999)
+        @input << rand(9999)
       else
-        input << arg
+        @input << arg
       end
     end
 
     # Action method with new arguments.
     begin
-      @output = @clone.send(method, *input)
+      @output = @clone.send(method, *@input)
 
       # Build reflection.
       reflection = {
         REFLEKT_TIME => Time.now.to_i,
-        REFLEKT_INPUT => normalize_input(input),
-        REFLEKT_OUTPUT => normalize_output(output)
+        REFLEKT_INPUT => normalize_input(@input),
+        REFLEKT_OUTPUT => normalize_output(@output)
       }
 
     # When fail.

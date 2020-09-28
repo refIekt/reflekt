@@ -10,10 +10,10 @@ require 'ShadowStack'
 #
 # An Execution is created each time a method is called.
 # Multiple Refections are created per Execution.
-# These Reflections run through their own execution stack on cloned objects.
-# Then the flow is returned to the original method and Execution is moved on.
+# These Reflections execute on a ShadowStack on cloned objects.
+# Then flow is returned to the original method and normal execution continues.
 #
-# Usage. Prepend to the class like so:
+# Usage:
 #
 #   class ExampleClass
 #     prepend Reflekt
@@ -21,77 +21,83 @@ require 'ShadowStack'
 
 module Reflekt
 
+  # The amount of reflections to create per method call.
   @@reflekt_reflect_amount = 2
+
+  # Limit the amount of reflections that can be created per instance method.
+  # A method called thousands of times doesn't need that many reflections.
+  @@reflection_limit = 10
 
   def initialize(*args)
 
-    @reflekt_clones = []
-
-    # Limit the amount of reflections that can be created per instance.
-    # A method called thousands of times doesn't need that many reflections.
-    @@reflection_count = 0
-    @@reflection_limit = 5
+    @reflection_counts = {}
 
     # Get instance methods.
+    # TODO: Include parent methods like "Array.include?".
     self.class.instance_methods(false).each do |method|
 
       # Don't process skipped methods.
       next if self.class.reflekt_skipped?(method)
 
+      @reflection_counts[method] = 0
+
       # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
         # Don't reflect when limit reached.
-        @@reflection_count = @@reflection_count + 1
-        #return if @@reflection_count >= @@reflection_limit
+        unless @reflection_counts[method] >= @@reflection_limit
 
-        # Get current execution.
-        execution = @@reflekt_stack.peek()
+          # Get current execution.
+          execution = @@reflekt_stack.peek()
 
-        # When stack empty or past execution done reflecting.
-        if execution.nil? || execution.has_finished_reflecting?
+          # When stack empty or past execution done reflecting.
+          if execution.nil? || execution.has_finished_reflecting?
 
-          # Create execution.
-          execution = Execution.new(self, @@reflekt_reflect_amount)
-          @@reflekt_stack.push(execution)
-
-        end
-
-        # Reflect.
-        # The first method call in the Execution creates a Reflection.
-        # Subsequent method calls are shadow executions on cloned objects.
-        if execution.has_empty_reflections? && !execution.is_reflecting?
-          execution.is_reflecting = true
-
-          # Multiple reflections per execution.
-          execution.reflections.each_with_index do |value, index|
-
-            # Flag first reflection is a control.
-            is_control = false
-            is_control = true if index == 0
-
-            # Create reflection.
-            reflection = Reflection.new(execution, method, is_control)
-            execution.reflections[index] = reflection
-
-            # Execute reflection.
-            reflection.reflect(*args)
-
-            # Add result.
-            class_name = execution.caller_class.to_s
-            method_name = method.to_s
-            @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection.result())
+            # Create execution.
+            execution = Execution.new(self, @@reflekt_reflect_amount)
+            @@reflekt_stack.push(execution)
 
           end
 
-          # Save results.
-          @@reflekt_db.write()
+          # Reflect.
+          # The first method call in the Execution creates a Reflection.
+          # Subsequent method calls are shadow executions on cloned objects.
+          if execution.has_empty_reflections? && !execution.is_reflecting?
+            execution.is_reflecting = true
 
-          # Render results.
-          reflekt_render()
+            # Multiple reflections per execution.
+            execution.reflections.each_with_index do |value, index|
 
-          execution.is_reflecting = false
+              # Flag first reflection is a control.
+              is_control = false
+              is_control = true if index == 0
+
+              # Create reflection.
+              reflection = Reflection.new(execution, method, is_control)
+              execution.reflections[index] = reflection
+
+              # Execute reflection.
+              reflection.reflect(*args)
+
+              # Add result.
+              class_name = execution.caller_class.to_s
+              method_name = method.to_s
+              @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection.result())
+
+            end
+
+            # Save results.
+            @@reflekt_db.write()
+
+            # Render results.
+            reflekt_render()
+
+            execution.is_reflecting = false
+          end
+
         end
+
+        @reflection_counts[method] = @reflection_counts[method] + 1
 
         # Continue execution / shadow execution.
         super *args

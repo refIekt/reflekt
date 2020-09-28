@@ -1,11 +1,19 @@
 require 'set'
 require 'erb'
 require 'rowdb'
+require 'Execution'
+require 'Reflection'
+require 'ShadowStack'
 
 ################################################################################
 # REFLEKT
 #
-# Usage. Prepend to the class like so:
+# An Execution is created each time a method is called.
+# Multiple Refections are created per Execution.
+# These Reflections execute on a ShadowStack on cloned objects.
+# Then flow is returned to the original method and normal execution continues.
+#
+# Usage:
 #
 #   class ExampleClass
 #     prepend Reflekt
@@ -13,186 +21,105 @@ require 'rowdb'
 
 module Reflekt
 
-  # Reflection keys.
-  REFLEKT_TIME    = "t"
-  REFLEKT_INPUT   = "i"
-  REFLEKT_OUTPUT  = "o"
-  REFLEKT_TYPE    = "T"
-  REFLEKT_COUNT   = "C"
-  REFLEKT_VALUE   = "V"
-  REFLEKT_STATUS  = "s"
-  REFLEKT_MESSAGE = "m"
-  # Reflection values.
-  REFLEKT_PASS    = "p"
-  REFLEKT_FAIL    = "f"
+  # The amount of reflections to create per method call.
+  @@reflekt_reflect_amount = 2
 
-  @@reflekt_clone_count = 5
+  # Limit the amount of reflections that can be created per instance method.
+  # A method called thousands of times doesn't need that many reflections.
+  @@reflection_limit = 10
 
   def initialize(*args)
 
-    @reflekt_forked = false
-    @reflekt_clones = []
+    @reflection_counts = {}
 
-    # Limit the amount of clones that can be created per instance.
-    # A method called thousands of times doesn't need that many reflections.
-    @reflekt_limit = 5
-    @reflekt_count = 0
-
-    # Override methods.
+    # Get instance methods.
+    # TODO: Include parent methods like "Array.include?".
     self.class.instance_methods(false).each do |method|
+
+      # Don't process skipped methods.
+      next if self.class.reflekt_skipped?(method)
+
+      @reflection_counts[method] = 0
+
+      # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
-        # When method called in flow.
-        if @reflekt_forked
+        # Don't reflect when limit reached.
+        unless @reflection_counts[method] >= @@reflection_limit
 
-          if @reflekt_count < @reflekt_limit
-            unless self.class.deflekted?(method)
+          # Get current execution.
+          execution = @@reflekt_stack.peek()
 
-              # Reflekt on method.
-              @reflekt_clones.each do |clone|
-                reflekt_action(clone, method, *args)
-              end
+          # When stack empty or past execution done reflecting.
+          if execution.nil? || execution.has_finished_reflecting?
 
-              # Save results.
-              @@reflekt_db.write()
+            # Create execution.
+            execution = Execution.new(self, @@reflekt_reflect_amount)
+            @@reflekt_stack.push(execution)
 
-              reflekt_render()
+          end
+
+          # Reflect.
+          # The first method call in the Execution creates a Reflection.
+          # Subsequent method calls are shadow executions on cloned objects.
+          if execution.has_empty_reflections? && !execution.is_reflecting?
+            execution.is_reflecting = true
+
+            # Multiple reflections per execution.
+            execution.reflections.each_with_index do |value, index|
+
+              # Flag first reflection is a control.
+              is_control = false
+              is_control = true if index == 0
+
+              # Create reflection.
+              reflection = Reflection.new(execution, method, is_control)
+              execution.reflections[index] = reflection
+
+              # Execute reflection.
+              reflection.reflect(*args)
+
+              # Add result.
+              class_name = execution.caller_class.to_s
+              method_name = method.to_s
+              @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection.result())
 
             end
-            @reflekt_count = @reflekt_count + 1
+
+            # Save results.
+            @@reflekt_db.write()
+
+            # Render results.
+            reflekt_render()
+
+            execution.is_reflecting = false
           end
 
         end
 
-        # Continue method flow.
+        @reflection_counts[method] = @reflection_counts[method] + 1
+
+        # Continue execution / shadow execution.
         super *args
+
       end
 
     end
 
-    # Continue contructor flow.
+    # Continue initialization.
     super
 
-    # Create forks.
-    reflekt_fork()
-
-  end
-
-  def reflekt_fork()
-
-    @@reflekt_clone_count.times do |clone|
-      @reflekt_clones << self.clone
-    end
-
-    @reflekt_forked = true
-
-  end
-
-  def reflekt_action(clone, method, *args)
-
-    class_name = clone.class.to_s
-    method_name = method.to_s
-
-    # TODO: Create control fork. Get good value. Check against it.
-
-    # Create new arguments that are deviations on inputted type.
-    input = []
-
-    args.each do |arg|
-      case arg
-      when Integer
-        input << rand(9999)
-      else
-        input << arg
-      end
-    end
-
-    # Action method with new arguments.
-    begin
-      output = clone.send(method, *input)
-
-      # Build reflection.
-      reflection = {
-        REFLEKT_TIME => Time.now.to_i,
-        REFLEKT_INPUT => reflekt_normalize_input(input),
-        REFLEKT_OUTPUT => reflekt_normalize_output(output)
-      }
-
-    # When fail.
-  rescue StandardError => message
-      reflection[REFLEKT_STATUS] = REFLEKT_MESSAGE
-      reflection[REFLEKT_MESSAGE] = message
-    # When pass.
-    else
-      reflection[REFLEKT_STATUS] = REFLEKT_PASS
-    end
-
-    # Save reflection.
-    @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection)
-
   end
 
   ##
-  # Normalize inputs.
-  #
-  # @param args - The actual inputs.
-  # @return - A generic inputs representation.
+  # Render results.
   ##
-  def reflekt_normalize_input(args)
-    inputs = []
-    args.each do |arg|
-      input = {
-        REFLEKT_TYPE => arg.class.to_s,
-        REFLEKT_VALUE => reflekt_normalize_value(arg)
-      }
-      if (arg.class == Array)
-        input[REFLEKT_COUNT] = arg.count
-      end
-      inputs << input
-    end
-    inputs
-  end
-
-  ##
-  # Normalize output.
-  #
-  # @param output - The actual output.
-  # @return - A generic output representation.
-  ##
-  def reflekt_normalize_output(output)
-
-    o = {
-      REFLEKT_TYPE => output.class.to_s,
-      REFLEKT_VALUE => reflekt_normalize_value(output)
-    }
-
-    if (output.class == Array || output.class == Hash)
-      o[REFLEKT_COUNT] = output.count
-    elsif (output.class == TrueClass || output.class == FalseClass)
-      o[REFLEKT_TYPE] = :Boolean
-    end
-
-    return o
-
-  end
-
-  def reflekt_normalize_value(value)
-
-    unless value.nil?
-      value = value.to_s.gsub(/\r?\n/, " ").to_s
-      if value.length >= 30
-        value = value[0, value.rindex(/\s/,30)].rstrip() + '...'
-      end
-    end
-
-    return value
-
-  end
-
   def reflekt_render()
 
-    # Render results.
+    # Get JSON.
     @@reflekt_json = File.read("#{@@reflekt_output_path}/db.json")
+
+    # Save HTML.
     template = File.read("#{@@reflekt_path}/web/template.html.erb")
     rendered = ERB.new(template).result(binding)
     File.open("#{@@reflekt_output_path}/index.html", 'w+') do |f|
@@ -225,20 +152,24 @@ module Reflekt
   # Setup class.
   def self.reflekt_setup_class()
 
-    # Receive configuration from host application.
+    # Receive configuration.
     $ENV ||= {}
     $ENV[:reflekt] ||= $ENV[:reflekt] = {}
 
+    # Set configuration.
     @@reflekt_path = File.dirname(File.realpath(__FILE__))
 
-    # Create "reflections" directory in configured path.
+    # Create reflection tree.
+    @@reflekt_stack = ShadowStack.new()
+
+    # Build reflections directory.
     if $ENV[:reflekt][:output_path]
       @@reflekt_output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
-    # Create "reflections" directory in current execution path.
+    # Build reflections directory in current execution path.
     else
       @@reflekt_output_path = File.join(Dir.pwd, 'reflections')
     end
-
+    # Create reflections directory.
     unless Dir.exist? @@reflekt_output_path
       Dir.mkdir(@@reflekt_output_path)
     end
@@ -252,7 +183,7 @@ module Reflekt
 
   module SingletonClassMethods
 
-    @@deflekted_methods = Set.new
+    @@reflekt_skipped_methods = Set.new
 
     ##
     # Skip a method.
@@ -260,16 +191,16 @@ module Reflekt
     # @param method - A symbol representing the method name.
     ##
     def reflekt_skip(method)
-      @@deflekted_methods.add(method)
+      @@reflekt_skipped_methods.add(method)
     end
 
-    def deflekted?(method)
-      return true if @@deflekted_methods.include?(method)
+    def reflekt_skipped?(method)
+      return true if @@reflekt_skipped_methods.include?(method)
       false
     end
 
     def reflekt_limit(amount)
-      @reflekt_limit = amount
+      @@reflection_limit = amount
     end
 
   end

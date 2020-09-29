@@ -4,6 +4,7 @@ require 'rowdb'
 require 'Control'
 require 'Execution'
 require 'Reflection'
+require 'Ruler'
 require 'ShadowStack'
 
 ################################################################################
@@ -88,11 +89,17 @@ module Reflekt
 
               # Execute reflection.
               reflection.reflect(*args)
+              @reflection_counts[method] = @reflection_counts[method] + 1
 
               # Save reflection.
               @@reflekt_db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
 
             end
+
+            # Define rules.
+            # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
+            controls = @@reflekt_db.value()[class_name.to_sym][method_name]['controls']
+            @@reflekt_ruler.train(controls)
 
             # Save results.
             @@reflekt_db.write()
@@ -104,8 +111,6 @@ module Reflekt
           end
 
         end
-
-        @reflection_counts[method] = @reflection_counts[method] + 1
 
         # Continue execution / shadow execution.
         super *args
@@ -167,8 +172,11 @@ module Reflekt
     # Set configuration.
     @@reflekt_path = File.dirname(File.realpath(__FILE__))
 
-    # Create reflection tree.
+    # Create shadow execution stack.
     @@reflekt_stack = ShadowStack.new()
+
+    @@reflekt_rules = {}
+    @@reflekt_ruler = Ruler.new()
 
     # Build reflections directory.
     if $ENV[:reflekt][:output_path]
@@ -184,7 +192,7 @@ module Reflekt
 
     # Create database.
     @@reflekt_db = Rowdb.new(@@reflekt_output_path + '/db.json')
-    @@reflekt_db.defaults({ :reflekt => { :api_version => 1 }}).write()
+    @@reflekt_db.defaults({ :reflekt => { :api_version => 1 }})
 
     return true
   end

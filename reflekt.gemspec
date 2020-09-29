@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
     "lib/Control.rb",
     "lib/Execution.rb",
     "lib/Reflection.rb",
+    "lib/Rule.rb",
+    "lib/Ruler.rb",
     "lib/ShadowStack.rb",
     "lib/web/template.html.erb",
     "lib/web/style.css",

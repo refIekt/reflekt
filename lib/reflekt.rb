@@ -61,6 +61,14 @@ module Reflekt
 
           end
 
+          # Get ruler.
+          # The method's ruler will not exist the first time the db generated.
+          if @@reflekt_rules.key? execution.caller_class
+            ruler = @@reflekt_rules[execution.caller_class][method_name]
+          else
+            ruler = nil
+          end
+
           # Reflect.
           # The first method call in the Execution creates a Reflection.
           # Subsequent method calls are shadow executions on cloned objects.
@@ -71,7 +79,7 @@ module Reflekt
             method_name = method.to_s
 
             # Create control.
-            control = Control.new(execution, method, @@reflekt_rules[execution.caller_class][method_name])
+            control = Control.new(execution, method, ruler)
             execution.control = control
 
             # Execute control.
@@ -84,7 +92,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, method, @@reflekt_rules[execution.caller_class][method_name])
+              reflection = Reflection.new(execution, method, ruler)
               execution.reflections[index] = reflection
 
               # Execute reflection.

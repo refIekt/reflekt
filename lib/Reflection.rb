@@ -70,9 +70,11 @@ class Reflection
     # When pass.
     else
       # Has it really passed?
-      unless @ruler.accept(@execution.caller_class, @method)
-        @status = FAIL
-        return
+      unless @ruler.nil?
+        unless @ruler.accept(@execution.caller_class, @method)
+          @status = FAIL
+          return
+        end
       end
       @status = PASS
     end

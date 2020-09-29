@@ -1,6 +1,7 @@
 require 'set'
 require 'erb'
 require 'rowdb'
+require 'Control'
 require 'Execution'
 require 'Reflection'
 require 'ShadowStack'
@@ -65,24 +66,31 @@ module Reflekt
           if execution.has_empty_reflections? && !execution.is_reflecting?
             execution.is_reflecting = true
 
+            class_name = execution.caller_class.to_s
+            method_name = method.to_s
+
+            # Create control.
+            control = Control.new(execution, method, true)
+            execution.control = control
+
+            # Execute control.
+            control.reflect(*args)
+
+            # Save control.
+            @@reflekt_db.get("#{class_name}.#{method_name}.controls").push(control.result())
+
             # Multiple reflections per execution.
             execution.reflections.each_with_index do |value, index|
 
-              # Flag first reflection is a control.
-              is_control = false
-              is_control = true if index == 0
-
               # Create reflection.
-              reflection = Reflection.new(execution, method, is_control)
+              reflection = Reflection.new(execution, method, false)
               execution.reflections[index] = reflection
 
               # Execute reflection.
               reflection.reflect(*args)
 
-              # Add result.
-              class_name = execution.caller_class.to_s
-              method_name = method.to_s
-              @@reflekt_db.get("#{class_name}.#{method_name}").push(reflection.result())
+              # Save reflection.
+              @@reflekt_db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
 
             end
 

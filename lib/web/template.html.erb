@@ -32,17 +32,18 @@
 
       function getData() {
 
-        var reflections = JSON.parse(<%= @@reflekt_json %>);
-        console.log("REFLECTIONS:");
-        console.log(reflections);
+        var data = JSON.parse(<%= @@reflekt_json %>);
         var results = {};
 
-        if ('reflekt' in reflections) {
-          delete(reflections.reflekt);
+        console.log("DATA:");
+        console.log(data);
+
+        if ('reflekt' in data) {
+          delete(data.reflekt);
         }
 
         // Classes.
-        for ([class_id, class_value] of Object.entries(reflections)) {
+        for ([class_id, class_value] of Object.entries(data)) {
 
           // Class pass rate.
           results[class_id] = {
@@ -57,17 +58,17 @@
           // Methods.
           for ([method_id, method] of Object.entries(class_value)) {
 
-            // Method pass rate.
-            var pass_count = method.reduce(function(obj, v) {
+            // Reflection pass rate.
+            var pass_count = method.reflections.reduce(function(obj, v) {
               obj[v[STATUS]] = (obj[v[STATUS]] || 0) + 1;
               return obj;
             }, {});
 
-            var pass_rate = (pass_count[PASS] / method.length) * 100;
+            var pass_rate = (pass_count[PASS] / method.reflections.length) * 100;
             results[class_id]['methods'][method_id] = {
               'stats': {
                 'pass_rate': pass_rate,
-                'test_count': method.length,
+                'test_count': method.reflections.length,
                 'pass_count': pass_count[PASS]
               }
             };
@@ -79,7 +80,7 @@
             }
 
             // Class pass rate.
-            results[class_id]['stats']['test_count'] += method.length;
+            results[class_id]['stats']['test_count'] += method.reflections.length;
             results[class_id]['stats']['pass_count'] += pass_count[PASS];
 
           }
@@ -97,7 +98,7 @@
         }
 
         return {
-          reflections: reflections,
+          data: data,
           results: results
         };
       }
@@ -134,15 +135,19 @@
               <template x-for="[method_id, method] in Object.entries(klass['methods'])" :key="method_id">
                 <li class="method-container">
 
-                  <div class="status-row method" x-bind:class="`${method.status}`" @click="method['show'] = !method['show']" :aria-expanded="method['show'] ? 'true' : 'false'" :class="{ 'active': method['show'] }">
+                  <div class="status-row method" x-bind:class="`${method.status}`" :class="{ 'active': method['show_reflections'] }" :class="{ 'active': method['show_controls'] }">
                     <h3 x-text="`${method_id}()`"></h3>
+                    <div class="buttons">
+                      <button @click="method['show_controls'] = !method['show_controls']">Controls</button>
+                      <button @click="method['show_reflections'] = !method['show_reflections']">Reflections</button>
+                    </div>
                     <div class="stats">
                       <div class="stat" x-text="`${method.stats.pass_rate.toFixed(2)}%`"></div>
                     </div>
                   </div>
 
-                  <ul class="reflections" x-show="method['show']">
-                    <template x-for="[reflection_id, reflection] in Object.entries(reflections[class_id][method_id])">
+                  <ul class="reflections" x-show="method['show_reflections']">
+                    <template x-for="[reflection_id, reflection] in Object.entries(data[class_id][method_id].reflections)">
 
                       <li class="reflection">
 
@@ -184,6 +189,57 @@
                             </template>
                             <div class="info-item">
                               <strong>Value:</strong><pre><div class="output" x-text="reflection.o.V"></div></pre>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+
+                    </template>
+                  </ul>
+
+                  <ul class="controls" x-show="method['show_controls']">
+                    <template x-for="[control_id, control] in Object.entries(data[class_id][method_id].controls)">
+
+                      <li class="control">
+
+                        <div class="time" x-text="`${new Date(control.t * 1000).getFullYear()}/${new Date(control.t * 1000).getMonth() + 1}/${new Date(control.t * 1000).getDate()} ${new Date(control.t * 1000).getHours()}:${new Date(control.t * 1000).getMinutes()}:${new Date(control.t * 1000).getSeconds()}`"></div>
+
+                        <template x-for="[input_id, input] in Object.entries(control.i)">
+
+                          <div class="info">
+                            <h4>Input</h4>
+                            <div class="info-items">
+                              <div class="info-item">
+                                <strong>Type:</strong><div class="input" x-text="input.T"></div>
+                              </div>
+                              <template x-if="input.V != undefined">
+                                <div class="info-item">
+                                  <strong>Value:</strong><pre><div class="output" x-text="input.V"></div></pre>
+                                </div>
+                              </template>
+                              <template x-if="input.C != undefined">
+                                <div class="info-item">
+                                  <strong>Count:</strong><div class="input" x-text="input.C"></div>
+                                </div>
+                              </template>
+                            </div>
+                          </div>
+
+                        </template>
+
+                        <div class="info">
+                          <h4>Output</h4>
+                          <div class="info-items">
+                            <div class="info-item">
+                              <strong>Type:</strong><div class="output" x-text="control.o.T"></div>
+                            </div>
+                            <template x-if="control.o.C != undefined">
+                              <div class="info-item">
+                                <strong>Count:</strong><div class="output" x-text="control.o.C"></div>
+                              </div>
+                            </template>
+                            <div class="info-item">
+                              <strong>Value:</strong><pre><div class="output" x-text="control.o.V"></div></pre>
                             </div>
                           </div>
                         </div>

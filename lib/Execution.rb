@@ -5,6 +5,7 @@ class Execution
   attr_accessor :caller_class
   attr_accessor :parent
   attr_accessor :child
+  attr_accessor :control
   attr_accessor :reflections
   attr_accessor :is_reflecting
 
@@ -16,6 +17,7 @@ class Execution
     @parent = nil
     @child = nil
 
+    @control = []
     @reflections = Array.new(reflection_count)
     @is_reflecting = false
 

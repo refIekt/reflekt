@@ -15,11 +15,11 @@ class Reflection
 
   attr_accessor :clone
 
-  def initialize(execution, method, is_control)
+  def initialize(execution, method, ruler)
 
     @execution = execution
     @method = method
-    @is_control = is_control
+    @ruler = ruler
 
     # Clone the execution's object.
     @clone = execution.object.clone
@@ -65,10 +65,15 @@ class Reflection
       @output = @clone.send(@method, *@input)
     # When fail.
     rescue StandardError => message
-      @status = MESSAGE
+      @status = FAIL
       @message = message
     # When pass.
     else
+      # Has it really passed?
+      unless @ruler.accept(@execution.caller_class, @method)
+        @status = FAIL
+        return
+      end
       @status = PASS
     end
 

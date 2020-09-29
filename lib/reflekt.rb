@@ -71,7 +71,7 @@ module Reflekt
             method_name = method.to_s
 
             # Create control.
-            control = Control.new(execution, method, true)
+            control = Control.new(execution, method, @@reflekt_rules[execution.caller_class][method_name])
             execution.control = control
 
             # Execute control.
@@ -84,7 +84,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, method, false)
+              reflection = Reflection.new(execution, method, @@reflekt_rules[execution.caller_class][method_name])
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -95,11 +95,6 @@ module Reflekt
               @@reflekt_db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
 
             end
-
-            # Define rules.
-            # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
-            controls = @@reflekt_db.value()[class_name.to_sym][method_name]['controls']
-            @@reflekt_ruler.train(controls)
 
             # Save results.
             @@reflekt_db.write()
@@ -172,12 +167,6 @@ module Reflekt
     # Set configuration.
     @@reflekt_path = File.dirname(File.realpath(__FILE__))
 
-    # Create shadow execution stack.
-    @@reflekt_stack = ShadowStack.new()
-
-    @@reflekt_rules = {}
-    @@reflekt_ruler = Ruler.new()
-
     # Build reflections directory.
     if $ENV[:reflekt][:output_path]
       @@reflekt_output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
@@ -193,6 +182,29 @@ module Reflekt
     # Create database.
     @@reflekt_db = Rowdb.new(@@reflekt_output_path + '/db.json')
     @@reflekt_db.defaults({ :reflekt => { :api_version => 1 }})
+
+    # Create shadow execution stack.
+    @@reflekt_stack = ShadowStack.new()
+
+    # Define rules.
+    # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
+    @@reflekt_rules = {}
+    db = @@reflekt_db.value()
+    db.each do |key, klass|
+      @@reflekt_rules[klass] = {}
+      klass.each do |key, method|
+        next if method.nil?
+        next unless method.class == Hash
+        if method.key? "controls"
+
+          ruler = Ruler.new()
+          ruler.load(method['controls'])
+          ruler.train()
+
+          @@reflekt_rules[klass][method] = ruler
+        end
+      end
+    end
 
     return true
   end

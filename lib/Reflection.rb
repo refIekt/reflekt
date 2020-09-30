@@ -49,7 +49,7 @@ class Reflection
     args.each do |arg|
       case arg
       when Integer
-        @input << rand(9999)
+        @input << rand(999)
       else
         @input << arg
       end
@@ -57,6 +57,15 @@ class Reflection
 
     # Action method with new arguments.
     begin
+      # Validate input with controls.
+      unless @ruler.nil?
+        if @ruler.validate_input(@execution.caller_class, @method, @input)
+          @status = PASS
+        else
+          @status = FAIL
+        end
+      end
+      # Run reflection.
       @output = @clone.send(@method, *@input)
     # When fail.
     rescue StandardError => message
@@ -64,12 +73,14 @@ class Reflection
       @message = message
     # When pass.
     else
-      # Has it really passed?
+      # Validate output with controls.
       unless @ruler.nil?
-        unless @ruler.accept(@execution.caller_class, @method)
+        if @ruler.validate_output(@execution.caller_class, @method, @output)
+          @status = PASS
+        else
           @status = FAIL
-          return
         end
+        return
       end
       @status = PASS
     end

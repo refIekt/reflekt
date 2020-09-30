@@ -198,18 +198,19 @@ module Reflekt
     # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
     @@reflekt_rules = {}
     db = @@reflekt_db.value()
-    db.each do |key, klass|
-      @@reflekt_rules[klass] = {}
-      klass.each do |key, method|
-        next if method.nil?
-        next unless method.class == Hash
-        if method.key? "controls"
+    db.each do |class_name, class_values|
+      @@reflekt_rules[class_name] = {}
+      class_values.each do |method_name, method_values|
+        next if method_values.nil?
+        next unless method_values.class == Hash
+        if method_values.key? "controls"
 
           ruler = Ruler.new()
-          ruler.load(method['controls'])
+          # TODO: Remove array with one value.
+          ruler.load(method_values['controls'].first)
           ruler.train()
 
-          @@reflekt_rules[klass][method] = ruler
+          @@reflekt_rules[class_name][method_name] = ruler
         end
       end
     end

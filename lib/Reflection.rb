@@ -45,18 +45,13 @@ class Reflection
   ##
   def reflect(*args)
 
-    # Reflect on real world arguments.
-    if @is_control
-      @input = *args
-    # Reflect on deviated arguments.
-    else
-      args.each do |arg|
-        case arg
-        when Integer
-          @input << rand(9999)
-        else
-          @input << arg
-        end
+    # Create deviated arguments.
+    args.each do |arg|
+      case arg
+      when Integer
+        @input << rand(9999)
+      else
+        @input << arg
       end
     end
 

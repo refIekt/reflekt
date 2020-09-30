@@ -21,11 +21,21 @@ class Ruler
     @controls.each do |control_key, control|
 
       # TODO: Figure out why timestamp, "p" and "nil" items leaking through.
-      unless control.class == Hash
+      unless control.class == Hash || control.class == Array
         next
       end
 
+      if control.class == Array
+        if control.empty?
+          next
+        end
+        unless control.first.nil?
+          control = control.first
+        end
+      end
+
       unless control[INPUT].nil? || control[INPUT].empty?
+
         control[INPUT].each_with_index do |input, index|
 
           # Create rule.

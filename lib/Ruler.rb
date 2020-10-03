@@ -11,32 +11,22 @@ class Ruler
 
     @controls = nil
     @inputs = []
-    @outputs = []
+    @output = nil
 
   end
 
   def load(controls)
 
     @controls = controls
-    @controls.each do |control_key, control|
+    @controls.each_with_index do |control, index|
 
-      # TODO: Figure out why timestamp, "p" and "nil" items leaking through.
-      unless control.class == Hash || control.class == Array
-        next
-      end
+      p '-----'
+      p control
+      p '-----'
 
-      if control.class == Array
-        if control.empty?
-          next
-        end
-        unless control.first.nil?
-          control = control.first
-        end
-      end
-
-      unless control[INPUT].nil? || control[INPUT].empty?
-
-        control[INPUT].each_with_index do |input, index|
+      # Multiple inputs.
+      control[INPUT].each_with_index do |input, index|
+        unless input.nil?
 
           # Create rule.
           if @inputs[index].nil?
@@ -54,29 +44,30 @@ class Ruler
             rule.add_value(input[VALUE])
           end
 
+          index = index + 1
         end
       end
 
-      unless control[OUTPUT].nil? || control[OUTPUT].empty?
-        control[OUTPUT].each_with_index do |output, index|
+      # Singular output.
+      output = control[OUTPUT]
+      unless control[OUTPUT].nil?
 
-          # Create rule.
-          if @outputs[index].nil?
-            rule = Rule.new()
-            @outputs[index] = rule
-          else
-            rule = @outputs[index]
-          end
-
-          # Add rules to rule.
-          unless output[TYPE].nil? || output[TYPE].empty?
-            rule.add_type(output[TYPE])
-          end
-          unless output[VALUE].nil? || output[VALUE].empty?
-            rule.add_value(output[VALUE])
-          end
-
+        # Create rule.
+        if @output.nil?
+          rule = Rule.new()
+          @output = rule
+        else
+          rule = @output
         end
+
+        ## Add rules to rule.
+        unless output[TYPE].nil? || output[TYPE].empty?
+          rule.add_type(output[TYPE])
+        end
+        unless output[VALUE].nil? || output[VALUE].empty?
+          rule.add_value(output[VALUE])
+        end
+
       end
 
     end
@@ -112,12 +103,10 @@ class Ruler
 
   def validate_output(klass, method, outputs)
     result = true
-    outputs.each_with_index do |value, index|
-      rule = @outputs[index]
-      if rule.is_number? && value.class == Integer
-        result = false if value < rule.min
-        result = false if value > rule.max
-      end
+    rule = @output
+    if rule.is_number? && value.class == Integer
+      result = false if value < rule.min
+      result = false if value > rule.max
     end
     return result
   end

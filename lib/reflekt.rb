@@ -206,8 +206,7 @@ module Reflekt
         if method_values.key? "controls"
 
           ruler = Ruler.new()
-          # TODO: Remove array with one value.
-          ruler.load(method_values['controls'].first)
+          ruler.load(method_values['controls'])
           ruler.train()
 
           @@reflekt_rules[class_name][method_name] = ruler

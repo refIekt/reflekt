@@ -10,6 +10,8 @@ class Ruler
   def initialize()
 
     @controls = nil
+
+    # Rules.
     @inputs = []
     @output = nil
 
@@ -19,10 +21,6 @@ class Ruler
 
     @controls = controls
     @controls.each_with_index do |control, index|
-
-      p '-----'
-      p control
-      p '-----'
 
       # Multiple inputs.
       control[INPUT].each_with_index do |input, index|
@@ -38,7 +36,7 @@ class Ruler
 
           # Add rules to rule.
           unless input[TYPE].nil? || input[TYPE].empty?
-            rule.add_type(input[TYPE])
+            rule.add_type(input[TYPE].class)
           end
           unless input[VALUE].nil? || input[VALUE].empty?
             rule.add_value(input[VALUE])
@@ -89,7 +87,7 @@ class Ruler
 
   end
 
-  def validate_input(klass, method, inputs)
+  def validate_inputs(klass, method, inputs)
     result = true
     inputs.each_with_index do |value, index|
       rule = @inputs[index]

@@ -63,8 +63,8 @@ module Reflekt
 
           # Get ruler.
           # The method's ruler will not exist the first time the db generated.
-          if @@reflekt_rules.key? execution.caller_class
-            ruler = @@reflekt_rules[execution.caller_class][method_name]
+          if @@reflekt_rules.key? execution.caller_class.to_s.to_sym
+            ruler = @@reflekt_rules[execution.caller_class.to_s.to_sym][method.to_s]
           else
             ruler = nil
           end

@@ -28,7 +28,7 @@ class Reflection
     # Result.
     @status = nil
     @time = Time.now.to_i
-    @input = []
+    @inputs = []
     @output = nil
 
   end
@@ -49,9 +49,9 @@ class Reflection
     args.each do |arg|
       case arg
       when Integer
-        @input << rand(999)
+        @inputs << rand(999)
       else
-        @input << arg
+        @inputs << arg
       end
     end
 
@@ -59,14 +59,14 @@ class Reflection
     begin
       # Validate input with controls.
       unless @ruler.nil?
-        if @ruler.validate_input(@execution.caller_class, @method, @input)
+        if @ruler.validate_inputs(@execution.caller_class, @method, @inputs)
           @status = PASS
         else
           @status = FAIL
         end
       end
       # Run reflection.
-      @output = @clone.send(@method, *@input)
+      @output = @clone.send(@method, *@inputs)
     # When fail.
     rescue StandardError => message
       @status = FAIL
@@ -92,7 +92,7 @@ class Reflection
     reflection = {
       TIME => @time,
       STATUS => @status,
-      INPUT => normalize_input(@input),
+      INPUT => normalize_input(@inputs),
       OUTPUT => normalize_output(@output),
       MESSAGE => @message
     }

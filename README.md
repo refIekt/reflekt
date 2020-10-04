@@ -30,8 +30,6 @@ Use the application as usual and test results will start showing up in the `refl
 
 ## Installation
 
-**Bundler:**
-
 In Gemfile add:
 ```ruby
 gem "reflekt"
@@ -42,14 +40,7 @@ In terminal run:
 bundle install
 ```
 
-**RubyGems:**
-
-In terminal run:
-```
-gem install reflekt
-```
-
-## Dealing with test data
+## Configuration
 
 You can configure Reflekt to skip "no undo" methods like deletion and sending email:
 
@@ -58,7 +49,7 @@ class ExampleClass
   reflekt_skip :method_name
 ```
 
-## Display
+### Displaying test data
 
 Use `reflekt_skip` on methods that do the final render to the UI to avoid a visual mess of duplicated elements.
 Ensure that there is a dedicated method that renders output, so that Reflekt can track changes in output.
@@ -73,9 +64,9 @@ Ensure that there is a dedicated method that renders output, so that Reflekt can
 
 ```
 
-## Database
+### Saving test data
 
-If you don't want test data to save to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database, like you would with unit testing. To check when Reflekt is enabled, use the `object.reflekt_enabled` boolean property on an object. Or use `reflekt_skip` to avoid testing the database method alltogether.
+If you don't want test data to save to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database, like you would with unit testing. To check when Reflekt is enabled use the `@reflekt_enabled` boolean property on an object, or use `reflekt_skip` on the method that saves to the database.
 
 ## How it works
 

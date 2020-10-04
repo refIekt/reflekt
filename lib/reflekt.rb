@@ -1,6 +1,7 @@
 require 'set'
 require 'erb'
 require 'rowdb'
+require 'Accessor'
 require 'Control'
 require 'Execution'
 require 'Reflection'
@@ -23,13 +24,6 @@ require 'ShadowStack'
 
 module Reflekt
 
-  # The amount of reflections to create per method call.
-  @@reflekt_reflect_amount = 2
-
-  # Limit the amount of reflections that can be created per instance method.
-  # A method called thousands of times doesn't need that many reflections.
-  @@reflection_limit = 10
-
   def initialize(*args)
 
     @reflection_counts = {}
@@ -47,24 +41,24 @@ module Reflekt
       self.define_singleton_method(method) do |*args|
 
         # Don't reflect when limit reached.
-        unless @reflection_counts[method] >= @@reflection_limit
+        unless @reflection_counts[method] >= @@reflekt.reflection_limit
 
           # Get current execution.
-          execution = @@reflekt_stack.peek()
+          execution = @@reflekt.stack.peek()
 
           # When stack empty or past execution done reflecting.
           if execution.nil? || execution.has_finished_reflecting?
 
             # Create execution.
-            execution = Execution.new(self, @@reflekt_reflect_amount)
-            @@reflekt_stack.push(execution)
+            execution = Execution.new(self, @@reflekt.reflect_amount)
+            @@reflekt.stack.push(execution)
 
           end
 
           # Get ruler.
           # The method's ruler will not exist the first time the db generated.
-          if @@reflekt_rules.key? execution.caller_class.to_s.to_sym
-            ruler = @@reflekt_rules[execution.caller_class.to_s.to_sym][method.to_s]
+          if @@reflekt.rules.key? execution.caller_class.to_s.to_sym
+            ruler = @@reflekt.rules[execution.caller_class.to_s.to_sym][method.to_s]
           else
             ruler = nil
           end
@@ -86,7 +80,7 @@ module Reflekt
             control.reflect(*args)
 
             # Save control.
-            @@reflekt_db.get("#{class_name}.#{method_name}.controls").push(control.result())
+            @@reflekt.db.get("#{class_name}.#{method_name}.controls").push(control.result())
 
             # Multiple reflections per execution.
             execution.reflections.each_with_index do |value, index|
@@ -100,12 +94,12 @@ module Reflekt
               @reflection_counts[method] = @reflection_counts[method] + 1
 
               # Save reflection.
-              @@reflekt_db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
+              @@reflekt.db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
 
             end
 
             # Save results.
-            @@reflekt_db.write()
+            @@reflekt.db.write()
 
             # Render results.
             reflekt_render()
@@ -133,24 +127,24 @@ module Reflekt
   def reflekt_render()
 
     # Get JSON.
-    @@reflekt_json = File.read("#{@@reflekt_output_path}/db.json")
+    @@reflekt.json = File.read("#{@@reflekt.output_path}/db.json")
 
     # Save HTML.
-    template = File.read("#{@@reflekt_path}/web/template.html.erb")
+    template = File.read("#{@@reflekt.path}/web/template.html.erb")
     rendered = ERB.new(template).result(binding)
-    File.open("#{@@reflekt_output_path}/index.html", 'w+') do |f|
+    File.open("#{@@reflekt.output_path}/index.html", 'w+') do |f|
       f.write rendered
     end
 
     # Add JS.
-    javascript = File.read("#{@@reflekt_path}/web/script.js")
-    File.open("#{@@reflekt_output_path}/script.js", 'w+') do |f|
+    javascript = File.read("#{@@reflekt.path}/web/script.js")
+    File.open("#{@@reflekt.output_path}/script.js", 'w+') do |f|
       f.write javascript
     end
 
     # Add CSS.
-    stylesheet = File.read("#{@@reflekt_path}/web/style.css")
-    File.open("#{@@reflekt_output_path}/style.css", 'w+') do |f|
+    stylesheet = File.read("#{@@reflekt.path}/web/style.css")
+    File.open("#{@@reflekt.output_path}/style.css", 'w+') do |f|
       f.write stylesheet
     end
 
@@ -159,10 +153,14 @@ module Reflekt
   private
 
   def self.prepended(base)
+
     # Prepend class methods to the instance's singleton class.
     base.singleton_class.prepend(SingletonClassMethods)
 
-    @@reflekt_setup ||= reflekt_setup_class
+    # Setup class.
+    @@reflekt = Accessor.new()
+    @@reflekt.setup ||= reflekt_setup_class
+
   end
 
   # Setup class.
@@ -173,33 +171,33 @@ module Reflekt
     $ENV[:reflekt] ||= $ENV[:reflekt] = {}
 
     # Set configuration.
-    @@reflekt_path = File.dirname(File.realpath(__FILE__))
+    @@reflekt.path = File.dirname(File.realpath(__FILE__))
 
     # Build reflections directory.
     if $ENV[:reflekt][:output_path]
-      @@reflekt_output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
+      @@reflekt.output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
     # Build reflections directory in current execution path.
     else
-      @@reflekt_output_path = File.join(Dir.pwd, 'reflections')
+      @@reflekt.output_path = File.join(Dir.pwd, 'reflections')
     end
     # Create reflections directory.
-    unless Dir.exist? @@reflekt_output_path
-      Dir.mkdir(@@reflekt_output_path)
+    unless Dir.exist? @@reflekt.output_path
+      Dir.mkdir(@@reflekt.output_path)
     end
 
     # Create database.
-    @@reflekt_db = Rowdb.new(@@reflekt_output_path + '/db.json')
-    @@reflekt_db.defaults({ :reflekt => { :api_version => 1 }})
+    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.json')
+    @@reflekt.db.defaults({ :reflekt => { :api_version => 1 }})
 
     # Create shadow execution stack.
-    @@reflekt_stack = ShadowStack.new()
+    @@reflekt.stack = ShadowStack.new()
 
     # Define rules.
     # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
-    @@reflekt_rules = {}
-    db = @@reflekt_db.value()
+    @@reflekt.rules = {}
+    db = @@reflekt.db.value()
     db.each do |class_name, class_values|
-      @@reflekt_rules[class_name] = {}
+      @@reflekt.rules[class_name] = {}
       class_values.each do |method_name, method_values|
         next if method_values.nil?
         next unless method_values.class == Hash
@@ -209,10 +207,17 @@ module Reflekt
           ruler.load(method_values['controls'])
           ruler.train()
 
-          @@reflekt_rules[class_name][method_name] = ruler
+          @@reflekt.rules[class_name][method_name] = ruler
         end
       end
     end
+
+    # The amount of reflections to create per method call.
+    @@reflekt.reflect_amount = 2
+
+    # Limit the amount of reflections that can be created per instance method.
+    # A method called thousands of times doesn't need that many reflections.
+    @@reflekt.reflection_limit = 10
 
     return true
   end
@@ -236,7 +241,7 @@ module Reflekt
     end
 
     def reflekt_limit(amount)
-      @@reflection_limit = amount
+      @@reflekt.reflection_limit = amount
     end
 
   end

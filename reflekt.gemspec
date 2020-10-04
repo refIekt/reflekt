@@ -12,10 +12,11 @@ Gem::Specification.new do |spec|
   spec.license     = 'MPL-2.0'
 
   spec.files = [
-    "lib/reflekt.rb",
+    "lib/Accessor.rb",
     "lib/Control.rb",
     "lib/Execution.rb",
     "lib/Reflection.rb",
+    "lib/reflekt.rb",
     "lib/Rule.rb",
     "lib/Ruler.rb",
     "lib/ShadowStack.rb",

@@ -12,8 +12,8 @@ class Accessor
 
   attr_accessor :setup
   attr_accessor :db
-  attr_accessor :json
   attr_accessor :stack
+  attr_accessor :renderer
   attr_accessor :rules
   attr_accessor :path
   attr_accessor :output_path
@@ -24,8 +24,8 @@ class Accessor
 
     @setup = nil
     @db = nil
-    @json = nil
     @stack = nil
+    @renderer = nil
     @rules = nil
     @path = nil
     @output_path = nil

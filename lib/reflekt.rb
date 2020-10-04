@@ -5,6 +5,7 @@ require 'Accessor'
 require 'Control'
 require 'Execution'
 require 'Reflection'
+require 'Renderer'
 require 'Ruler'
 require 'ShadowStack'
 
@@ -102,7 +103,7 @@ module Reflekt
             @@reflekt.db.write()
 
             # Render results.
-            reflekt_render()
+            @@reflekt.renderer.render()
 
             execution.is_reflecting = false
           end
@@ -118,35 +119,6 @@ module Reflekt
 
     # Continue initialization.
     super
-
-  end
-
-  ##
-  # Render results.
-  ##
-  def reflekt_render()
-
-    # Get JSON.
-    @@reflekt.json = File.read("#{@@reflekt.output_path}/db.json")
-
-    # Save HTML.
-    template = File.read("#{@@reflekt.path}/web/template.html.erb")
-    rendered = ERB.new(template).result(binding)
-    File.open("#{@@reflekt.output_path}/index.html", 'w+') do |f|
-      f.write rendered
-    end
-
-    # Add JS.
-    javascript = File.read("#{@@reflekt.path}/web/script.js")
-    File.open("#{@@reflekt.output_path}/script.js", 'w+') do |f|
-      f.write javascript
-    end
-
-    # Add CSS.
-    stylesheet = File.read("#{@@reflekt.path}/web/style.css")
-    File.open("#{@@reflekt.output_path}/style.css", 'w+') do |f|
-      f.write stylesheet
-    end
 
   end
 
@@ -218,6 +190,9 @@ module Reflekt
     # Limit the amount of reflections that can be created per instance method.
     # A method called thousands of times doesn't need that many reflections.
     @@reflekt.reflection_limit = 10
+
+    # Create renderer.
+    @@reflekt.renderer = Renderer.new(@@reflekt.path, @@reflekt.output_path)
 
     return true
   end

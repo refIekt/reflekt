@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
     "lib/Execution.rb",
     "lib/Reflection.rb",
     "lib/reflekt.rb",
+    "lib/Renderer.rb",
     "lib/Rule.rb",
     "lib/Ruler.rb",
     "lib/ShadowStack.rb",

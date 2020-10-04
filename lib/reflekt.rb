@@ -1,3 +1,16 @@
+################################################################################
+# REFLEKT - By Maedi Prichard.
+#
+# An Execution is created each time a method is called.
+# Many Refections are created per Execution.
+# Each Reflection executes on a ShadowStack on cloned data.
+# Then flow is returned to the original method and normal execution continues.
+#
+# Usage:
+#   class ExampleClass
+#     prepend Reflekt
+################################################################################
+
 require 'set'
 require 'erb'
 require 'rowdb'
@@ -8,20 +21,6 @@ require 'Reflection'
 require 'Renderer'
 require 'Ruler'
 require 'ShadowStack'
-
-################################################################################
-# REFLEKT
-#
-# An Execution is created each time a method is called.
-# Multiple Refections are created per Execution.
-# These Reflections execute on a ShadowStack on cloned objects.
-# Then flow is returned to the original method and normal execution continues.
-#
-# Usage:
-#
-#   class ExampleClass
-#     prepend Reflekt
-################################################################################
 
 module Reflekt
 

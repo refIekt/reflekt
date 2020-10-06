@@ -57,31 +57,36 @@ class Reflection
 
     # Action method with new arguments.
     begin
+
       # Validate input with controls.
       unless @ruler.nil?
-        if @ruler.validate_inputs(@execution.caller_class, @method, @inputs)
+        if @ruler.validate_inputs(@inputs)
           @status = PASS
         else
           @status = FAIL
         end
       end
+
       # Run reflection.
       @output = @clone.send(@method, *@inputs)
-    # When fail.
-    rescue StandardError => message
-      @status = FAIL
-      @message = message
-    # When pass.
-    else
+
       # Validate output with controls.
       unless @ruler.nil?
-        if @ruler.validate_output(@execution.caller_class, @method, @output)
+        if @ruler.validate_output(@output)
           @status = PASS
         else
           @status = FAIL
         end
         return
       end
+
+    # When fail.
+    rescue StandardError => message
+      @status = FAIL
+      @message = message
+
+    # When no validation and execution fails.
+    else
       @status = PASS
     end
 

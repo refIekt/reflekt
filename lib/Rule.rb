@@ -1,38 +1,32 @@
+################################################################################
+# RULES
+#
+# Abstract class.
+# See lib/rules for rules.
+################################################################################
+
 require 'set'
 
 class Rule
 
-  attr_accessor :type
-  attr_accessor :min
-  attr_accessor :max
-  attr_accessor :length
-  attr_accessor :types
-  attr_accessor :values
-
+  # Each rule intitalises itself.
   def initialize()
+    @values = nil
+  end
 
-    @types = Set.new
-    @values = Set.new
-    @min = nil
-    @max = nil
-    @length = nil
+  # Each rule loads up an array of values.
+  def load(value)
+    @values << value
+  end
+
+  # Each rule trains on values to determine its patterns.
+  def train()
 
   end
 
-  ##
-  # A parameter can accept multiple input types.
-  # Duplicates will not be added to the set.
-  ##
-  def add_type(type)
-    @types.add(type)
-  end
+  # Each rule compares the data it has with the data it's given.
+  def validate()
 
-  def add_value(value)
-    @values.add(value)
-  end
-
-  def is_number?
-    @types.include? Integer
   end
 
 end

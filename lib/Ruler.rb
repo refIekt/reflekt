@@ -1,4 +1,10 @@
-require 'Rule'
+################################################################################
+# RULER
+#
+# Aggregate a method's inputs and output into a series of generic rules.
+################################################################################
+
+require 'RulePool'
 
 class Ruler
 
@@ -9,9 +15,9 @@ class Ruler
 
   def initialize()
 
+    # Reflections.
     @controls = nil
-
-    # Rules.
+    # Arguments.
     @inputs = []
     @output = nil
 
@@ -22,90 +28,96 @@ class Ruler
     @controls = controls
     @controls.each_with_index do |control, index|
 
-      # Multiple inputs.
+      # Create rules for each input.
       control[INPUT].each_with_index do |input, index|
         unless input.nil?
-
-          # Create rule.
-          if @inputs[index].nil?
-            rule = Rule.new()
-            @inputs[index] = rule
-          else
-            rule = @inputs[index]
-          end
-
-          # Add rules to rule.
-          unless input[TYPE].nil? || input[TYPE].empty?
-            rule.add_type(input[TYPE].class)
-          end
-          unless input[VALUE].nil? || input[VALUE].empty?
-            rule.add_value(input[VALUE])
-          end
-
-          index = index + 1
+          @inputs[index] = load_rule_pool(@inputs[index], input[TYPE], input[VALUE])
         end
       end
 
-      # Singular output.
+      # Create rules for the output.
       output = control[OUTPUT]
       unless control[OUTPUT].nil?
-
-        # Create rule.
-        if @output.nil?
-          rule = Rule.new()
-          @output = rule
-        else
-          rule = @output
-        end
-
-        ## Add rules to rule.
-        unless output[TYPE].nil? || output[TYPE].empty?
-          rule.add_type(output[TYPE])
-        end
-        unless output[VALUE].nil? || output[VALUE].empty?
-          rule.add_value(output[VALUE])
-        end
-
+        @output = load_rule_pool(@output, output[TYPE], output[VALUE])
       end
 
     end
+
+  end
+
+  def load_rule_pool(rule_pool, type, value)
+
+    if rule_pool.nil?
+      rule_pool = RulePool.new()
+    end
+
+    # Track data type.
+    rule_pool.types << type
+
+    # Get rule for this data type.
+    rule = nil
+
+    case type
+    when "Integer"
+      unless rule_pool.rules.key? IntegerRule
+        rule = IntegerRule.new()
+        rule_pool.rules << rule
+      else
+        rule = rule_pool.rules[IntegerRule]
+      end
+    when "String"
+      unless rule_pool.rules.key? StringRule
+        rule = StringRule.new()
+        rule_pool.rules << rule
+      else
+        rule = rule_pool.rules[IntegerRule]
+      end
+    end
+
+    # Add value to rule.
+    unless rule.nil?
+      rule.load(value)
+    end
+
+    return rule_pool
 
   end
 
   def train()
 
-    @inputs.each do |rule|
-      # Get min/max.
-      if rule.is_number?
-        numbers = rule.values.select {|num| num.class == Integer }
-        numbers.sort!
-        rule.min = numbers.first
-        rule.max = numbers.last
+    @inputs.each do |rule_pool|
+      unless rule_pool.nil?
+        rule_pool.train()
       end
+    end
 
+    unless @output.nil?
+      @output.train()
     end
 
   end
 
-  def validate_inputs(klass, method, inputs)
+  def validate_inputs(inputs)
     result = true
+
     inputs.each_with_index do |value, index|
-      rule = @inputs[index]
-      if rule.is_number? && value.class == Integer
-        result = false if value < rule.min
-        result = false if value > rule.max
+      rule_pool = @inputs[index]
+      unless rule_pool.validate(input)
+        result = false
       end
     end
+
     return result
   end
 
-  def validate_output(klass, method, outputs)
+  def validate_output(output)
     result = true
-    rule = @output
-    if rule.is_number? && value.class == Integer
-      result = false if value < rule.min
-      result = false if value > rule.max
+
+    rule_pool = @output
+    unless rule_pool.validate(output)
+      result = false
     end
+
     return result
   end
 

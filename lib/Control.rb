@@ -14,11 +14,11 @@ class Control < Reflection
   ##
   def reflect(*args)
 
-    @input = *args
+    @inputs = *args
 
     # Action method with new arguments.
     begin
-      @output = @clone.send(@method, *@input)
+      @output = @clone.send(@method, *@inputs)
     # When fail.
     rescue StandardError => message
       @status = FAIL

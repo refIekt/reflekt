@@ -25,7 +25,7 @@ rake install
 
 1. Create a fork/branch
 2. Submit a pull request:
-   https://github.com/maedi/reflekt/pulls
+   https://github.com/refIekt/reflekt/pulls
 
 ## Release
 

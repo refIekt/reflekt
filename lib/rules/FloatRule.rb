@@ -1,9 +1,13 @@
+require 'Rule'
+
 class FloatRule < Rule
 
   attr_accessor :min
   attr_accessor :max
 
   def initialize()
+    super
+
     @min = nil
     @max = nil
   end

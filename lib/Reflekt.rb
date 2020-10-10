@@ -57,8 +57,8 @@ module Reflekt
 
           # Get ruler.
           # The method's ruler will not exist the first time the db generated.
-          if @@reflekt.rules.key? execution.caller_class.to_s.to_sym
-            ruler = @@reflekt.rules[execution.caller_class.to_s.to_sym][method.to_s]
+          if @@reflekt.rulers.key? execution.caller_class.to_s.to_sym
+            ruler = @@reflekt.rulers[execution.caller_class.to_s.to_sym][method.to_s]
           else
             ruler = nil
           end
@@ -165,20 +165,20 @@ module Reflekt
 
     # Define rules.
     # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
-    @@reflekt.rules = {}
+    @@reflekt.rulers = {}
     db = @@reflekt.db.value()
     db.each do |class_name, class_values|
-      @@reflekt.rules[class_name] = {}
+      @@reflekt.rulers[class_name] = {}
       class_values.each do |method_name, method_values|
         next if method_values.nil?
         next unless method_values.class == Hash
         if method_values.key? "controls"
 
           ruler = Ruler.new()
-          ruler.load(method_values['controls'])
+          ruler.process(method_values['controls'])
           ruler.train()
 
-          @@reflekt.rules[class_name][method_name] = ruler
+          @@reflekt.rulers[class_name][method_name] = ruler
         end
       end
     end

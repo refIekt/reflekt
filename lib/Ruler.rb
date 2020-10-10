@@ -1,7 +1,9 @@
 ################################################################################
 # RULER
 #
-# Aggregate a method's inputs and output into a series of generic rules.
+# Aggregates a method's input/output.
+# Creates a pool of rules from each aggregation.
+# Validates input/output against rules.
 ################################################################################
 
 require 'RulePool'
@@ -13,73 +15,47 @@ class Ruler
   TYPE   = "T"
   VALUE  = "V"
 
+  attr_accessor :inputs
+  attr_accessor :output
+
   def initialize()
 
-    # Reflections.
-    @controls = nil
-    # Arguments.
+    # Rule Pools.
     @inputs = []
     @output = nil
 
   end
 
-  def load(controls)
+  def process(controls)
 
-    @controls = controls
-    @controls.each_with_index do |control, index|
+    controls.each_with_index do |control, index|
 
-      # Create rules for each input.
+      # Create rule pools for each input.
       control[INPUT].each_with_index do |input, index|
         unless input.nil?
-          @inputs[index] = load_rule_pool(@inputs[index], input[TYPE], input[VALUE])
+
+          if @inputs[index].nil?
+            @inputs[index] = RulePool.new()
+          end
+
+          @inputs[index].process(input[TYPE], input[VALUE])
+
         end
       end
 
-      # Create rules for the output.
+      # Create rule pool for the output.
       output = control[OUTPUT]
       unless control[OUTPUT].nil?
-        @output = load_rule_pool(@output, output[TYPE], output[VALUE])
+
+        if @output.nil?
+          @output = RulePool.new()
+        end
+
+        @output.process(output[TYPE], output[VALUE])
+
       end
 
     end
-
-  end
-
-  def load_rule_pool(rule_pool, type, value)
-
-    if rule_pool.nil?
-      rule_pool = RulePool.new()
-    end
-
-    # Track data type.
-    rule_pool.types << type
-
-    # Get rule for this data type.
-    rule = nil
-
-    case type
-    when "Integer"
-      unless rule_pool.rules.key? IntegerRule
-        rule = IntegerRule.new()
-        rule_pool.rules << rule
-      else
-        rule = rule_pool.rules[IntegerRule]
-      end
-    when "String"
-      unless rule_pool.rules.key? StringRule
-        rule = StringRule.new()
-        rule_pool.rules << rule
-      else
-        rule = rule_pool.rules[IntegerRule]
-      end
-    end
-
-    # Add value to rule.
-    unless rule.nil?
-      rule.load(value)
-    end
-
-    return rule_pool
 
   end
 
@@ -97,25 +73,28 @@ class Ruler
 
   end
 
-  def validate_inputs(inputs)
+  # Called on both method arguments and method return value.
+  def validate(items, rule_pools)
+
+    # Ensure outputs/input behave as arrays even if they're only one value.
+    items = [*items]
+    rule_pools = [*rule_pools]
+    p rule_pools
+
+    # Default to a PASS result.
     result = true
 
-    inputs.each_with_index do |value, index|
-      rule_pool = @inputs[index]
-      unless rule_pool.validate(input)
-        result = false
-      end
+    # Can't validate an empty rule pool.
+    if rule_pools.empty?
+      return result
     end
 
-    return result
-  end
-
-  def validate_output(output)
-    result = true
-
-    rule_pool = @output
-    unless rule_pool.validate(output)
-      result = false
+    # Validate each value against each pool of rules for that value.
+    items.each_with_index do |value, index|
+      rule_pool = rule_pools[index]
+      unless rule_pool.validate(value)
+        result = false
+      end
     end
 
     return result

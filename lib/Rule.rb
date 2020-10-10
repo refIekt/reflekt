@@ -11,7 +11,7 @@ class Rule
 
   # Each rule intitalises itself.
   def initialize()
-    @values = nil
+    @values = []
   end
 
   # Each rule loads up an array of values.
@@ -19,12 +19,12 @@ class Rule
     @values << value
   end
 
-  # Each rule trains on values to determine its patterns.
+  # Each rule trains on values to determine its boundaries.
   def train()
 
   end
 
-  # Each rule compares the data it has with the data it's given.
+  # Each rule compares the values it's given with its boundaries.
   def validate()
 
   end

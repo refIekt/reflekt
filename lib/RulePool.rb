@@ -1,12 +1,13 @@
 ################################################################################
 # RULE POOL
 #
-# A collection of rules generated for an argument.
-# Duplicates will not be added to the sets.
+# A collection of unique rules that validate an argument.
 ################################################################################
 
 require 'set'
-require 'Rule'
+require 'rules/FloatRule'
+require 'rules/IntegerRule'
+require 'rules/StringRule'
 
 class RulePool
 
@@ -20,9 +21,43 @@ class RulePool
 
   end
 
+  def process(type, value)
+
+    # Track data type.
+    @types << type
+
+    # Get rule for this data type.
+    rule = nil
+
+    case type
+    when "Integer"
+      unless @rules.key? IntegerRule
+        rule = IntegerRule.new()
+        @rules[IntegerRule] = rule
+      else
+        rule = @rules[IntegerRule]
+      end
+    when "String"
+      unless @rules.key? StringRule
+        rule = StringRule.new()
+        @rules[StringRule] = rule
+      else
+        rule = @rules[IntegerRule]
+      end
+    end
+
+    # Add value to rule.
+    unless rule.nil?
+      rule.load(value)
+    end
+
+    return self
+
+  end
+
   def train()
 
-    rules.each do |rule|
+    rules.each do |klass, rule|
       rule.train()
     end
 

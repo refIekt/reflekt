@@ -14,7 +14,7 @@ class Accessor
   attr_accessor :db
   attr_accessor :stack
   attr_accessor :renderer
-  attr_accessor :rules
+  attr_accessor :rulers
   attr_accessor :path
   attr_accessor :output_path
   attr_accessor :reflect_amount

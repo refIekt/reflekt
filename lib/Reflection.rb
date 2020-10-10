@@ -60,7 +60,7 @@ class Reflection
 
       # Validate input with controls.
       unless @ruler.nil?
-        if @ruler.validate_inputs(@inputs)
+        if @ruler.validate(@inputs, @ruler.inputs)
           @status = PASS
         else
           @status = FAIL
@@ -72,7 +72,7 @@ class Reflection
 
       # Validate output with controls.
       unless @ruler.nil?
-        if @ruler.validate_output(@output)
+        if @ruler.validate(@output, @ruler.output)
           @status = PASS
         else
           @status = FAIL

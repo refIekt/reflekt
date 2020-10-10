@@ -55,13 +55,8 @@ module Reflekt
 
           end
 
-          # Get ruler.
-          # The method's ruler will not exist the first time the db generated.
-          if @@reflekt.rulers.key? execution.caller_class.to_s.to_sym
-            ruler = @@reflekt.rulers[execution.caller_class.to_s.to_sym][method.to_s]
-          else
-            ruler = nil
-          end
+          input_rule_sets = @@reflekt.ruler.get(execution.caller_class, method, :inputs)
+          output_rule_set = @@reflekt.ruler.get(execution.caller_class, method, :output)
 
           # Reflect.
           # The first method call in the Execution creates a Reflection.
@@ -73,11 +68,11 @@ module Reflekt
             method_name = method.to_s
 
             # Create control.
-            control = Control.new(execution, method, ruler)
+            control = Control.new(execution, method)
             execution.control = control
 
             # Execute control.
-            control.reflect(*args)
+            control.reflect(*args, input_rule_sets, output_rule_set)
 
             # Save control.
             @@reflekt.db.get("#{class_name}.#{method_name}.controls").push(control.result())
@@ -86,7 +81,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, method, ruler)
+              reflection = Reflection.new(execution, method)
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -165,22 +160,21 @@ module Reflekt
 
     # Define rules.
     # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
-    @@reflekt.rulers = {}
+    @@reflekt.ruler = Ruler.new()
     db = @@reflekt.db.value()
     db.each do |class_name, class_values|
-      @@reflekt.rulers[class_name] = {}
-      class_values.each do |method_name, method_values|
-        next if method_values.nil?
-        next unless method_values.class == Hash
-        if method_values.key? "controls"
 
-          ruler = Ruler.new()
-          ruler.process(method_values['controls'])
-          ruler.train()
+      class_values.each do |method_name, method_items|
+        next if method_items.nil?
+        next unless method_items.class == Hash
+        if method_items.key? "controls"
 
-          @@reflekt.rulers[class_name][method_name] = ruler
+          @@reflekt.ruler.process(class_name, method_name, method_items['controls'])
+          @@reflekt.ruler.train(class_name, method_name)
+
         end
       end
+
     end
 
     # The amount of reflections to create per method call.

@@ -13,8 +13,8 @@ class Accessor
   attr_accessor :setup
   attr_accessor :db
   attr_accessor :stack
+  attr_accessor :ruler
   attr_accessor :renderer
-  attr_accessor :rulers
   attr_accessor :path
   attr_accessor :output_path
   attr_accessor :reflect_amount
@@ -25,8 +25,8 @@ class Accessor
     @setup = nil
     @db = nil
     @stack = nil
+    @ruler = nil
     @renderer = nil
-    @rules = nil
     @path = nil
     @output_path = nil
     @reflect_amount = nil

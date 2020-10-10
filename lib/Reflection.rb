@@ -15,11 +15,12 @@ class Reflection
 
   attr_accessor :clone
 
-  def initialize(execution, method, ruler)
+  def initialize(execution, method)
 
     @execution = execution
     @method = method
-    @ruler = ruler
+    @input_rule_sets = input_rule_sets
+    @output_rule_set = output_rule_set
 
     # Clone the execution's object.
     @clone = execution.object.clone
@@ -43,7 +44,7 @@ class Reflection
   #
   # @return - A reflection hash.
   ##
-  def reflect(*args)
+  def reflect(*args, input_rule_sets, output_rule_set)
 
     # Create deviated arguments.
     args.each do |arg|
@@ -59,8 +60,8 @@ class Reflection
     begin
 
       # Validate input with controls.
-      unless @ruler.nil?
-        if @ruler.validate(@inputs, @ruler.inputs)
+      unless @input_rule_sets.nil?
+        if @input_rule_sets.validate(@inputs)
           @status = PASS
         else
           @status = FAIL
@@ -71,8 +72,8 @@ class Reflection
       @output = @clone.send(@method, *@inputs)
 
       # Validate output with controls.
-      unless @ruler.nil?
-        if @ruler.validate(@output, @ruler.output)
+      unless @output_rule_set.nil?
+        if @output_rule_set.validate(@output)
           @status = PASS
         else
           @status = FAIL

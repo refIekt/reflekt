@@ -58,8 +58,8 @@ class Reflection
     begin
 
       # Validate input with controls.
-      unless @input_rule_sets.nil?
-        if @input_rule_sets.validate(@inputs)
+      unless input_rule_sets.nil?
+        if @ruler.validate_inputs(@inputs, input_rule_sets)
           @status = PASS
         else
           @status = FAIL
@@ -70,8 +70,8 @@ class Reflection
       @output = @clone.send(@method, *@inputs)
 
       # Validate output with controls.
-      unless @output_rule_set.nil?
-        if @output_rule_set.validate(@output)
+      unless output_rule_set.nil?
+        if @ruler.validate_output(@output, output_rule_set)
           @status = PASS
         else
           @status = FAIL

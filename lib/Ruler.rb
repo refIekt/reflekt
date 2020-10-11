@@ -118,4 +118,59 @@ class Ruler
 
   end
 
+  ##
+  # Validate inputs.
+  #
+  # @param Array inputs - The method's arguments.
+  # @param Array input_rule_sets - The RuleSets to validate each input with.
+  ##
+  def validate_inputs(inputs, input_rule_sets)
+
+    # Default to a PASS result.
+    result = true
+
+    # Validate each argument against each rule set for that argument.
+    inputs.each_with_index do |input, arg_num|
+
+      rule_set = input_rule_sets[arg_num]
+
+      # Can't validate an empty rule set.
+      if rule_set.empty?
+        next
+      end
+
+      unless rule_set.validate(input)
+        result = false
+      end
+    end
+
+    return result
+
+  end
+
+  ##
+  # Validate output.
+  #
+  # @param output - The method's return value.
+  # @param RuleSet output_rule_set - The RuleSet to validate the output with.
+  ##
+  def validate_output(output, output_rule_set)
+
+    # Default to a PASS result.
+    result = true
+
+    # Can't validate an empty rule pool.
+    if rule_set.empty?
+      return result
+    end
+
+    # Validate output RuleSet for that argument.
+    unless output_rule_set.validate(output)
+      result = false
+    end
+
+    return result
+
+  end
+
 end

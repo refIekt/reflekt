@@ -63,32 +63,6 @@ class RuleSet
 
   end
 
-  # Called on both method arguments and method return value.
-  def validate(items, rule_sets)
-
-    # Ensure outputs/input behave as arrays even if they're only one value.
-    items = [*items]
-    rule_sets = [*rule_sets]
-
-    # Default to a PASS result.
-    result = true
-
-    # Can't validate an empty rule pool.
-    if rule_sets.empty?
-      return result
-    end
-
-    # Validate each value against each pool of rules for that value.
-    items.each_with_index do |value, index|
-      rule_pool = rule_sets[index]
-      unless rule_pool.validate(value)
-        result = false
-      end
-    end
-
-    return result
-  end
-
   def validate(value)
     result = true
 

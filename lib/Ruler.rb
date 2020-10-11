@@ -70,9 +70,9 @@ class Ruler
   end
 
   ##
-  # Create RuleSets.
+  # Load RuleSets.
   ##
-  def create(class_name, method_name, controls)
+  def load(class_name, method_name, controls)
 
     # Create a RuleSet for each control's inputs/output.
     controls.each_with_index do |control, index|
@@ -84,7 +84,7 @@ class Ruler
           rule_set = RuleSet.new()
           set_input_rule_set(class_name, method_name, arg_num, rule_set)
         end
-        rule_set.process(input[TYPE], input[VALUE])
+        rule_set.load(input[TYPE], input[VALUE])
       end
 
       # Process output.
@@ -93,7 +93,7 @@ class Ruler
         output_rule_set = RuleSet.new()
         set_output_rule_set(class_name, method_name, output_rule_set)
       end
-      output_rule_set.process(control[OUTPUT][TYPE], control[OUTPUT][VALUE])
+      output_rule_set.load(control[OUTPUT][TYPE], control[OUTPUT][VALUE])
 
     end
 

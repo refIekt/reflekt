@@ -25,7 +25,7 @@ class Rule
   end
 
   # Each rule compares the values it's given with its boundaries.
-  def validate()
+  def validate(value)
 
   end
 

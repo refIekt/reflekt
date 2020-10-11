@@ -21,7 +21,7 @@ class RuleSet
 
   end
 
-  def process(type, value)
+  def load(type, value)
 
     # Track data type.
     @types << type

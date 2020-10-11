@@ -21,7 +21,7 @@ class StringRule < Rule
     # TODO.
   end
 
-  def validate()
+  def validate(value)
     # TODO.
     true
   end

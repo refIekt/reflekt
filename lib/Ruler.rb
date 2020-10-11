@@ -1,8 +1,8 @@
 ################################################################################
 # RULER
 #
-# Aggregates control input/output.
-# Creates and trains RuleSets from aggregates.
+# Aggregates input/output from controls.
+# Creates and trains RuleSets from aggregated input/output.
 # Validates reflection input/output against RuleSets.
 ################################################################################
 
@@ -10,7 +10,7 @@ require 'RuleSet'
 
 class Ruler
 
-  INPUTS  = "i"
+  INPUTS = "i"
   OUTPUT = "o"
   TYPE   = "T"
   VALUE  = "V"
@@ -20,25 +20,53 @@ class Ruler
   end
 
   ##
-  # Get RuleSet for class/method.
+  # Get input RuleSets.
   #
-  # Returns empty array when no RuleSets exist for class/method.
+  # @return Array
   ##
-  def get(class_name, method, type)
-
-    # A RuleSet for class/method will not exist the first time the db generated.
-    unless @rule_sets.key? class_name.to_s.to_sym
-      return []
-    end
-    @rule_sets[class_name.to_s.to_sym][method.to_s][type]
-
+  def get_input_rule_sets(class_name, method_name)
+    @rule_sets.dig(class_name, method_name, :inputs)
   end
 
   ##
-  # Set RuleSet.
+  # Get input RuleSet.
+  #
+  # @return RuleSet
   ##
-  def set(execution, method, type, value)
-    @rule_sets[execution][method][type] = value
+  def get_input_rule_set(class_name, method_name, arg_num)
+    @rule_sets.dig(class_name, method_name, :inputs, arg_num)
+  end
+
+  ##
+  # Get output RuleSet.
+  #
+  # @return RuleSet.
+  ##
+  def get_output_rule_set(class_name, method_name)
+    @rule_sets.dig(class_name, method_name, :output)
+  end
+
+  ##
+  # Set input RuleSet.
+  ##
+  def set_input_rule_set(class_name, method_name, arg_num, rule_set)
+    # Set defaults.
+    @rule_sets[class_name] = {} unless @rule_sets.key? class_name
+    @rule_sets[class_name][method_name] = {} unless @rule_sets[class_name].key? method_name
+    @rule_sets[class_name][method_name][:inputs] = [] unless @rule_sets[class_name][method_name].key? :inputs
+    # Set value.
+    @rule_sets[class_name][method_name][:inputs][arg_num] = rule_set
+  end
+
+  ##
+  # Set output RuleSet.
+  ##
+  def set_output_rule_set(class_name, method_name, rule_set)
+    # Set defaults.
+    @rule_sets[class_name] = {} unless @rule_sets.key? class_name
+    @rule_sets[class_name][method_name] = {} unless @rule_sets[class_name].key? method_name
+    # Set value.
+    @rule_sets[class_name][method_name][:output] = rule_set
   end
 
   ##
@@ -46,32 +74,27 @@ class Ruler
   ##
   def create(class_name, method_name, controls)
 
-    input_rule_sets = get(class_name, method_name, :inputs)
-    output_rule_set = get(class_name, method_name, :output)
-
-    # Create a RuleSet for each control input/output.
+    # Create a RuleSet for each control's inputs/output.
     controls.each_with_index do |control, index|
-      process_io(control, INPUTS, input_rule_sets)
-      process_io(control, OUTPUT, output_rule_set)
-    end
 
-  end
-
-  def process_io(control, io_type, rule_sets)
-
-    control_type_ios = control[io_type]
-
-    # Ensure inputs and output are inside arrays even if they're only one value.
-    if control[io_type].class == Hash
-      control_type_ios = [control_type_ios]
-    end
-
-    # Generate RuleSets for inputs/outputs.
-    control_type_ios.each_with_index do |io, index|
-      if rule_sets[index].nil?
-        rule_sets[index] = RuleSet.new()
+      # Process inputs.
+      control[INPUTS].each_with_index do |input, arg_num|
+        rule_set = get_input_rule_set(class_name, method_name, arg_num)
+        if rule_set.nil?
+          rule_set = RuleSet.new()
+          set_input_rule_set(class_name, method_name, arg_num, rule_set)
+        end
+        rule_set.process(input[TYPE], input[VALUE])
       end
-      rule_sets[index].process(io[TYPE], io[VALUE])
+
+      # Process output.
+      output_rule_set = get_output_rule_set(class_name, method_name)
+      if output_rule_set.nil?
+        output_rule_set = RuleSet.new()
+        set_output_rule_set(class_name, method_name, output_rule_set)
+      end
+      output_rule_set.process(control[OUTPUT][TYPE], control[OUTPUT][VALUE])
+
     end
 
   end
@@ -81,14 +104,16 @@ class Ruler
   ##
   def train(class_name, method_name)
 
-    input_rule_sets = get(class_name, method_name, :inputs)
-    input_rule_sets.each do |rule_set|
-      rule_set.train()
+    input_rule_sets = get_input_rule_sets(class_name, method_name)
+    unless input_rule_sets.nil?
+      input_rule_sets.each do |input_rule_set|
+        input_rule_set.train()
+      end
     end
 
-    output_rule_set = get(class_name, method_name, :output)
-    output_rule_set.each do |rule_set|
-      rule_set.train()
+    output_rule_set = get_output_rule_set(class_name, method_name)
+    unless output_rule_set.nil?
+      output_rule_set.train()
     end
 
   end

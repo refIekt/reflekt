@@ -26,7 +26,7 @@ module Reflekt
 
   def initialize(*args)
 
-    @reflection_counts = {}
+    @reflekt_counts = {}
 
     # Get instance methods.
     # TODO: Include parent methods like "Array.include?".
@@ -35,13 +35,13 @@ module Reflekt
       # Don't process skipped methods.
       next if self.class.reflekt_skipped?(method)
 
-      @reflection_counts[method] = 0
+      @reflekt_counts[method] = 0
 
       # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
         # Don't reflect when limit reached.
-        unless @reflection_counts[method] >= @@reflekt.reflection_limit
+        unless @reflekt_counts[method] >= @@reflekt.reflect_limit
 
           # Get current execution.
           execution = @@reflekt.stack.peek()
@@ -54,9 +54,6 @@ module Reflekt
             @@reflekt.stack.push(execution)
 
           end
-
-          input_rule_sets = @@reflekt.ruler.get(execution.caller_class, method, :inputs)
-          output_rule_set = @@reflekt.ruler.get(execution.caller_class, method, :output)
 
           # Reflect.
           # The first method call in the Execution creates a Reflection.
@@ -77,6 +74,10 @@ module Reflekt
             # Save control.
             @@reflekt.db.get("#{class_name}.#{method_name}.controls").push(control.result())
 
+            # Setup RuleSets for reflections.
+            input_rule_sets = @@reflekt.ruler.get_input_rule_sets(class_name, method_name)
+            output_rule_set = @@reflekt.ruler.get_output_rule_set(class_name, method_name)
+
             # Multiple reflections per execution.
             execution.reflections.each_with_index do |value, index|
 
@@ -86,7 +87,7 @@ module Reflekt
 
               # Execute reflection.
               reflection.reflect(*args, input_rule_sets, output_rule_set)
-              @reflection_counts[method] = @reflection_counts[method] + 1
+              @reflekt_counts[method] = @reflekt_counts[method] + 1
 
               # Save reflection.
               @@reflekt.db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
@@ -158,11 +159,11 @@ module Reflekt
     # Create shadow execution stack.
     @@reflekt.stack = ShadowStack.new()
 
-    # Define rules.
-    # TODO: Fix Rowdb.get(path) not returning data at path after Rowdb.push()?
+    # Create rules.
     @@reflekt.ruler = Ruler.new()
-    db = @@reflekt.db.value()
-    db.each do |class_name, class_values|
+    # TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
+    values = @@reflekt.db.value()
+    values.each do |class_name, class_values|
 
       class_values.each do |method_name, method_items|
         next if method_items.nil?
@@ -182,7 +183,7 @@ module Reflekt
 
     # Limit the amount of reflections that can be created per instance method.
     # A method called thousands of times doesn't need that many reflections.
-    @@reflekt.reflection_limit = 10
+    @@reflekt.reflect_limit = 10
 
     # Create renderer.
     @@reflekt.renderer = Renderer.new(@@reflekt.path, @@reflekt.output_path)
@@ -209,7 +210,7 @@ module Reflekt
     end
 
     def reflekt_limit(amount)
-      @@reflekt.reflection_limit = amount
+      @@reflekt.reflect_limit = amount
     end
 
   end

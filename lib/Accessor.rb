@@ -1,10 +1,11 @@
 ################################################################################
 # ACCESSOR
 #
-# Access variables via one object to avoid polluting the caller class.
+# Access variables via one object to avoid polluting the caller class scope.
 #
-# Only 2 variables are not accessed via Accessor:
-#   - @reflection_counts on the instance
+# Some variables are not accessed via Accessor:
+#   - @reflekt_counts on the instance
+#   - @reflekt_enabled on the instance
 #   - @@reflekt_skipped_methods on the instance's singleton class
 ################################################################################
 
@@ -18,7 +19,7 @@ class Accessor
   attr_accessor :path
   attr_accessor :output_path
   attr_accessor :reflect_amount
-  attr_accessor :reflection_limit
+  attr_accessor :reflect_limit
 
   def initialize()
 
@@ -30,7 +31,7 @@ class Accessor
     @path = nil
     @output_path = nil
     @reflect_amount = nil
-    @reflection_limit = nil
+    @reflect_limit = nil
 
   end
 

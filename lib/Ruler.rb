@@ -1,9 +1,9 @@
 ################################################################################
 # RULER
 #
-# Aggregates a method's input/output.
-# Creates a pool of rules from each aggregation.
-# Validates input/output against rules.
+# Aggregates control input/output.
+# Creates and trains RuleSets from aggregates.
+# Validates reflection input/output against RuleSets.
 ################################################################################
 
 require 'RuleSet'
@@ -20,7 +20,8 @@ class Ruler
   end
 
   ##
-  # Returns RuleSet for class/method.
+  # Get RuleSet for class/method.
+  #
   # Returns empty array when no RuleSets exist for class/method.
   ##
   def get(class_name, method, type)
@@ -33,6 +34,9 @@ class Ruler
 
   end
 
+  ##
+  # Set RuleSet.
+  ##
   def set(execution, method, type, value)
     @rule_sets[execution][method][type] = value
   end
@@ -40,7 +44,7 @@ class Ruler
   ##
   # Create RuleSets.
   ##
-  def create_rule_sets(class_name, method_name, controls)
+  def create(class_name, method_name, controls)
 
     input_rule_sets = get(class_name, method_name, :inputs)
     output_rule_set = get(class_name, method_name, :output)
@@ -72,7 +76,10 @@ class Ruler
 
   end
 
-  def train_rule_sets(class_name, method_name)
+  ##
+  # Train RuleSets from controls.
+  ##
+  def train(class_name, method_name)
 
     input_rule_sets = get(class_name, method_name, :inputs)
     input_rule_sets.each do |rule_set|

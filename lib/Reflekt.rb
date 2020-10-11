@@ -169,8 +169,8 @@ module Reflekt
         next unless method_items.class == Hash
         if method_items.key? "controls"
 
-          @@reflekt.ruler.create_rule_sets(class_name, method_name, method_items['controls'])
-          @@reflekt.ruler.train_rule_sets(class_name, method_name)
+          @@reflekt.ruler.create(class_name, method_name, method_items['controls'])
+          @@reflekt.ruler.train(class_name, method_name)
 
         end
       end

@@ -57,18 +57,18 @@ class RuleSet
 
   def train()
 
-    rules.each do |klass, rule|
+    @rules.each do |klass, rule|
       rule.train()
     end
 
   end
 
-  def validate(value)
+  def validate_rule(value)
     result = true
 
-    rules.each do |rule|
-      result = rule.validate(value)
-      if result == false
+    @rules.each do |klass, rule|
+
+      unless rule.validate(value)
         result = false
       end
     end

@@ -2,18 +2,15 @@ require 'Rule'
 
 class IntegerRule < Rule
 
-  attr_accessor :min
-  attr_accessor :max
-
   def initialize()
-    super
-
     @min = nil
     @max = nil
+
+    super
   end
 
   def load(value)
-    @values << value
+    @values << value.to_i
   end
 
   def train()
@@ -23,9 +20,12 @@ class IntegerRule < Rule
     @max = numbers.last
   end
 
-  def validate()
-    return false if value < rule.min
-    return false if value > rule.max
+  def validate(value)
+
+    return false if value < @min
+    return false if value > @max
+
+    true
   end
 
 end

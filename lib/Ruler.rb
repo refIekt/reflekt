@@ -22,76 +22,96 @@ class Ruler
   ##
   # Get input RuleSets.
   #
+  # @param Symbol klass
+  # @param Symbol method
+  #
   # @return Array
   ##
-  def get_input_rule_sets(class_name, method_name)
-    @rule_sets.dig(class_name, method_name, :inputs)
+  def get_input_rule_sets(klass, method)
+    return @rule_sets.dig(klass, method, :inputs)
   end
 
   ##
   # Get input RuleSet.
   #
+  # @param Symbol klass
+  # @param Symbol method
+  #
   # @return RuleSet
   ##
-  def get_input_rule_set(class_name, method_name, arg_num)
-    @rule_sets.dig(class_name, method_name, :inputs, arg_num)
+  def get_input_rule_set(klass, method, arg_num)
+    @rule_sets.dig(klass, method, :inputs, arg_num)
   end
 
   ##
   # Get output RuleSet.
   #
+  # @param Symbol klass
+  # @param Symbol method
+  #
   # @return RuleSet.
   ##
-  def get_output_rule_set(class_name, method_name)
-    @rule_sets.dig(class_name, method_name, :output)
+  def get_output_rule_set(klass, method)
+    @rule_sets.dig(klass, method, :output)
   end
 
   ##
   # Set input RuleSet.
+  #
+  # @param Symbol klass
+  # @param Symbol method
   ##
-  def set_input_rule_set(class_name, method_name, arg_num, rule_set)
+  def set_input_rule_set(klass, method, arg_num, rule_set)
     # Set defaults.
-    @rule_sets[class_name] = {} unless @rule_sets.key? class_name
-    @rule_sets[class_name][method_name] = {} unless @rule_sets[class_name].key? method_name
-    @rule_sets[class_name][method_name][:inputs] = [] unless @rule_sets[class_name][method_name].key? :inputs
+    @rule_sets[klass] = {} unless @rule_sets.key? klass
+    @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
+    @rule_sets[klass][method][:inputs] = [] unless @rule_sets[klass][method].key? :inputs
     # Set value.
-    @rule_sets[class_name][method_name][:inputs][arg_num] = rule_set
+    @rule_sets[klass][method][:inputs][arg_num] = rule_set
   end
 
   ##
   # Set output RuleSet.
+  #
+  # @param Symbol klass
+  # @param Symbol method
+  # @param RuleSet rule_set
   ##
-  def set_output_rule_set(class_name, method_name, rule_set)
+  def set_output_rule_set(klass, method, rule_set)
     # Set defaults.
-    @rule_sets[class_name] = {} unless @rule_sets.key? class_name
-    @rule_sets[class_name][method_name] = {} unless @rule_sets[class_name].key? method_name
+    @rule_sets[klass] = {} unless @rule_sets.key? klass
+    @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
     # Set value.
-    @rule_sets[class_name][method_name][:output] = rule_set
+    @rule_sets[klass][method][:output] = rule_set
   end
 
   ##
   # Load RuleSets.
+  #
+  # @param Symbol klass
+  # @param Symbol method
+  # @param Array controls
   ##
-  def load(class_name, method_name, controls)
+  def load(klass, method, controls)
 
     # Create a RuleSet for each control's inputs/output.
     controls.each_with_index do |control, index|
 
       # Process inputs.
       control[INPUTS].each_with_index do |input, arg_num|
-        rule_set = get_input_rule_set(class_name, method_name, arg_num)
+        rule_set = get_input_rule_set(klass, method, arg_num)
         if rule_set.nil?
           rule_set = RuleSet.new()
-          set_input_rule_set(class_name, method_name, arg_num, rule_set)
+          set_input_rule_set(klass, method, arg_num, rule_set)
         end
         rule_set.load(input[TYPE], input[VALUE])
       end
 
       # Process output.
-      output_rule_set = get_output_rule_set(class_name, method_name)
+      output_rule_set = get_output_rule_set(klass, method)
       if output_rule_set.nil?
         output_rule_set = RuleSet.new()
-        set_output_rule_set(class_name, method_name, output_rule_set)
+        set_output_rule_set(klass, method, output_rule_set)
       end
       output_rule_set.load(control[OUTPUT][TYPE], control[OUTPUT][VALUE])
 
@@ -101,17 +121,20 @@ class Ruler
 
   ##
   # Train RuleSets from controls.
+  #
+  # @param Symbol klass
+  # @param Symbol method
   ##
-  def train(class_name, method_name)
+  def train(klass, method)
 
-    input_rule_sets = get_input_rule_sets(class_name, method_name)
+    input_rule_sets = get_input_rule_sets(klass, method)
     unless input_rule_sets.nil?
       input_rule_sets.each do |input_rule_set|
         input_rule_set.train()
       end
     end
 
-    output_rule_set = get_output_rule_set(class_name, method_name)
+    output_rule_set = get_output_rule_set(klass, method)
     unless output_rule_set.nil?
       output_rule_set.train()
     end
@@ -132,15 +155,14 @@ class Ruler
     # Validate each argument against each rule set for that argument.
     inputs.each_with_index do |input, arg_num|
 
-      rule_set = input_rule_sets[arg_num]
+      unless input_rule_sets[arg_num].nil?
 
-      # Can't validate an empty rule set.
-      if rule_set.empty?
-        next
-      end
+        rule_set = input_rule_sets[arg_num]
 
-      unless rule_set.validate(input)
-        result = false
+        unless rule_set.validate_rule(input)
+          result = false
+        end
+
       end
     end
 
@@ -151,7 +173,7 @@ class Ruler
   ##
   # Validate output.
   #
-  # @param output - The method's return value.
+  # @param dynamic output - The method's return value.
   # @param RuleSet output_rule_set - The RuleSet to validate the output with.
   ##
   def validate_output(output, output_rule_set)
@@ -159,14 +181,13 @@ class Ruler
     # Default to a PASS result.
     result = true
 
-    # Can't validate an empty rule pool.
-    if rule_set.empty?
-      return result
-    end
+    unless output_rule_set.nil?
 
-    # Validate output RuleSet for that argument.
-    unless output_rule_set.validate(output)
-      result = false
+      # Validate output RuleSet for that argument.
+      unless output_rule_set.validate_rule(output)
+        result = false
+      end
+
     end
 
     return result

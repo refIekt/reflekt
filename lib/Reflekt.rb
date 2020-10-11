@@ -61,11 +61,14 @@ module Reflekt
           if execution.has_empty_reflections? && !execution.is_reflecting?
             execution.is_reflecting = true
 
+            # Use symbols "klass" and "method" as keys in hashes.
+            # Use strings "class_name" and "method_name" to query the database.
             class_name = execution.caller_class.to_s
             method_name = method.to_s
+            klass = class_name.to_sym
 
             # Create control.
-            control = Control.new(execution, method)
+            control = Control.new(execution, klass, method, @@reflekt.ruler)
             execution.control = control
 
             # Execute control.
@@ -74,19 +77,15 @@ module Reflekt
             # Save control.
             @@reflekt.db.get("#{class_name}.#{method_name}.controls").push(control.result())
 
-            # Setup RuleSets for reflections.
-            input_rule_sets = @@reflekt.ruler.get_input_rule_sets(class_name, method_name)
-            output_rule_set = @@reflekt.ruler.get_output_rule_set(class_name, method_name)
-
             # Multiple reflections per execution.
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, method)
+              reflection = Reflection.new(execution, klass, method, @@reflekt.ruler)
               execution.reflections[index] = reflection
 
               # Execute reflection.
-              reflection.reflect(*args, input_rule_sets, output_rule_set)
+              reflection.reflect(*args)
               @reflekt_counts[method] = @reflekt_counts[method] + 1
 
               # Save reflection.
@@ -163,15 +162,17 @@ module Reflekt
     @@reflekt.ruler = Ruler.new()
     # TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
     values = @@reflekt.db.value()
-    values.each do |class_name, class_values|
+    values.each do |klass, class_values|
 
       class_values.each do |method_name, method_items|
         next if method_items.nil?
         next unless method_items.class == Hash
         if method_items.key? "controls"
 
-          @@reflekt.ruler.load(class_name, method_name, method_items['controls'])
-          @@reflekt.ruler.train(class_name, method_name)
+          method = method_name.to_sym
+
+          @@reflekt.ruler.load(klass, method, method_items['controls'])
+          @@reflekt.ruler.train(klass, method)
 
         end
       end

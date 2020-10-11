@@ -15,20 +15,32 @@ class Reflection
 
   attr_accessor :clone
 
-  def initialize(execution, method)
+  ##
+  # Create a Reflection.
+  #
+  # @param Execution execution - The Execution that created this Reflection.
+  # @param Symbol klass - The class of the method being called.
+  # @param Symbol method - The method that is being called.
+  # @param Ruler ruler - The RuleSets for this class/method.
+  ##
+  def initialize(execution, klass, method, ruler)
 
     @execution = execution
+    @klass = klass
     @method = method
+    @ruler = ruler
+
+    # Arguments.
+    @inputs = []
+    @output = nil
 
     # Clone the execution's object.
     @clone = execution.object.clone
     @clone_id = nil
 
     # Result.
-    @status = nil
+    @status = PASS
     @time = Time.now.to_i
-    @inputs = []
-    @output = nil
 
   end
 
@@ -37,12 +49,15 @@ class Reflection
   #
   # Creates a shadow execution stack.
   #
-  # @param method - The name of the method.
-  # @param *args - The method arguments.
+  # @param *args - The method's arguments.
   #
   # @return - A reflection hash.
   ##
-  def reflect(*args, input_rule_sets, output_rule_set)
+  def reflect(*args)
+
+    # Get RuleSets.
+    input_rule_sets = @ruler.get_input_rule_sets(@klass, @method)
+    output_rule_set = @ruler.get_output_rule_set(@klass, @method)
 
     # Create deviated arguments.
     args.each do |arg|
@@ -59,9 +74,7 @@ class Reflection
 
       # Validate input with controls.
       unless input_rule_sets.nil?
-        if @ruler.validate_inputs(@inputs, input_rule_sets)
-          @status = PASS
-        else
+        unless @ruler.validate_inputs(@inputs, input_rule_sets)
           @status = FAIL
         end
       end
@@ -71,22 +84,15 @@ class Reflection
 
       # Validate output with controls.
       unless output_rule_set.nil?
-        if @ruler.validate_output(@output, output_rule_set)
-          @status = PASS
-        else
+        unless @ruler.validate_output(@output, output_rule_set)
           @status = FAIL
         end
-        return
       end
 
     # When fail.
     rescue StandardError => message
       @status = FAIL
       @message = message
-
-    # When no validation and execution fails.
-    else
-      @status = PASS
     end
 
   end

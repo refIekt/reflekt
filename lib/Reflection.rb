@@ -19,8 +19,6 @@ class Reflection
 
     @execution = execution
     @method = method
-    @input_rule_sets = input_rule_sets
-    @output_rule_set = output_rule_set
 
     # Clone the execution's object.
     @clone = execution.object.clone

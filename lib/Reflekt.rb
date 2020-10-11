@@ -72,7 +72,7 @@ module Reflekt
             execution.control = control
 
             # Execute control.
-            control.reflect(*args, input_rule_sets, output_rule_set)
+            control.reflect(*args)
 
             # Save control.
             @@reflekt.db.get("#{class_name}.#{method_name}.controls").push(control.result())
@@ -85,7 +85,7 @@ module Reflekt
               execution.reflections[index] = reflection
 
               # Execute reflection.
-              reflection.reflect(*args)
+              reflection.reflect(*args, input_rule_sets, output_rule_set)
               @reflection_counts[method] = @reflection_counts[method] + 1
 
               # Save reflection.
@@ -169,8 +169,8 @@ module Reflekt
         next unless method_items.class == Hash
         if method_items.key? "controls"
 
-          @@reflekt.ruler.process(class_name, method_name, method_items['controls'])
-          @@reflekt.ruler.train(class_name, method_name)
+          @@reflekt.ruler.create_rule_sets(class_name, method_name, method_items['controls'])
+          @@reflekt.ruler.train_rule_sets(class_name, method_name)
 
         end
       end

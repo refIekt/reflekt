@@ -37,55 +37,51 @@ class Ruler
     @rule_sets[execution][method][type] = value
   end
 
-  def process(class_name, method_name, controls)
+  ##
+  # Create RuleSets.
+  ##
+  def create_rule_sets(class_name, method_name, controls)
 
     input_rule_sets = get(class_name, method_name, :inputs)
     output_rule_set = get(class_name, method_name, :output)
 
     # Create a RuleSet for each control input/output.
     controls.each_with_index do |control, index|
-
       process_io(control, INPUTS, input_rule_sets)
       process_io(control, OUTPUT, output_rule_set)
-
     end
 
   end
 
   def process_io(control, io_type, rule_sets)
 
-    # Ensure outputs/input behave as arrays even if they're only one value.
     control_type_ios = control[io_type]
-    control_type_ios = [*control_type_ios]
 
-    p control_type_ios
+    # Ensure inputs and output are inside arrays even if they're only one value.
+    if control[io_type].class == Hash
+      control_type_ios = [control_type_ios]
+    end
 
-    #control_type_ios.each_with_index do |io, index|
-
-    #  p io
-
-    #  if rule_sets[index].nil?
-    #    rule_sets[index] = RuleSet.new()
-    #  end
-
-    #  #rule_sets[index].process(io[TYPE], io[VALUE])
-
-    #end
+    # Generate RuleSets for inputs/outputs.
+    control_type_ios.each_with_index do |io, index|
+      if rule_sets[index].nil?
+        rule_sets[index] = RuleSet.new()
+      end
+      rule_sets[index].process(io[TYPE], io[VALUE])
+    end
 
   end
 
-  def train(class_name, method_name)
+  def train_rule_sets(class_name, method_name)
 
-    inputs = get(class_name, method_name, :inputs)
-    inputs.each do |rule_pool|
-      unless rule_pool.nil?
-        rule_pool.train()
-      end
+    input_rule_sets = get(class_name, method_name, :inputs)
+    input_rule_sets.each do |rule_set|
+      rule_set.train()
     end
 
-    output = get(execution, method_name, :output)
-    unless output.nil?
-      output.train()
+    output_rule_set = get(class_name, method_name, :output)
+    output_rule_set.each do |rule_set|
+      rule_set.train()
     end
 
   end

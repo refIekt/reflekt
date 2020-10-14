@@ -50,7 +50,7 @@ module Reflekt
           if execution.nil? || execution.has_finished_reflecting?
 
             # Create execution.
-            execution = Execution.new(self, @@reflekt.reflect_amount)
+            execution = Execution.new(self, method, @@reflekt.reflect_amount)
             @@reflekt.stack.push(execution)
 
           end
@@ -61,27 +61,21 @@ module Reflekt
           if execution.has_empty_reflections? && !execution.is_reflecting?
             execution.is_reflecting = true
 
-            # Use symbols "klass" and "method" as keys in hashes.
-            # Use strings "class_name" and "method_name" to query the database.
-            class_name = execution.caller_class.to_s
-            method_name = method.to_s
-            klass = class_name.to_sym
-
             # Create control.
-            control = Control.new(execution, klass, method, @@reflekt.ruler)
+            control = Control.new(execution, @@reflekt.ruler)
             execution.control = control
 
             # Execute control.
             control.reflect(*args)
 
             # Save control.
-            @@reflekt.db.get("#{class_name}.#{method_name}.controls").push(control.result())
+            @@reflekt.db.get("controls").push(control.result())
 
             # Multiple reflections per execution.
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, klass, method, @@reflekt.ruler)
+              reflection = Reflection.new(execution, @@reflekt.ruler)
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -89,7 +83,7 @@ module Reflekt
               @reflekt_counts[method] = @reflekt_counts[method] + 1
 
               # Save reflection.
-              @@reflekt.db.get("#{class_name}.#{method_name}.reflections").push(reflection.result())
+              @@reflekt.db.get("reflections").push(reflection.result())
 
             end
 
@@ -152,7 +146,7 @@ module Reflekt
     end
 
     # Create database.
-    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.json')
+    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.js')
     @@reflekt.db.defaults({ :reflekt => { :api_version => 1 }})
 
     # Create shadow execution stack.

@@ -2,13 +2,15 @@ class Reflection
 
   # Keys.
   TIME    = "t"
+  CLASS   = "k"
+  METHOD  = "f"
   INPUT   = "i"
   OUTPUT  = "o"
+  STATUS  = "s"
+  MESSAGE = "m"
   TYPE    = "T"
   COUNT   = "C"
   VALUE   = "V"
-  STATUS  = "s"
-  MESSAGE = "m"
   # Values.
   PASS    = "p"
   FAIL    = "f"
@@ -23,11 +25,11 @@ class Reflection
   # @param Symbol method - The method that is being called.
   # @param Ruler ruler - The RuleSets for this class/method.
   ##
-  def initialize(execution, klass, method, ruler)
+  def initialize(execution, ruler)
 
     @execution = execution
-    @klass = klass
-    @method = method
+    @klass = execution.klass
+    @method = execution.method
     @ruler = ruler
 
     # Arguments.
@@ -101,6 +103,8 @@ class Reflection
     # Build reflection.
     reflection = {
       TIME => @time,
+      CLASS => @klass,
+      METHOD => @method,
       STATUS => @status,
       INPUT => normalize_input(@inputs),
       OUTPUT => normalize_output(@output),

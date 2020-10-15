@@ -42,15 +42,4 @@ class ShadowStack
 
   end
 
-  def display
-    display_execution_tree(@bottom)
-  end
-
-  def display_execution_tree(execution)
-    p execution
-    unless execution.parent == nil
-      display_execution_tree(execution.parent)
-    end
-  end
-
 end

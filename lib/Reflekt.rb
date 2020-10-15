@@ -50,7 +50,8 @@ module Reflekt
           if execution.nil? || execution.has_finished_reflecting?
 
             # Create execution.
-            execution = Execution.new(self, method, @@reflekt.reflect_amount)
+            execution = Execution.new(self, method, @@reflekt.reflect_amount, @@reflekt.stack)
+
             @@reflekt.stack.push(execution)
 
           end
@@ -62,7 +63,7 @@ module Reflekt
             execution.is_reflecting = true
 
             # Create control.
-            control = Control.new(execution, @@reflekt.ruler)
+            control = Control.new(execution, 1, @@reflekt.ruler)
             execution.control = control
 
             # Execute control.
@@ -75,7 +76,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, @@reflekt.ruler)
+              reflection = Reflection.new(execution, index + 1, @@reflekt.ruler)
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -146,7 +147,7 @@ module Reflekt
     end
 
     # Create database.
-    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.js')
+    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.json')
     @@reflekt.db.defaults({ :reflekt => { :api_version => 1 }})
 
     # Create shadow execution stack.

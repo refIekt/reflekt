@@ -1,30 +1,56 @@
 class Execution
 
-  attr_accessor :object
+  attr_accessor :unique_id
+  attr_accessor :caller_object
   attr_accessor :caller_id
   attr_accessor :caller_class
   attr_accessor :klass
   attr_accessor :method
+  attr_accessor :base
   attr_accessor :parent
   attr_accessor :child
   attr_accessor :control
   attr_accessor :reflections
   attr_accessor :is_reflecting
+  attr_accessor :is_base
 
-  def initialize(object, method, reflection_count)
+  ##
+  # Create Execution.
+  #
+  # @param Object object - The calling object.
+  # @param Symbol method - The calling method.
+  # @param Integer number - The number of reflections to create per execution.
+  # @param ShadowStack stack - The shadow execution call stack.
+  ##
+  def initialize(caller_object, method, number, stack)
 
-    @object = object
-    @caller_id = object.object_id
-    @caller_class = object.class
-    
-    @klass = object.class.to_s.to_sym
-    @method = method
-
+    @time = Time.now.to_i
+    @unique_id = @time + rand(1..99999)
+    @base = nil
     @parent = nil
     @child = nil
-    @control = nil
-    @reflections = Array.new(reflection_count)
 
+    # Dependency.
+    @stack = stack
+
+    # Caller.
+    @caller_object = caller_object
+    @caller_id = caller_object.object_id
+    @caller_class = caller_object.class
+    @klass = @caller_class.to_s.to_sym
+    @method = method
+
+    # Reflections.
+    @control = nil
+    @reflections = Array.new(number)
+
+    # State.
+    if @stack.peek() == nil
+      @is_base = true
+    else
+      @is_base = false
+      @base = @stack.base()
+    end
     @is_reflecting = false
 
   end

@@ -1,13 +1,18 @@
 class Reflection
 
-  # Keys.
+  # Reflection.
+  BASE_ID = "b"
+  EXE_ID  = "e"
+  REF_ID  = "r"
+  REF_NUM = "n"
   TIME    = "t"
-  CLASS   = "k"
+  CLASS   = "c"
   METHOD  = "f"
   INPUT   = "i"
   OUTPUT  = "o"
   STATUS  = "s"
   MESSAGE = "m"
+  # Input/Output.
   TYPE    = "T"
   COUNT   = "C"
   VALUE   = "V"
@@ -21,23 +26,28 @@ class Reflection
   # Create a Reflection.
   #
   # @param Execution execution - The Execution that created this Reflection.
-  # @param Symbol klass - The class of the method being called.
-  # @param Symbol method - The method that is being called.
+  # @param Integer number - Multiple Reflections can be created per Execution.
   # @param Ruler ruler - The RuleSets for this class/method.
   ##
-  def initialize(execution, ruler)
+  def initialize(execution, number, ruler)
 
     @execution = execution
+    @unique_id = execution.unique_id + number
+    @number = number
+
+    # Dependency.
+    @ruler = ruler
+
+    # Caller.
     @klass = execution.klass
     @method = execution.method
-    @ruler = ruler
 
     # Arguments.
     @inputs = []
     @output = nil
 
-    # Clone the execution's object.
-    @clone = execution.object.clone
+    # Clone the execution's calling object.
+    @clone = execution.caller_object.clone
     @clone_id = nil
 
     # Result.
@@ -100,8 +110,19 @@ class Reflection
   end
 
   def result()
+
+    # The ID of the first execution in the ShadowStack.
+    base_id = nil
+    unless @execution.base == nil
+      base_id = @execution.base.unique_id
+    end
+
     # Build reflection.
     reflection = {
+      BASE_ID => base_id,
+      EXE_ID => @execution.unique_id,
+      REF_ID => @unique_id,
+      REF_NUM => @number,
       TIME => @time,
       CLASS => @klass,
       METHOD => @method,
@@ -110,6 +131,8 @@ class Reflection
       OUTPUT => normalize_output(@output),
       MESSAGE => @message
     }
+
+    return reflection
   end
 
   ##

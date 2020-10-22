@@ -26,7 +26,11 @@ class ExampleClass
   prepend Reflekt
 ```  
 
-Use the application as usual and test results will start showing up in the `reflections` folder.
+Use the application as usual and test results will start showing up in the `reflections` folder:
+
+<p align="center">
+  <img src="./assets/Screenshot.jpg" raw=true style="margin-left: auto; margin-right: auto;"/>
+</p>
 
 ## Installation
 
@@ -73,7 +77,7 @@ If you don't want test data to save to the database then use [dependency injecti
 When a method is called in the usual flow of an application, Reflekt runs multiple simulations with different values on that method to see if it can break things, before handing back control to the method to perform its usual task.
 
 <p align="center">
-  <img src="./Assets/Flowchart.svg" raw=true width="600" style="margin-left: auto; margin-right: auto;"/>
+  <img src="./assets/Flowchart.svg" raw=true width="600" style="margin-left: auto; margin-right: auto;"/>
 </p>
 
 ## Comparison

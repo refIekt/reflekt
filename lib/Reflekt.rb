@@ -147,7 +147,7 @@ module Reflekt
     end
 
     # Create database.
-    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.json')
+    @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.js')
     @@reflekt.db.defaults({ :reflekt => { :api_version => 1 }})
 
     # Create shadow execution stack.

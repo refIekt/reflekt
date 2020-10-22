@@ -1,7 +1,7 @@
 # Reflekt
 
 <p align="center">
-  <img src="./Assets/Logo.svg" raw=true width="200" style="margin-left: auto; margin-right: auto;"/>
+  <img src="./assets/Logo.svg" raw=true width="200" style="margin-left: auto; margin-right: auto;"/>
 </p>
 <p align="center">
   <a href="https://www.mozilla.org/MPL/2.0/" alt="MPLv2 License">

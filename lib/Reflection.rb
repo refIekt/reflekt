@@ -125,8 +125,7 @@ class Reflection
     inputs = []
     args.each do |arg|
       input = {
-        :type => arg.class.to_s,
-        :value => normalize_value(arg)
+        :type => arg.class.to_s
       }
       if (arg.class == Array)
         input[:count] = arg.count
@@ -142,20 +141,19 @@ class Reflection
   # @param input - The actual output.
   # @return - A generic output representation.
   ##
-  def normalize_output(input)
+  def normalize_output(arg)
 
-    output = {
-      :type => input.class.to_s,
-      :value => normalize_value(input)
+    input = {
+      :type => arg.class.to_s
     }
 
-    if (input.class == Array || input.class == Hash)
-      output[:count] = input.count
-    elsif (input.class == TrueClass || input.class == FalseClass)
-      output[:type] = :Boolean
+    if (arg.class == Array || arg.class == Hash)
+      input[:count] = arg.count
+    elsif (arg.class == TrueClass || arg.class == FalseClass)
+      input[:type] = :Boolean
     end
 
-    return output
+    return input
 
   end
 

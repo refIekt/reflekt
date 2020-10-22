@@ -1,0 +1,26 @@
+{
+  "name": "reflekt-server",
+  "version": "1.0.0",
+  "description": "Serves the UI and writes to the DB.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/refIekt/reflekt-ui.git"
+  },
+  "author": "Maedi Prichard",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/refIekt/reflekt-ui/issues"
+  },
+  "homepage": "https://reflekt.dev",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.5"
+  }
+}

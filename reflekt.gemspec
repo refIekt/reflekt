@@ -1,8 +1,8 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '0.9.6'
-  spec.date        = '2020-10-07'
+  spec.version     = '0.9.7'
+  spec.date        = '2020-10-22'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmailcom'
 
@@ -25,9 +25,12 @@ Gem::Specification.new do |spec|
     "lib/rules/FloatRule.rb",
     "lib/rules/IntegerRule.rb",
     "lib/rules/StringRule.rb",
-    "lib/web/template.html.erb",
-    "lib/web/style.css",
-    "lib/web/script.js"
+    "lib/web/bundle.js",
+    "lib/web/index.html",
+    "lib/web/package-lock.json",
+    "lib/web/package.json",
+    "lib/web/README.md",
+    "lib/web/server.js"
   ]
   spec.require_paths = ["lib"]
 

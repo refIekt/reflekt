@@ -134,13 +134,14 @@ module Reflekt
     # Set configuration.
     @@reflekt.path = File.dirname(File.realpath(__FILE__))
 
-    # Build reflections directory.
+    # Get reflections directory path from config.
     if $ENV[:reflekt][:output_path]
       @@reflekt.output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
-    # Build reflections directory in current execution path.
+    # Get reflections directory path from current execution path.
     else
       @@reflekt.output_path = File.join(Dir.pwd, 'reflections')
     end
+
     # Create reflections directory.
     unless Dir.exist? @@reflekt.output_path
       Dir.mkdir(@@reflekt.output_path)

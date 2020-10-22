@@ -1,35 +1,31 @@
 class Renderer
 
   def initialize(path, output_path)
+
     @path = path
     @output_path = output_path
+
   end
 
   ##
-  # Render results.
+  # Place files in output path.
   ##
   def render()
 
-    # Get JSON.
-    json = File.read("#{@output_path}/db.json")
+    filenames = [
+      "bundle.js",
+      "index.html",
+      "package-lock.json",
+      "package.json",
+      "README.md",
+      "server.js"
+    ]
 
-    # Save HTML.
-    template = File.read("#{@path}/web/template.html.erb")
-    rendered = ERB.new(template).result(binding)
-    File.open("#{@output_path}/index.html", 'w+') do |f|
-      f.write rendered
-    end
-
-    # Add JS.
-    javascript = File.read("#{@path}/web/script.js")
-    File.open("#{@output_path}/script.js", 'w+') do |f|
-      f.write javascript
-    end
-
-    # Add CSS.
-    stylesheet = File.read("#{@path}/web/style.css")
-    File.open("#{@output_path}/style.css", 'w+') do |f|
-      f.write stylesheet
+    filenames.each do |filename|
+      file = File.read(File.join(@path, "web", filename))
+      File.open(File.join(@output_path, filename), 'w+') do |f|
+        f.write file
+      end
     end
 
   end

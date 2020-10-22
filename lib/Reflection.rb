@@ -100,9 +100,9 @@ class Reflection
     # Build reflection.
     reflection = {
       :base_id => base_id,
-      :execution_id => @execution.unique_id,
-      :reflection_id => @unique_id,
-      :reflection_number => @number,
+      :exe_id => @execution.unique_id,
+      :ref_id => @unique_id,
+      :ref_num => @number,
       :time => @time,
       :class => @klass,
       :method => @method,

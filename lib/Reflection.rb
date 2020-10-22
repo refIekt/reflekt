@@ -1,25 +1,5 @@
 class Reflection
 
-  # Reflection.
-  BASE_ID = "b"
-  EXE_ID  = "e"
-  REF_ID  = "r"
-  REF_NUM = "n"
-  TIME    = "t"
-  CLASS   = "c"
-  METHOD  = "f"
-  INPUT   = "i"
-  OUTPUT  = "o"
-  STATUS  = "s"
-  MESSAGE = "m"
-  # Input/Output.
-  TYPE    = "T"
-  COUNT   = "C"
-  VALUE   = "V"
-  # Values.
-  PASS    = "p"
-  FAIL    = "f"
-
   attr_accessor :clone
 
   ##
@@ -51,7 +31,7 @@ class Reflection
     @clone_id = nil
 
     # Result.
-    @status = PASS
+    @status = :pass
     @time = Time.now.to_i
 
   end
@@ -87,7 +67,7 @@ class Reflection
       # Validate input with controls.
       unless input_rule_sets.nil?
         unless @ruler.validate_inputs(@inputs, input_rule_sets)
-          @status = FAIL
+          @status = :fail
         end
       end
 
@@ -97,13 +77,13 @@ class Reflection
       # Validate output with controls.
       unless output_rule_set.nil?
         unless @ruler.validate_output(@output, output_rule_set)
-          @status = FAIL
+          @status = :fail
         end
       end
 
     # When fail.
     rescue StandardError => message
-      @status = FAIL
+      @status = :fail
       @message = message
     end
 
@@ -119,17 +99,17 @@ class Reflection
 
     # Build reflection.
     reflection = {
-      BASE_ID => base_id,
-      EXE_ID => @execution.unique_id,
-      REF_ID => @unique_id,
-      REF_NUM => @number,
-      TIME => @time,
-      CLASS => @klass,
-      METHOD => @method,
-      STATUS => @status,
-      INPUT => normalize_input(@inputs),
-      OUTPUT => normalize_output(@output),
-      MESSAGE => @message
+      :base_id => base_id,
+      :execution_id => @execution.unique_id,
+      :reflection_id => @unique_id,
+      :reflection_number => @number,
+      :time => @time,
+      :class => @klass,
+      :method => @method,
+      :status => @status,
+      :input => normalize_input(@inputs),
+      :output => normalize_output(@output),
+      :message => @message
     }
 
     return reflection
@@ -145,11 +125,11 @@ class Reflection
     inputs = []
     args.each do |arg|
       input = {
-        TYPE => arg.class.to_s,
-        VALUE => normalize_value(arg)
+        :type => arg.class.to_s,
+        :value => normalize_value(arg)
       }
       if (arg.class == Array)
-        input[COUNT] = arg.count
+        input[:count] = arg.count
       end
       inputs << input
     end
@@ -165,14 +145,14 @@ class Reflection
   def normalize_output(input)
 
     output = {
-      TYPE => input.class.to_s,
-      VALUE => normalize_value(input)
+      :type => input.class.to_s,
+      :value => normalize_value(input)
     }
 
     if (input.class == Array || input.class == Hash)
-      output[COUNT] = input.count
+      output[:count] = input.count
     elsif (input.class == TrueClass || input.class == FalseClass)
-      output[TYPE] = :Boolean
+      output[:type] = :Boolean
     end
 
     return output

@@ -10,11 +10,6 @@ require 'RuleSet'
 
 class Ruler
 
-  INPUTS = "i"
-  OUTPUT = "o"
-  TYPE   = "T"
-  VALUE  = "V"
-
   def initialize()
     @rule_sets = {}
   end
@@ -98,13 +93,13 @@ class Ruler
     controls.each_with_index do |control, index|
 
       # Process inputs.
-      control[INPUTS].each_with_index do |input, arg_num|
+      control[:inputs].each_with_index do |input, arg_num|
         rule_set = get_input_rule_set(klass, method, arg_num)
         if rule_set.nil?
           rule_set = RuleSet.new()
           set_input_rule_set(klass, method, arg_num, rule_set)
         end
-        rule_set.load(input[TYPE], input[VALUE])
+        rule_set.load(input[:type], input[:value])
       end
 
       # Process output.
@@ -113,7 +108,7 @@ class Ruler
         output_rule_set = RuleSet.new()
         set_output_rule_set(klass, method, output_rule_set)
       end
-      output_rule_set.load(control[OUTPUT][TYPE], control[OUTPUT][VALUE])
+      output_rule_set.load(control[:output][:type], control[:output][:value])
 
     end
 

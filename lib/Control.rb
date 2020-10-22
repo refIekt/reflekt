@@ -21,11 +21,11 @@ class Control < Reflection
       @output = @clone.send(@method, *@inputs)
     # When fail.
     rescue StandardError => message
-      @status = FAIL
+      @status = :fail
       @message = message
     # When pass.
     else
-      @status = PASS
+      @status = :pass
     end
 
   end

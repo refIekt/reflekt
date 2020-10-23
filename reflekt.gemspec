@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.files = [
     "lib/Accessor.rb",
+    "lib/Aggregator.rb",
     "lib/Control.rb",
     "lib/Execution.rb",
     "lib/Reflection.rb",

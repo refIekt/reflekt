@@ -1,3 +1,16 @@
+################################################################################
+# REFLECTION
+#
+# A snapshot of simulated data.
+#
+# Hierachy:
+# 1. Execution
+# 2. Reflection <- YOU ARE HERE.
+# 3. RuleSet
+################################################################################
+
+require 'Ruler'
+
 class Reflection
 
   attr_accessor :clone
@@ -5,24 +18,24 @@ class Reflection
   ##
   # Create a Reflection.
   #
-  # @param Execution execution - The Execution that created this Reflection.
-  # @param Integer number - Multiple Reflections can be created per Execution.
-  # @param Ruler ruler - The RuleSets for this class/method.
+  # @param execution [Execution] The Execution that created this Reflection.
+  # @param number [Integer] Multiple Reflections can be created per Execution.
+  # @param aggregator [Aggregator] The aggregated RuleSets for this class/method.
   ##
-  def initialize(execution, number, ruler)
+  def initialize(execution, number, aggregator)
 
     @execution = execution
     @unique_id = execution.unique_id + number
     @number = number
 
     # Dependency.
-    @ruler = ruler
+    @aggregator = aggregator
 
     # Caller.
     @klass = execution.klass
     @method = execution.method
 
-    # Arguments.
+    # RuleSets.
     @inputs = []
     @output = nil
 
@@ -41,42 +54,41 @@ class Reflection
   #
   # Creates a shadow execution stack.
   #
-  # @param *args - The method's arguments.
-  #
-  # @return - A reflection hash.
+  # @param *args [Dynamic] The method's arguments.
+  # @return A reflection hash.
   ##
   def reflect(*args)
 
-    # Get RuleSets.
-    input_rule_sets = @ruler.get_input_rule_sets(@klass, @method)
-    output_rule_set = @ruler.get_output_rule_set(@klass, @method)
+    # Get aggregated RuleSets.
+    input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
+    output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
     # Create deviated arguments.
     args.each do |arg|
       case arg
       when Integer
-        @inputs << rand(999)
+        new_args << rand(999)
       else
-        @inputs << arg
+        new_args << arg
       end
     end
 
     # Action method with new arguments.
     begin
 
-      # Validate input with controls.
+      # Validate input with aggregated control rule sets.
       unless input_rule_sets.nil?
-        unless @ruler.validate_inputs(@inputs, input_rule_sets)
+        unless @ruler.validate_inputs(new_args, input_rule_sets)
           @status = :fail
         end
       end
 
       # Run reflection.
-      @output = @clone.send(@method, *@inputs)
+      output = @clone.send(@method, *new_args)
 
-      # Validate output with controls.
+      # Validate output with aggregated control rule sets.
       unless output_rule_set.nil?
-        unless @ruler.validate_output(@output, output_rule_set)
+        unless @ruler.validate_output(output, output_rule_set)
           @status = :fail
         end
       end
@@ -107,66 +119,12 @@ class Reflection
       :class => @klass,
       :method => @method,
       :status => @status,
-      :input => normalize_input(@inputs),
-      :output => normalize_output(@output),
+      :inputs => @inputs,
+      :output => @output,
       :message => @message
     }
 
     return reflection
-  end
-
-  ##
-  # Normalize inputs.
-  #
-  # @param args - The actual inputs.
-  # @return - A generic inputs representation.
-  ##
-  def normalize_input(args)
-    inputs = []
-    args.each do |arg|
-      input = {
-        :type => arg.class.to_s
-      }
-      if (arg.class == Array)
-        input[:count] = arg.count
-      end
-      inputs << input
-    end
-    inputs
-  end
-
-  ##
-  # Normalize output.
-  #
-  # @param input - The actual output.
-  # @return - A generic output representation.
-  ##
-  def normalize_output(arg)
-
-    input = {
-      :type => arg.class.to_s
-    }
-
-    if (arg.class == Array || arg.class == Hash)
-      input[:count] = arg.count
-    elsif (arg.class == TrueClass || arg.class == FalseClass)
-      input[:type] = :Boolean
-    end
-
-    return input
-
-  end
-
-  def normalize_value(value)
-
-    unless value.nil?
-      value = value.to_s.gsub(/\r?\n/, " ").to_s
-      if value.length >= 30
-        value = value[0, value.rindex(/\s/,30)].rstrip() + '...'
-      end
-    end
-
-    return value
 
   end
 

@@ -15,11 +15,11 @@ require 'set'
 require 'erb'
 require 'rowdb'
 require 'Accessor'
+require 'Aggregator'
 require 'Control'
 require 'Execution'
 require 'Reflection'
 require 'Renderer'
-require 'Ruler'
 require 'ShadowStack'
 
 module Reflekt
@@ -63,7 +63,7 @@ module Reflekt
             execution.is_reflecting = true
 
             # Create control.
-            control = Control.new(execution, 1, @@reflekt.ruler)
+            control = Control.new(execution, 1, @@reflekt.aggregator)
             execution.control = control
 
             # Execute control.
@@ -76,7 +76,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, index + 1, @@reflekt.ruler)
+              reflection = Reflection.new(execution, index + 1, @@reflekt.aggregator)
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -134,10 +134,9 @@ module Reflekt
     # Set configuration.
     @@reflekt.path = File.dirname(File.realpath(__FILE__))
 
-    # Get reflections directory path from config.
+    # Get reflections directory path from config or current execution path.
     if $ENV[:reflekt][:output_path]
       @@reflekt.output_path = File.join($ENV[:reflekt][:output_path], 'reflections')
-    # Get reflections directory path from current execution path.
     else
       @@reflekt.output_path = File.join(Dir.pwd, 'reflections')
     end
@@ -154,26 +153,26 @@ module Reflekt
     # Create shadow execution stack.
     @@reflekt.stack = ShadowStack.new()
 
-    # Create rules.
-    @@reflekt.ruler = Ruler.new()
-    # TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
-    values = @@reflekt.db.value()
-    values.each do |klass, class_values|
+    ## Create rules.
+    #@@reflekt.aggregator = Aggregator.new()
+    ## TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
+    #values = @@reflekt.db.value()
+    #values.each do |klass, class_values|
 
-      class_values.each do |method_name, method_items|
-        next if method_items.nil?
-        next unless method_items.class == Hash
-        if method_items.key? "controls"
+    #  class_values.each do |method_name, method_items|
+    #    next if method_items.nil?
+    #    next unless method_items.class == Hash
+    #    if method_items.key? "controls"
 
-          method = method_name.to_sym
+    #      method = method_name.to_sym
 
-          @@reflekt.ruler.load(klass, method, method_items['controls'])
-          @@reflekt.ruler.train(klass, method)
+    #      @@reflekt.aggregator.load(klass, method, method_items['controls'])
+    #      @@reflekt.aggregator.train(klass, method)
 
-        end
-      end
+    #    end
+    #  end
 
-    end
+    #end
 
     # The amount of reflections to create per method call.
     @@reflekt.reflect_amount = 2

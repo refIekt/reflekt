@@ -13,15 +13,20 @@ class IntegerRule < Rule
 
   end
 
-  def load(value)
-    @values << value.to_i
+  def train(value)
+
+    @min = value.min if value.min > @min
+    @max = value.max if value.max < @max
+
   end
 
-  def train()
-    numbers = @values.select {|num| num.class == Integer }
-    numbers.sort!
-    @min = numbers.first
-    @max = numbers.last
+  def result()
+
+    {
+      :min => @min,
+      :max => @max
+    }
+
   end
 
   def validate(value)

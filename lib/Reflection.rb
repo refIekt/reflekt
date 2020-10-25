@@ -1,6 +1,4 @@
 ################################################################################
-# REFLECTION
-#
 # A snapshot of simulated data.
 #
 # Hierachy:
@@ -9,7 +7,7 @@
 # 3. RuleSet
 ################################################################################
 
-require 'Ruler'
+require 'RuleController'
 
 class Reflection
 
@@ -35,7 +33,7 @@ class Reflection
     @klass = execution.klass
     @method = execution.method
 
-    # RuleSets.
+    # Rule sets [Hash].
     @inputs = []
     @output = nil
 
@@ -75,7 +73,7 @@ class Reflection
     end
 
     # Create rule sets.
-    @inputs = Ruler.create_rule_sets(new_args)
+    @inputs = RuleController.create_rule_sets(new_args)
 
     # Action method with new arguments.
     begin
@@ -89,7 +87,7 @@ class Reflection
 
       # Run reflection.
       output = @clone.send(@method, *new_args)
-      @output = Ruler.create_rule_set(output)
+      @output = RuleController.create_rule_set(output)
 
       # Validate output with aggregated control rule sets.
       unless output_rule_set.nil?

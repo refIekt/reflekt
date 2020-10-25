@@ -13,15 +13,11 @@ class FloatRule < Rule
 
   end
 
-  def load(value)
-    @values << value.to_i
-  end
+  def train(value)
 
-  def train()
-    numbers = @values.select {|num| num.class == Float }
-    numbers.sort!
-    @min = numbers.first
-    @max = numbers.last
+    @min = value.min if value.min > @min
+    @max = value.max if value.max < @max
+
   end
 
   def validate(value)

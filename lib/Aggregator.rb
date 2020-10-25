@@ -1,11 +1,9 @@
 ################################################################################
-# AGGREGATOR
-#
 # Aggregates rule sets from control rule sets.
 # Validates reflection arguments against aggregated rule sets.
 #
 # Hierachy:
-# 1. Aggregator <- YOU ARE HERE.
+# 1. Aggregator
 # 2. RuleSet
 # 3. AggRule
 ################################################################################
@@ -119,7 +117,7 @@ class Aggregator
   end
 
   ##
-  # Train RuleSets from controls.
+  # Train rule sets from controls.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -137,6 +135,40 @@ class Aggregator
     unless output_rule_set.nil?
       output_rule_set.train()
     end
+
+  end
+
+  def train_from_rule(rule)
+
+    # Track data type.
+    @types << type
+
+    # Get rule for this data type.
+    rule = nil
+
+    case type
+    when "Integer"
+      unless @rules.key? IntegerRule
+        rule = IntegerRule.new()
+        @rules[IntegerRule] = rule
+      else
+        rule = @rules[IntegerRule]
+      end
+    when "String"
+      unless @rules.key? StringRule
+        rule = StringRule.new()
+        @rules[StringRule] = rule
+      else
+        rule = @rules[IntegerRule]
+      end
+    end
+
+    # Add value to rule.
+    unless rule.nil?
+      rule.load(value)
+    end
+
+    return self
 
   end
 

@@ -13,11 +13,7 @@ class StringRule < Rule
 
   end
 
-  def load(value)
-    @values << value
-  end
-
-  def train()
+  def train(value)
     # TODO.
   end
 

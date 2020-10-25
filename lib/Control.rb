@@ -10,7 +10,7 @@
 ################################################################################
 
 require 'Reflection'
-require 'Ruler'
+require 'RuleController'
 
 class Control < Reflection
 

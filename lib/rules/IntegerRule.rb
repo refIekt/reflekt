@@ -2,7 +2,11 @@ require 'Rule'
 
 class IntegerRule < Rule
 
+  attr_accessor :min
+  attr_accessor :max
+
   def initialize()
+
     @min = nil
     @max = nil
 

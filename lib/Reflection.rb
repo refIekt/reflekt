@@ -64,6 +64,7 @@ class Reflection
     output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
     # Create deviated arguments.
+    new_args = []
     args.each do |arg|
       case arg
       when Integer
@@ -72,6 +73,9 @@ class Reflection
         new_args << arg
       end
     end
+
+    # Create rule sets.
+    @inputs = Ruler.create_rule_sets(new_args)
 
     # Action method with new arguments.
     begin
@@ -85,6 +89,7 @@ class Reflection
 
       # Run reflection.
       output = @clone.send(@method, *new_args)
+      @output = Ruler.create_rule_set(output)
 
       # Validate output with aggregated control rule sets.
       unless output_rule_set.nil?

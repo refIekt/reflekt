@@ -1,13 +1,10 @@
 ################################################################################
-# RULE POOL
+# RULE SET
 #
-# A collection of unique rules that validate an argument.
+# A collection of rules that validate an argument.
 ################################################################################
 
 require 'set'
-require 'rules/FloatRule'
-require 'rules/IntegerRule'
-require 'rules/StringRule'
 
 class RuleSet
 
@@ -21,59 +18,12 @@ class RuleSet
 
   end
 
-  def load(type, value)
-
-    # Track data type.
-    @types << type
-
-    # Get rule for this data type.
-    rule = nil
-
-    case type
-    when "Integer"
-      unless @rules.key? IntegerRule
-        rule = IntegerRule.new()
-        @rules[IntegerRule] = rule
-      else
-        rule = @rules[IntegerRule]
-      end
-    when "String"
-      unless @rules.key? StringRule
-        rule = StringRule.new()
-        @rules[StringRule] = rule
-      else
-        rule = @rules[IntegerRule]
-      end
-    end
-
-    # Add value to rule.
-    unless rule.nil?
-      rule.load(value)
-    end
-
-    return self
-
-  end
-
-  def train()
+  def create_rules(arg)
 
     @rules.each do |klass, rule|
-      rule.train()
+      rule.load(arg)
     end
 
-  end
-
-  def validate_rule(value)
-    result = true
-
-    @rules.each do |klass, rule|
-
-      unless rule.validate(value)
-        result = false
-      end
-    end
-
-    return result
   end
 
 end

@@ -3,6 +3,11 @@
 #
 # Aggregates RuleSets from Controls.
 # Validates reflection arguments against aggregated RuleSets.
+#
+# Hierachy:
+# 1. Aggregator <- YOU ARE HERE.
+# 2. RuleSet
+# 3. AggRule
 ################################################################################
 
 require 'RuleSet'

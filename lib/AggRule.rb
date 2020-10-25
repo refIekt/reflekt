@@ -1,25 +1,20 @@
 ################################################################################
-# RULE
+# AGG RULE
 #
-# Abstract class.
-# See lib/rules for rules.
+# An aggregated rule that is built from other rules.
+#
+# @see Rule
 ################################################################################
 
 require 'set'
 
-class Rule
+class AggRule
 
   # Each rule intitalises itself.
   def initialize()
-    @values = []
   end
 
-  # Each rule loads up an array of values.
-  def load(value)
-    @values << value
-  end
-
-  # Each rule trains on values to determine its boundaries.
+  # Each rule trains on rules to determine its boundaries.
   def train()
 
   end

@@ -10,18 +10,25 @@ class FloatRule < Rule
 
     @min = nil
     @max = nil
+
   end
 
   def load(value)
-    @values << value
+    @values << value.to_i
   end
 
   def train()
-    # TODO.
+    numbers = @values.select {|num| num.class == Float }
+    numbers.sort!
+    @min = numbers.first
+    @max = numbers.last
   end
 
   def validate(value)
-    # TODO.
+
+    return false if value < @min
+    return false if value > @max
+
     true
   end
 

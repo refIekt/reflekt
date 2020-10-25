@@ -3,10 +3,11 @@ require 'Rule'
 class AggIntegerRule < Rule
 
   def initialize()
+    super
+
     @min = nil
     @max = nil
 
-    super
   end
 
   def train(integer_rule)

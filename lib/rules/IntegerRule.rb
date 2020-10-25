@@ -6,11 +6,11 @@ class IntegerRule < Rule
   attr_accessor :max
 
   def initialize()
+    super
 
     @min = nil
     @max = nil
 
-    super
   end
 
   def load(value)

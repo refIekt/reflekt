@@ -1,8 +1,8 @@
 ################################################################################
 # AGGREGATOR
 #
-# Aggregates RuleSets from Controls.
-# Validates reflection arguments against aggregated RuleSets.
+# Aggregates rule sets from control rule sets.
+# Validates reflection arguments against aggregated rule sets.
 #
 # Hierachy:
 # 1. Aggregator <- YOU ARE HERE.
@@ -15,50 +15,50 @@ require 'RuleSet'
 class Aggregator
 
   def initialize()
+
+    # Key by class and method.
     @rule_sets = {}
+
   end
 
   ##
-  # Get input RuleSets.
+  # Get input rule sets.
   #
-  # @param Symbol klass
-  # @param Symbol method
-  #
-  # @return Array
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @return [Array]
   ##
   def get_input_rule_sets(klass, method)
     return @rule_sets.dig(klass, method, :inputs)
   end
 
   ##
-  # Get input RuleSet.
+  # Get input aggregated rule set.
   #
-  # @param Symbol klass
-  # @param Symbol method
-  #
-  # @return RuleSet
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @return [RuleSet]
   ##
   def get_input_rule_set(klass, method, arg_num)
     @rule_sets.dig(klass, method, :inputs, arg_num)
   end
 
   ##
-  # Get output RuleSet.
+  # Get output aggregated rule set.
   #
-  # @param Symbol klass
-  # @param Symbol method
-  #
-  # @return RuleSet.
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @return [RuleSet]
   ##
   def get_output_rule_set(klass, method)
     @rule_sets.dig(klass, method, :output)
   end
 
   ##
-  # Set input RuleSet.
+  # Set input aggregated rule set.
   #
-  # @param Symbol klass
-  # @param Symbol method
+  # @param klass [Symbol]
+  # @param method [Symbol]
   ##
   def set_input_rule_set(klass, method, arg_num, rule_set)
     # Set defaults.
@@ -70,7 +70,7 @@ class Aggregator
   end
 
   ##
-  # Set output RuleSet.
+  # Set output aggregated rule set.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -85,16 +85,16 @@ class Aggregator
   end
 
   ##
-  # Create aggregated RuleSets.
+  # Create aggregated rule sets.
   #
-  # @param Symbol klass
-  # @param Symbol method
-  # @param Array controls
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @param controls [Array]
   ##
-  def load(klass, method, controls)
+  def load(controls)
 
-    # Create a RuleSet for each control's inputs/output.
-    controls.each_with_index do |control, index|
+    # Create aggregated rule sets for each control's inputs/output.
+    controls.each do |control|
 
       # Process inputs.
       control[:inputs].each_with_index do |input, arg_num|
@@ -121,8 +121,8 @@ class Aggregator
   ##
   # Train RuleSets from controls.
   #
-  # @param Symbol klass
-  # @param Symbol method
+  # @param klass [Symbol]
+  # @param method [Symbol]
   ##
   def train(klass, method)
 
@@ -143,8 +143,8 @@ class Aggregator
   ##
   # Validate inputs.
   #
-  # @param Array inputs - The method's arguments.
-  # @param Array input_rule_sets - The RuleSets to validate each input with.
+  # @param inputs [Array] The method's arguments.
+  # @param input_rule_sets [Array] The RuleSets to validate each input with.
   ##
   def validate_inputs(inputs, input_rule_sets)
 
@@ -172,8 +172,8 @@ class Aggregator
   ##
   # Validate output.
   #
-  # @param dynamic output - The method's return value.
-  # @param RuleSet output_rule_set - The RuleSet to validate the output with.
+  # @param output [Dynamic] The method's return value.
+  # @param output_rule_set [RuleSet] The rule set to validate the output with.
   ##
   def validate_output(output, output_rule_set)
 

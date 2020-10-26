@@ -6,14 +6,13 @@ class StringRule < Rule
   attr_accessor :max_length
 
   def initialize()
-    super
 
     @min_length = nil
     @max_length = nil
 
   end
 
-  def train(value)
+  def train()
     # TODO.
   end
 

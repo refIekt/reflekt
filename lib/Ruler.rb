@@ -3,14 +3,14 @@
 # Validates reflection arguments against aggregated rule sets.
 #
 # Hierachy:
-# 1. Aggregator
+# 1. Ruler
 # 2. RuleSet
-# 3. AggRule
+# 3. Rule
 ################################################################################
 
 require 'RuleSet'
 
-class Aggregator
+class Ruler
 
   def initialize()
 

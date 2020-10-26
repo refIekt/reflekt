@@ -1,7 +1,8 @@
 ################################################################################
-# A template for all rules to follow.
+# RULE
 #
-# @see lib/rules for child rules.
+# Abstract class.
+# @see lib/rules for rules.
 ################################################################################
 
 require 'set'
@@ -13,14 +14,14 @@ class Rule
     @values = []
   end
 
-  # Each rule trains on values to determine its boundaries.
-  def train(arg)
-
+  # Each rule loads up an array of values.
+  def load(value)
+    @values << value
   end
 
-  # Each rule provides a serializable result.
-  def result()
-    return {}
+  # Each rule trains on values to determine its boundaries.
+  def train()
+
   end
 
   # Each rule compares the values it's given with its boundaries.

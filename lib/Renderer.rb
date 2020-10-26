@@ -28,6 +28,11 @@ class Renderer
       end
     end
 
+    file = File.read(File.join(@path, "web", "gitignore.txt"))
+    File.open(File.join(@output_path, ".gitignore"), 'w+') do |f|
+      f.write file
+    end
+
   end
 
 

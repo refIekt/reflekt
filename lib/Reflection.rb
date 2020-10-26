@@ -1,10 +1,13 @@
 ################################################################################
 # A snapshot of simulated data.
 #
+# Nomenclature:
+#   args/inputs/values are the same thing but at a different stage in its lifecycle.
+#
 # Hierachy:
-# 1. Execution
-# 2. Reflection <- YOU ARE HERE.
-# 3. RuleSet
+#   1. Execution
+#   2. Reflection <- YOU ARE HERE.
+#   3. RuleSet
 ################################################################################
 
 require 'RuleController'
@@ -18,16 +21,16 @@ class Reflection
   #
   # @param execution [Execution] The Execution that created this Reflection.
   # @param number [Integer] Multiple Reflections can be created per Execution.
-  # @param aggregator [Aggregator] The aggregated RuleSets for this class/method.
+  # @param ruler [Ruler] The aggregated RuleSets for this class/method.
   ##
-  def initialize(execution, number, aggregator)
+  def initialize(execution, number, ruler)
 
     @execution = execution
     @unique_id = execution.unique_id + number
     @number = number
 
     # Dependency.
-    @aggregator = aggregator
+    @ruler = ruler
 
     # Caller.
     @klass = execution.klass
@@ -57,9 +60,9 @@ class Reflection
   ##
   def reflect(*args)
 
-    # Get aggregated RuleSets.
-    input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
-    output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+    # Get RuleSets.
+    input_rule_sets = @ruler.get_input_rule_sets(@klass, @method)
+    output_rule_set = @ruler.get_output_rule_set(@klass, @method)
 
     # Create deviated arguments.
     new_args = []
@@ -72,8 +75,8 @@ class Reflection
       end
     end
 
-    # Create rule sets.
-    @inputs = RuleController.create_rule_sets(new_args)
+    # Create values.
+    @inputs = ValueController.create_values(new_args)
 
     # Action method with new arguments.
     begin
@@ -87,7 +90,7 @@ class Reflection
 
       # Run reflection.
       output = @clone.send(@method, *new_args)
-      @output = RuleController.create_rule_set(output)
+      @output = ValueController.create_value(output)
 
       # Validate output with aggregated control rule sets.
       unless output_rule_set.nil?

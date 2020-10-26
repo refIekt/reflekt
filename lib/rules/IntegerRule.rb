@@ -2,11 +2,7 @@ require 'Rule'
 
 class IntegerRule < Rule
 
-  attr_accessor :min
-  attr_accessor :max
-
   def initialize()
-    super
 
     @min = nil
     @max = nil
@@ -15,17 +11,17 @@ class IntegerRule < Rule
 
   def train(value)
 
-    @min = value.min if value.min > @min
-    @max = value.max if value.max < @max
+    if @min.nil?
+      @min = value
+    else
+      @min = value if value < @min
+    end
 
-  end
-
-  def result()
-
-    {
-      :min => @min,
-      :max => @max
-    }
+    if @max.nil?
+      @max = value
+    else
+      @max = value if value > @max
+    end
 
   end
 

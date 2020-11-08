@@ -7,16 +7,16 @@ class Reflection
   #
   # @param Execution execution - The Execution that created this Reflection.
   # @param Integer number - Multiple Reflections can be created per Execution.
-  # @param Ruler ruler - The RuleSets for this class/method.
+  # @param Aggregates aggregates - The RuleSets for this class/method.
   ##
-  def initialize(execution, number, ruler)
+  def initialize(execution, number, aggregates)
 
     @execution = execution
     @unique_id = execution.unique_id + number
     @number = number
 
     # Dependency.
-    @ruler = ruler
+    @aggregates = aggregates
 
     # Caller.
     @klass = execution.klass
@@ -48,8 +48,8 @@ class Reflection
   def reflect(*args)
 
     # Get RuleSets.
-    input_rule_sets = @ruler.get_input_rule_sets(@klass, @method)
-    output_rule_set = @ruler.get_output_rule_set(@klass, @method)
+    input_rule_sets = @aggregates.get_input_rule_sets(@klass, @method)
+    output_rule_set = @aggregates.get_output_rule_set(@klass, @method)
 
     # Create deviated arguments.
     args.each do |arg|
@@ -66,7 +66,7 @@ class Reflection
 
       # Validate input with controls.
       unless input_rule_sets.nil?
-        unless @ruler.validate_inputs(@inputs, input_rule_sets)
+        unless @aggregates.validate_inputs(@inputs, input_rule_sets)
           @status = :fail
         end
       end
@@ -76,7 +76,7 @@ class Reflection
 
       # Validate output with controls.
       unless output_rule_set.nil?
-        unless @ruler.validate_output(@output, output_rule_set)
+        unless @aggregates.validate_output(@output, output_rule_set)
           @status = :fail
         end
       end

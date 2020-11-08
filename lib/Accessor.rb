@@ -14,7 +14,7 @@ class Accessor
   attr_accessor :setup
   attr_accessor :db
   attr_accessor :stack
-  attr_accessor :ruler
+  attr_accessor :aggregates
   attr_accessor :renderer
   attr_accessor :path
   attr_accessor :output_path
@@ -26,7 +26,7 @@ class Accessor
     @setup = nil
     @db = nil
     @stack = nil
-    @ruler = nil
+    @aggregates = nil
     @renderer = nil
     @path = nil
     @output_path = nil

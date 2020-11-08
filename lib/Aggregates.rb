@@ -8,7 +8,7 @@
 
 require 'RuleSet'
 
-class Ruler
+class Aggregates
 
   def initialize()
     @rule_sets = {}

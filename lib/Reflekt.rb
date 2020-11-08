@@ -19,7 +19,7 @@ require 'Control'
 require 'Execution'
 require 'Reflection'
 require 'Renderer'
-require 'Ruler'
+require 'Aggregates'
 require 'ShadowStack'
 
 module Reflekt
@@ -63,7 +63,7 @@ module Reflekt
             execution.is_reflecting = true
 
             # Create control.
-            control = Control.new(execution, 1, @@reflekt.ruler)
+            control = Control.new(execution, 1, @@reflekt.aggregates)
             execution.control = control
 
             # Execute control.
@@ -76,7 +76,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, index + 1, @@reflekt.ruler)
+              reflection = Reflection.new(execution, index + 1, @@reflekt.aggregates)
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -155,7 +155,7 @@ module Reflekt
     @@reflekt.stack = ShadowStack.new()
 
     # Create rules.
-    @@reflekt.ruler = Ruler.new()
+    @@reflekt.aggregates = Aggregates.new()
     # TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
     values = @@reflekt.db.value()
     values.each do |klass, class_values|
@@ -167,8 +167,8 @@ module Reflekt
 
           method = method_name.to_sym
 
-          @@reflekt.ruler.load(klass, method, method_items['controls'])
-          @@reflekt.ruler.train(klass, method)
+          @@reflekt.aggregates.load(klass, method, method_items['controls'])
+          @@reflekt.aggregates.train(klass, method)
 
         end
       end

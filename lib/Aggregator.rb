@@ -1,26 +1,26 @@
 ################################################################################
-# Aggregates rule sets from control rule sets.
-# Validates reflection arguments against aggregated rule sets.
+# Aggregate control RuleSets. Validate reflection arguments against aggregates.
 #
-# Hierachy:
-# 1. Ruler
-# 2. RuleSet
-# 3. Rule
+# @pattern Singleton
+# @hierachy
+#   1. Aggregator
+#   2. RuleSet
+#   3. Rule
 ################################################################################
 
 require 'RuleSet'
 
-class Ruler
+class Aggregator
 
   def initialize()
 
-    # Key by class and method.
+    # Store by class and method.
     @rule_sets = {}
 
   end
 
   ##
-  # Get input rule sets.
+  # Get aggregated RuleSets for all inputs.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -31,7 +31,7 @@ class Ruler
   end
 
   ##
-  # Get input aggregated rule set.
+  # Get an aggregated RuleSet for an input.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -42,7 +42,7 @@ class Ruler
   end
 
   ##
-  # Get output aggregated rule set.
+  # Get an aggregated RuleSet for an output.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -53,7 +53,7 @@ class Ruler
   end
 
   ##
-  # Set input aggregated rule set.
+  # Set an aggregated RuleSet for an input.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -68,7 +68,7 @@ class Ruler
   end
 
   ##
-  # Set output aggregated rule set.
+  # Set an aggregated RuleSet for an output.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -83,7 +83,7 @@ class Ruler
   end
 
   ##
-  # Create aggregated rule sets.
+  # Create aggregated RuleSets.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -91,7 +91,7 @@ class Ruler
   ##
   def load(controls)
 
-    # Create aggregated rule sets for each control's inputs/output.
+    # Create aggregated RuleSets for each control's inputs/output.
     controls.each do |control|
 
       # Process inputs.
@@ -101,7 +101,7 @@ class Ruler
           rule_set = RuleSet.new()
           set_input_rule_set(klass, method, arg_num, rule_set)
         end
-        rule_set.load(input[:type], input[:value])
+        rule_set.train(input[:type], input[:value])
       end
 
       # Process output.
@@ -110,14 +110,14 @@ class Ruler
         output_rule_set = RuleSet.new()
         set_output_rule_set(klass, method, output_rule_set)
       end
-      output_rule_set.load(control[:output][:type], control[:output][:value])
+      output_rule_set.train(control[:output][:type], control[:output][:value])
 
     end
 
   end
 
   ##
-  # Train rule sets from controls.
+  # Train RuleSets from controls.
   #
   # @param klass [Symbol]
   # @param method [Symbol]
@@ -183,7 +183,7 @@ class Ruler
     # Default to a PASS result.
     result = true
 
-    # Validate each argument against each rule set for that argument.
+    # Validate each argument against each RuleSet for that argument.
     inputs.each_with_index do |input, arg_num|
 
       unless input_rule_sets[arg_num].nil?
@@ -205,7 +205,7 @@ class Ruler
   # Validate output.
   #
   # @param output [Dynamic] The method's return value.
-  # @param output_rule_set [RuleSet] The rule set to validate the output with.
+  # @param output_rule_set [RuleSet] The RuleSet to validate the output with.
   ##
   def validate_output(output, output_rule_set)
 

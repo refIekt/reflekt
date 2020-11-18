@@ -25,12 +25,19 @@ class IntegerRule < Rule
 
   end
 
-  def validate(value)
+  def test(value)
 
     return false if value < @min
     return false if value > @max
 
     true
+  end
+
+  def result()
+    rule = {
+      :value => @value
+    }
+    rule
   end
 
 end

@@ -1,10 +1,10 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '0.9.7'
-  spec.date        = '2020-10-22'
+  spec.version     = '0.9.8'
+  spec.date        = '2020-11-19'
   spec.authors     = ["Maedi Prichard"]
-  spec.email       = 'maediprichard@gmailcom'
+  spec.email       = 'maediprichard@gmail.com'
 
   spec.summary     = "Reflective testing."
   spec.description = "Testing that's completely automated."
@@ -20,10 +20,8 @@ Gem::Specification.new do |spec|
     "lib/Reflekt.rb",
     "lib/Renderer.rb",
     "lib/Rule.rb",
-    "lib/RuleController.rb",
     "lib/RuleSet.rb",
     "lib/ShadowStack.rb",
-    "lib/rules/FloatRule.rb",
     "lib/rules/IntegerRule.rb",
     "lib/rules/StringRule.rb",
     "lib/web/bundle.js",

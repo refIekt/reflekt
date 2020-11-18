@@ -12,13 +12,20 @@ class StringRule < Rule
 
   end
 
-  def train()
+  def train(value)
     # TODO.
   end
 
-  def validate(value)
+  def test(value)
     # TODO.
     true
+  end
+
+  def result()
+    rule = {
+      :value => @value
+    }
+    rule
   end
 
 end

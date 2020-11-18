@@ -3,7 +3,6 @@
 ################################################################################
 
 require 'set'
-require 'rules/FloatRule'
 require 'rules/IntegerRule'
 require 'rules/StringRule'
 

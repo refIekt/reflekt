@@ -1,9 +1,8 @@
 ################################################################################
-# ACCESSOR
-#
 # Access variables via one object to avoid polluting the caller class scope.
 #
-# Some variables are not accessed via Accessor:
+# @pattern Singleton
+# @note Some variables are not accessed via Accessor:
 #   - @reflekt_counts on the instance
 #   - @reflekt_enabled on the instance
 #   - @@reflekt_skipped_methods on the instance's singleton class
@@ -14,7 +13,7 @@ class Accessor
   attr_accessor :setup
   attr_accessor :db
   attr_accessor :stack
-  attr_accessor :ruler
+  attr_accessor :aggregator
   attr_accessor :renderer
   attr_accessor :path
   attr_accessor :output_path
@@ -26,7 +25,7 @@ class Accessor
     @setup = nil
     @db = nil
     @stack = nil
-    @ruler = nil
+    @aggregator = nil
     @renderer = nil
     @path = nil
     @output_path = nil

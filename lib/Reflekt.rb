@@ -15,7 +15,7 @@ require 'set'
 require 'erb'
 require 'rowdb'
 require 'Accessor'
-require 'Ruler'
+require 'Aggregator'
 require 'Control'
 require 'Execution'
 require 'Reflection'
@@ -63,7 +63,7 @@ module Reflekt
             execution.is_reflecting = true
 
             # Create control.
-            control = Control.new(execution, 1, @@reflekt.ruler)
+            control = Control.new(execution, 1, @@reflekt.aggregator)
             execution.control = control
 
             # Execute control.
@@ -76,7 +76,7 @@ module Reflekt
             execution.reflections.each_with_index do |value, index|
 
               # Create reflection.
-              reflection = Reflection.new(execution, index + 1, @@reflekt.ruler)
+              reflection = Reflection.new(execution, index + 1, @@reflekt.aggregator)
               execution.reflections[index] = reflection
 
               # Execute reflection.
@@ -155,14 +155,14 @@ module Reflekt
     @@reflekt.stack = ShadowStack.new()
 
     ## Create aggregated rules.
-    @@reflekt.ruler = Ruler.new()
+    @@reflekt.aggregator = Aggregator.new()
     ## TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
     db = @@reflekt.db.value()
 
     p db[:controls]
 
-    #@@reflekt.ruler.load(db[:controls])
-    #@@reflekt.ruler.train(klass, method)
+    #@@reflekt.aggregator.load(db[:controls])
+    #@@reflekt.aggregator.train(klass, method)
 
     # The amount of reflections to create per method call.
     @@reflekt.reflect_amount = 2

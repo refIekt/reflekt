@@ -1,16 +1,13 @@
 ################################################################################
-# CONTROL
-#
 # A shapshot of real data.
 #
-# Hierachy:
-# 1. Execution
-# 2. Control <- YOU ARE HERE.
-# 3. RuleSet
+# @hierachy
+#   1. Execution
+#   2. Control
+#   3. RuleSet
 ################################################################################
 
 require 'Reflection'
-require 'RuleController'
 
 class Control < Reflection
 
@@ -39,6 +36,11 @@ class Control < Reflection
 
   end
 
+  ##
+  # Provide the results of the control.
+  #
+  # @return [Hash] Control metadata.
+  ##
   def result()
 
     # The ID of the first execution in the ShadowStack.

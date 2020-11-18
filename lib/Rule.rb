@@ -1,7 +1,7 @@
 ################################################################################
-# RULE
+# All rules behave the same.
 #
-# Abstract class.
+# @pattern Abstract class.
 # @see lib/rules for rules.
 ################################################################################
 
@@ -9,24 +9,33 @@ require 'set'
 
 class Rule
 
+  ##
   # Each rule intitalises itself.
+  ##
   def initialize()
     @values = []
   end
 
-  # Each rule loads up an array of values.
-  def load(value)
-    @values << value
+  ##
+  # Each rule trains on a value to determine its boundaries.
+  ##
+  def train(value)
   end
 
-  # Each rule trains on values to determine its boundaries.
-  def train()
-
+  ##
+  # Each rule validates a value with its boundaries.
+  # @return [Boolean]
+  ##
+  def test(value)
   end
 
-  # Each rule compares the values it's given with its boundaries.
-  def validate(value)
-
+  ##
+  # Each rule provides metadata.
+  # @return [Hash]
+  ##
+  def result()
+    rule = {}
+    rule
   end
 
 end

@@ -63,7 +63,7 @@ class Reflection
     new_args = randomize(args)
 
     # Create RuleSet for each argument.
-    @input = create_rule_sets(new_args)
+    @inputs = create_rule_sets(new_args)
 
     # Action method with new arguments.
     begin

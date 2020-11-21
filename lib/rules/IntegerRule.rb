@@ -34,10 +34,11 @@ class IntegerRule < Rule
   end
 
   def result()
-    rule = {
-      :value => @value
+    {
+      :type => "int",
+      # Min and max are the same for the integer values.
+      :value => @min
     }
-    rule
   end
 
 end

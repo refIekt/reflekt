@@ -18,12 +18,16 @@ class Rule
 
   ##
   # Each rule trains on a value to determine its boundaries.
+  #
+  # @param value [Dynamic]
   ##
   def train(value)
   end
 
   ##
   # Each rule validates a value with its boundaries.
+  #
+  # @param value [Dynamic]
   # @return [Boolean]
   ##
   def test(value)
@@ -31,11 +35,11 @@ class Rule
 
   ##
   # Each rule provides metadata.
+  #
   # @return [Hash]
   ##
   def result()
-    rule = {}
-    rule
+    {}
   end
 
 end

@@ -18,4 +18,21 @@ class RuleSet
 
   end
 
+  ##
+  # Get the results of the rules.
+  #
+  # @return [Array] The rules.
+  ##
+  def result()
+
+    rules = {}
+
+    @rules.each do |key, rule|
+      rules[rule.class] = rule.result()
+    end
+
+    return rules
+
+  end
+
 end

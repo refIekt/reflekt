@@ -149,7 +149,7 @@ class Reflection
   end
 
   ##
-  # Provide the results of the reflection.
+  # Get the results of the reflection.
   #
   # @return [Hash] Reflection metadata.
   ##
@@ -171,10 +171,13 @@ class Reflection
       :class => @klass,
       :method => @method,
       :status => @status,
-      :inputs => @inputs,
+      :message => @message,
+      :inputs => [],
       :output => @output,
-      :message => @message
     }
+    @inputs.each do |input_rule_set|
+      reflection[:inputs] << input_rule_set.result()
+    end
 
     return reflection
 

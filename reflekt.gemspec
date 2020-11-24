@@ -1,8 +1,8 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '0.9.8'
-  spec.date        = '2020-11-19'
+  spec.version     = '0.9.9'
+  spec.date        = '2020-11-24'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
@@ -12,18 +12,26 @@ Gem::Specification.new do |spec|
   spec.license     = 'MPL-2.0'
 
   spec.files = [
+    # Core.
     "lib/Accessor.rb",
     "lib/Aggregator.rb",
     "lib/Control.rb",
     "lib/Execution.rb",
+    "lib/MetaBuilder.rb",
+    "lib/Meta.rb",
     "lib/Reflection.rb",
     "lib/Reflekt.rb",
     "lib/Renderer.rb",
     "lib/Rule.rb",
     "lib/RuleSet.rb",
     "lib/ShadowStack.rb",
+    # Meta.
+    "lib/meta/IntegerMeta.rb",
+    "lib/meta/StringMeta.rb",
+    # Rules.
     "lib/rules/IntegerRule.rb",
     "lib/rules/StringRule.rb",
+    # UI.
     "lib/web/bundle.js",
     "lib/web/gitignore.txt",
     "lib/web/index.html",

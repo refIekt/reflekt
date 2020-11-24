@@ -12,20 +12,46 @@ class StringRule < Rule
 
   end
 
-  def train(value)
-    # TODO.
+  ##
+  # @param meta [Meta]
+  ##
+  def train(meta)
+
+    length = meta[:length]
+
+    if @min_length.nil?
+      @min_length = length
+    else
+      @min_length = length if length < @min_length
+    end
+
+    if @max_length.nil?
+      @max_length = length
+    else
+      @max_length = length if length > @max_length
+    end
+
   end
 
+  ##
+  # @param value [String]
+  ##
   def test(value)
-    # TODO.
+
+    length = value.length
+
+    return false if length < @min_length
+    return false if length > @max_length
+
     true
   end
 
   def result()
-    rule = {
-      :value => @value
+    {
+      :type => :string,
+      :min_length => @min_length,
+      :max_length => @max_length
     }
-    rule
   end
 
 end

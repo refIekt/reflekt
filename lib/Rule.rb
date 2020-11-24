@@ -5,30 +5,21 @@
 # @see lib/rules for rules.
 ################################################################################
 
-require 'set'
-
 class Rule
 
   ##
-  # Each rule intitalises itself.
-  ##
-  def initialize()
-    @values = []
-  end
-
-  ##
-  # Each rule trains on a value to determine its boundaries.
+  # Each rule trains on metadata to determine its boundaries.
   #
-  # @param value [Dynamic]
+  # @param meta [Meta]
   ##
-  def train(value)
+  def train(meta)
   end
 
   ##
   # Each rule validates a value with its boundaries.
   #
   # @param value [Dynamic]
-  # @return [Boolean]
+  # @return [Boolean] Whether the value passes or fails.
   ##
   def test(value)
   end

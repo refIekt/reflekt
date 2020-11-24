@@ -9,7 +9,12 @@ class IntegerRule < Rule
 
   end
 
-  def train(value)
+  ##
+  # @param meta [IntegerMeta]
+  ##
+  def train(meta)
+
+    value = meta[:value]
 
     if @min.nil?
       @min = value
@@ -25,6 +30,9 @@ class IntegerRule < Rule
 
   end
 
+  ##
+  # @param value [Integer]
+  ##
   def test(value)
 
     return false if value < @min
@@ -35,9 +43,8 @@ class IntegerRule < Rule
 
   def result()
     {
-      :type => "int",
-      # Min and max are the same for the integer values.
-      :value => @min
+      :type => :int,
+      :value => @min # Min/max are the same.
     }
   end
 

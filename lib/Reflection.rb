@@ -3,11 +3,14 @@
 #
 # @nomenclature
 #   args/inputs/values are the same thing but at a different stage of lifecycle.
+#
 # @hierachy
 #   1. Execution
 #   2. Reflection
 #   3. RuleSet
 ################################################################################
+
+require 'MetaBuilder'
 
 class Reflection
 
@@ -33,7 +36,7 @@ class Reflection
     @klass = execution.klass
     @method = execution.method
 
-    # Rule sets.
+    # Metadata.
     @inputs = []
     @output = nil
 
@@ -62,8 +65,8 @@ class Reflection
     # Create random arguments.
     new_args = randomize(args)
 
-    # Create RuleSet for each argument.
-    @inputs = create_rule_sets(new_args)
+    # Create metadata for each argument.
+    @inputs = MetaBuilder.create_many(new_args)
 
     # Action method with new arguments.
     begin
@@ -77,7 +80,7 @@ class Reflection
 
       # Run reflection.
       output = @clone.send(@method, *new_args)
-      @output = create_rule_set(output)
+      @output = MetaBuilder.create(output)
 
       # Validate output with aggregated control RuleSets.
       unless agg_output_rule_set.nil?
@@ -117,37 +120,6 @@ class Reflection
 
   end
 
-  def create_rule_sets(args)
-
-    rule_sets = []
-
-    args.each do |arg|
-      rule_sets << create_rule_set(arg)
-    end
-
-    rule_sets
-  end
-
-  def create_rule_set(arg)
-
-    rule_set = RuleSet.new()
-    type = arg.class.to_s
-
-    # Creates values for matching data type.
-    case type
-    when "Integer"
-      rule = IntegerRule.new()
-      rule.train(arg)
-      rule_set.rules[IntegerRule] = rule
-    when "String"
-      rule = StringRule.new()
-      rule.train(arg)
-      rule_set.rules[StringRule] = rule
-    end
-
-    rule_set
-  end
-
   ##
   # Get the results of the reflection.
   #
@@ -175,8 +147,8 @@ class Reflection
       :inputs => [],
       :output => @output,
     }
-    @inputs.each do |input_rule_set|
-      reflection[:inputs] << input_rule_set.result()
+    @inputs.each do |meta|
+      reflection[:inputs] << meta.result()
     end
 
     return reflection

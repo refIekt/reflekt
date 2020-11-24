@@ -1,12 +1,16 @@
 ################################################################################
-# REFLEKT - By Maedi Prichard.
+# Reflective testing.
 #
-# An Execution is created each time a method is called.
-# Many Refections are created per Execution.
-# Each Reflection executes on a ShadowStack on cloned data.
-# Then flow is returned to the original method and normal execution continues.
+# @author
+#   Maedi Prichard
 #
-# Usage:
+# @flow
+#   1. An Execution is created on method call.
+#   2. Many Refections are created per Execution.
+#   3. Each Reflection executes on cloned data.
+#   4. Flow is returned to the original method.
+#
+# @usage
 #   class ExampleClass
 #     prepend Reflekt
 ################################################################################
@@ -150,19 +154,15 @@ module Reflekt
     # Create database.
     @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.js')
     @@reflekt.db.defaults({ :reflekt => { :api_version => 1 }})
-
-    # Create shadow execution stack.
-    @@reflekt.stack = ShadowStack.new()
-
-    ## Create aggregated rules.
-    @@reflekt.aggregator = Aggregator.new()
-    ## TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()?
+    # @TODO Fix Rowdb.get(path) not returning values at path after Rowdb.push()
     db = @@reflekt.db.value()
 
-    p db[:controls]
+    # Create shadow stack.
+    @@reflekt.stack = ShadowStack.new()
 
-    #@@reflekt.aggregator.load(db[:controls])
-    #@@reflekt.aggregator.train(klass, method)
+    # Create aggregated rule sets.
+    @@reflekt.aggregator = Aggregator.new()
+    @@reflekt.aggregator.train(db[:controls])
 
     # The amount of reflections to create per method call.
     @@reflekt.reflect_amount = 2
@@ -175,16 +175,17 @@ module Reflekt
     @@reflekt.renderer = Renderer.new(@@reflekt.path, @@reflekt.output_path)
 
     return true
+
   end
 
   module SingletonClassMethods
 
-    @@reflekt_skipped_methods = Set.new
+    @@reflekt_skipped_methods = Set.new()
 
     ##
     # Skip a method.
     #
-    # @param method - A symbol representing the method name.
+    # @param method [Symbol] The method name.
     ##
     def reflekt_skip(method)
       @@reflekt_skipped_methods.add(method)

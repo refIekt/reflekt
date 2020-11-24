@@ -8,6 +8,7 @@
 ################################################################################
 
 require 'Reflection'
+require 'MetaBuilder'
 
 class Control < Reflection
 
@@ -22,6 +23,9 @@ class Control < Reflection
   ##
   def reflect(*args)
 
+    # Create metadata for each argument.
+    @inputs = MetaBuilder.create_many(args)
+
     # Action method with new arguments.
     begin
       output = @clone.send(@method, *args)
@@ -33,38 +37,6 @@ class Control < Reflection
     else
       @status = :pass
     end
-
-  end
-
-  ##
-  # Provide the results of the control.
-  #
-  # @return [Hash] Control metadata.
-  ##
-  def result()
-
-    # The ID of the first execution in the ShadowStack.
-    base_id = nil
-    unless @execution.base == nil
-      base_id = @execution.base.unique_id
-    end
-
-    # Build control.
-    control = {
-      :base_id => base_id,
-      :exe_id => @execution.unique_id,
-      :ref_id => @unique_id,
-      :ref_num => @number,
-      :time => @time,
-      :class => @klass,
-      :method => @method,
-      :status => @status,
-      :inputs => @inputs,
-      :output => @output,
-      :message => @message
-    }
-
-    return control
 
   end
 

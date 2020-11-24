@@ -1,7 +1,9 @@
 ################################################################################
-# Aggregate control RuleSets. Validate reflection arguments against aggregates.
+# Aggregate reflection metadata into rule sets.
+# Validate reflection arguments against aggregates.
 #
 # @pattern Singleton
+#
 # @hierachy
 #   1. Aggregator
 #   2. RuleSet
@@ -14,7 +16,7 @@ class Aggregator
 
   def initialize()
 
-    # Store by class and method.
+    # Key rule sets by class and method.
     @rule_sets = {}
 
   end
@@ -83,92 +85,55 @@ class Aggregator
   end
 
   ##
-  # Create aggregated RuleSets.
+  # Create aggregated rule sets from reflection metadata.
   #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  # @param controls [Array]
+  # @param reflections [Array] Controls with metadata.
   ##
-  def load(controls)
+  def train(reflections)
 
-    # Create aggregated RuleSets for each control's inputs/output.
-    controls.each do |control|
+    # On first use there are no previous reflections.
+    return if reflections.nil?
 
-      # Process inputs.
-      control[:inputs].each_with_index do |input, arg_num|
-        rule_set = get_input_rule_set(klass, method, arg_num)
-        if rule_set.nil?
-          rule_set = RuleSet.new()
-          set_input_rule_set(klass, method, arg_num, rule_set)
+    reflections.each do |reflection|
+
+      klass = reflection[:class]
+      method = reflection[:method]
+
+      ##
+      # INPUT
+      ##
+
+      unless reflection[:inputs].nil?
+        reflection[:inputs].each_with_index do |meta, arg_num|
+
+          # Get rule set.
+          rule_set = get_input_rule_set(klass, method, arg_num)
+          if rule_set.nil?
+            rule_set = RuleSet.new()
+            set_input_rule_set(klass, method, arg_num, rule_set)
+          end
+
+          # Train on metadata.
+          rule_set.train(meta)
+
         end
-        rule_set.train(input[:type], input[:value])
       end
 
-      # Process output.
+      ##
+      # OUTPUT
+      ##
+
+      # Get rule set.
       output_rule_set = get_output_rule_set(klass, method)
       if output_rule_set.nil?
         output_rule_set = RuleSet.new()
         set_output_rule_set(klass, method, output_rule_set)
       end
-      output_rule_set.train(control[:output][:type], control[:output][:value])
+
+      # Train on metadata.
+      output_rule_set.train(reflection[:output])
 
     end
-
-  end
-
-  ##
-  # Train RuleSets from controls.
-  #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  ##
-  def train(klass, method)
-
-    input_rule_sets = get_input_rule_sets(klass, method)
-    unless input_rule_sets.nil?
-      input_rule_sets.each do |input_rule_set|
-        input_rule_set.train()
-      end
-    end
-
-    output_rule_set = get_output_rule_set(klass, method)
-    unless output_rule_set.nil?
-      output_rule_set.train()
-    end
-
-  end
-
-  def train_from_rule(rule)
-
-    # Track data type.
-    @types << type
-
-    # Get rule for this data type.
-    rule = nil
-
-    case type
-    when "Integer"
-      unless @rules.key? IntegerRule
-        rule = IntegerRule.new()
-        @rules[IntegerRule] = rule
-      else
-        rule = @rules[IntegerRule]
-      end
-    when "String"
-      unless @rules.key? StringRule
-        rule = StringRule.new()
-        @rules[StringRule] = rule
-      else
-        rule = @rules[IntegerRule]
-      end
-    end
-
-    # Add value to rule.
-    unless rule.nil?
-      rule.load(value)
-    end
-
-    return self
 
   end
 

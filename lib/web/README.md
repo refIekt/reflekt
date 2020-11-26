@@ -1,6 +1,6 @@
 # Reflections
 
-As you use the application reflections will be added to `/reflections/db.js`.
+As you use the application reflections will be added to `/reflections/db.js`.  
 They can be viewed by opening `/reflections/index.html` in your browser, no server setup required.
 
 If you would like to keep or delete reflections then start the server:

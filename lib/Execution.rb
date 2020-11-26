@@ -17,10 +17,10 @@ class Execution
   ##
   # Create Execution.
   #
-  # @param Object object - The calling object.
-  # @param Symbol method - The calling method.
-  # @param Integer number - The number of reflections to create per execution.
-  # @param ShadowStack stack - The shadow execution call stack.
+  # @param object [Object] The calling object.
+  # @param method [Symbol] The calling method.
+  # @param number [Integer] The number of reflections to create per execution.
+  # @param stack [ShadowStack] The shadow execution call stack.
   ##
   def initialize(caller_object, method, number, stack)
 

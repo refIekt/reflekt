@@ -1,7 +1,14 @@
 ################################################################################
 # All rules behave the same.
 #
-# @pattern Abstract class.
+# @pattern
+#   Abstract class.
+#
+# @hierachy
+#   1. Aggregator
+#   2. RuleSet
+#   3. Rule <- YOU ARE HERE.
+#
 # @see lib/rules for rules.
 ################################################################################
 

@@ -1,5 +1,13 @@
 ################################################################################
 # A collection of rules that validate a value.
+#
+# @patterns
+#   [Dependency Injection, Builder]
+#
+# @hierachy
+#   1. Aggregator
+#   2. RuleSet <- YOU ARE HERE.
+#   3. Rule
 ################################################################################
 
 require 'set'
@@ -8,42 +16,15 @@ class RuleSet
 
   attr_accessor :rules
 
-  def initialize()
+  ##
+  # @param rule_map [Hash] The rules to apply to each data type.
+  ##
+  def initialize(rule_map)
 
+    @rule_map = rule_map
     @rules = {}
     @types = Set.new()
 
-  end
-
-  def self.create_sets(args)
-
-    rule_sets = []
-
-    args.each do |arg|
-      rule_sets << self.create_set(arg)
-    end
-
-    rule_sets
-  end
-
-  def self.create_set(value)
-
-    rule_set = RuleSet.new()
-    value_type = value.class.to_s
-
-    # Creates values for matching data type.
-    case value_type
-    when "Integer"
-      rule = IntegerRule.new()
-      rule.train(arg)
-      rule_set.rules[IntegerRule] = rule
-    when "String"
-      rule = StringRule.new()
-      rule.train(arg)
-      rule_set.rules[StringRule] = rule
-    end
-
-    rule_set
   end
 
   ##
@@ -55,30 +36,23 @@ class RuleSet
 
     # Track data type.
     @types << meta.class
-    type = meta.class.to_s
+    meta_type = meta.class
 
-    # Get rule for this data type.
-    rule = nil
-    case type
-    when "Integer"
-      unless @rules.key? IntegerRule
-        rule = IntegerRule.new()
-        @rules[IntegerRule] = rule
-      else
-        rule = @rules[IntegerRule]
-      end
-    when "String"
-      unless @rules.key? StringRule
-        rule = StringRule.new()
-        @rules[StringRule] = rule
-      else
-        rule = @rules[IntegerRule]
-      end
-    end
+    # Get rules for this meta type.
+    if @rule_map.key? meta_type
 
-    # Train rule.
-    unless rule.nil?
-      rule.train(meta)
+      @rule_map[meta_type].each do |rule_type|
+
+        # Ensure rules exist for this meta type.
+        if @rules[rule_type].nil?
+          @rules << rule_type.new()
+        end
+
+        # Train rules for this type.
+        @rules[rule_type].train(meta)
+
+      end
+
     end
 
     return self

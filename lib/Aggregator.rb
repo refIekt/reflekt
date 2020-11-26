@@ -5,7 +5,7 @@
 # @pattern Singleton
 #
 # @hierachy
-#   1. Aggregator
+#   1. Aggregator <- YOU ARE HERE.
 #   2. RuleSet
 #   3. Rule
 ################################################################################
@@ -14,8 +14,12 @@ require 'RuleSet'
 
 class Aggregator
 
-  def initialize()
+  ##
+  # @param rule_map [Hash] The rules to apply to each data type.
+  ##
+  def initialize(rule_map)
 
+    @rule_map = rule_map
     # Key rule sets by class and method.
     @rule_sets = {}
 
@@ -109,7 +113,7 @@ class Aggregator
           # Get rule set.
           rule_set = get_input_rule_set(klass, method, arg_num)
           if rule_set.nil?
-            rule_set = RuleSet.new()
+            rule_set = RuleSet.new(@rule_map)
             set_input_rule_set(klass, method, arg_num, rule_set)
           end
 
@@ -126,7 +130,7 @@ class Aggregator
       # Get rule set.
       output_rule_set = get_output_rule_set(klass, method)
       if output_rule_set.nil?
-        output_rule_set = RuleSet.new()
+        output_rule_set = RuleSet.new(@rule_map)
         set_output_rule_set(klass, method, output_rule_set)
       end
 

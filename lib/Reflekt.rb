@@ -25,6 +25,8 @@ require 'Execution'
 require 'Reflection'
 require 'Renderer'
 require 'ShadowStack'
+# Require all rules.
+Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require file }
 
 module Reflekt
 
@@ -160,15 +162,24 @@ module Reflekt
     # Create shadow stack.
     @@reflekt.stack = ShadowStack.new()
 
+    # Define rules that apply to data types.
+    # TODO: Make user configurable.
+    rule_map = {
+      Integer => [IntegerRule],
+      String => [StringRule]
+    }
+
     # Create aggregated rule sets.
-    @@reflekt.aggregator = Aggregator.new()
+    @@reflekt.aggregator = Aggregator.new(rule_map)
     @@reflekt.aggregator.train(db[:controls])
 
     # The amount of reflections to create per method call.
+    # TODO: Make user configurable.
     @@reflekt.reflect_amount = 2
 
     # Limit the amount of reflections that can be created per instance method.
     # A method called thousands of times doesn't need that many reflections.
+    # TODO: Make user configurable.
     @@reflekt.reflect_limit = 10
 
     # Create renderer.

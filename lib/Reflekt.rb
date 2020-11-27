@@ -162,18 +162,17 @@ module Reflekt
     # Create shadow stack.
     @@reflekt.stack = ShadowStack.new()
 
-    # Define rules that apply to data types.
+    # Define the rules that apply to meta types.
     # TODO: Make user configurable.
-    rule_map = {
-      Array => [ArrayRule],
-      TrueClass => [BooleanRule],
-      FalseClass => [BooleanRule],
-      Integer => [IntegerRule],
-      String => [StringRule]
+    meta_map = {
+      :array  => [ArrayRule],
+      :bool   => [BooleanRule],
+      :int    => [IntegerRule],
+      :string => [StringRule]
     }
 
     # Create aggregated rule sets.
-    @@reflekt.aggregator = Aggregator.new(rule_map)
+    @@reflekt.aggregator = Aggregator.new(meta_map)
     @@reflekt.aggregator.train(db[:controls])
 
     # The amount of reflections to create per method call.

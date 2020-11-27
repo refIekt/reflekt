@@ -17,11 +17,11 @@ class RuleSet
   attr_accessor :rules
 
   ##
-  # @param rule_map [Hash] The rules to apply to each data type.
+  # @param meta_map [Hash] The rules to apply to each data type.
   ##
-  def initialize(rule_map)
+  def initialize(meta_map)
 
-    @rule_map = rule_map
+    @meta_map = meta_map
     @rules = {}
     @types = Set.new()
 
@@ -34,25 +34,22 @@ class RuleSet
   ##
   def train(meta)
 
-    # Track data type.
-    @types << meta.class
-    meta_type = meta.class
+    meta_type = meta[:type]
+    @types << meta_type
 
-    # Get rules for this meta type.
-    if @rule_map.key? meta_type
+    # Get rule types for this meta type.
+    if @meta_map.key? meta_type
+      @meta_map[meta_type].each do |rule_type|
 
-      @rule_map[meta_type].each do |rule_type|
-
-        # Ensure rules exist for this meta type.
+        # Ensure rule exists.
         if @rules[rule_type].nil?
           @rules << rule_type.new()
         end
 
-        # Train rules for this type.
+        # Train rule.
         @rules[rule_type].train(meta)
 
       end
-
     end
 
     return self

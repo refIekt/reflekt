@@ -13,7 +13,7 @@ class StringRule < Rule
   end
 
   ##
-  # @param meta [Meta]
+  # @param meta [StringMeta]
   ##
   def train(meta)
 

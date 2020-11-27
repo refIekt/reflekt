@@ -44,7 +44,8 @@ class IntegerRule < Rule
   def result()
     {
       :type => :int,
-      :value => @min # Min/max are the same.
+      :min => @min,
+      :max => @max
     }
   end
 

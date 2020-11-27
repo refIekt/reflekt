@@ -1,13 +1,13 @@
 require 'Meta'
 
-class IntegerMeta < Meta
+class BooleanMeta < Meta
 
   def initialize()
     @value = nil
   end
 
   ##
-  # @param value [Integer]
+  # @param value [Boolean]
   ##
   def load(value)
     @value = value
@@ -15,7 +15,7 @@ class IntegerMeta < Meta
 
   def result()
     {
-      :type => :int,
+      :type => :bool,
       :value => @value
     }
   end

@@ -166,7 +166,8 @@ module Reflekt
     # TODO: Make user configurable.
     rule_map = {
       Array => [ArrayRule],
-      Boolean => [BooleanRule],
+      TrueClass => [BooleanRule],
+      FalseClass => [BooleanRule],
       Integer => [IntegerRule],
       String => [StringRule]
     }

@@ -165,6 +165,8 @@ module Reflekt
     # Define rules that apply to data types.
     # TODO: Make user configurable.
     rule_map = {
+      Array => [ArrayRule],
+      Boolean => [BooleanRule],
       Integer => [IntegerRule],
       String => [StringRule]
     }

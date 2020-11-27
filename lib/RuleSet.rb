@@ -34,25 +34,29 @@ class RuleSet
   ##
   def train(meta)
 
-    meta_type = meta[:type]
-    @types << meta_type
+    unless meta.nil? || meta[:type].nil?
 
-    # Get rule types for this meta type.
-    if @meta_map.key? meta_type
-      @meta_map[meta_type].each do |rule_type|
+      meta_type = meta[:type]
+      @types << meta_type
 
-        # Ensure rule exists.
-        if @rules[rule_type].nil?
-          @rules << rule_type.new()
+      # Get rule types for this meta type.
+      if @meta_map.key? meta_type
+        @meta_map[meta_type].each do |rule_type|
+
+          # Ensure rule exists.
+          if @rules[rule_type].nil?
+            @rules << rule_type.new()
+          end
+
+          # Train rule.
+          @rules[rule_type].train(meta)
+
         end
-
-        # Train rule.
-        @rules[rule_type].train(meta)
-
       end
-    end
 
-    return self
+      return self
+
+    end
 
   end
 

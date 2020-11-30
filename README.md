@@ -75,21 +75,15 @@ end
 ```ruby
 reflekt_skip :render
 
+# Business logic.
 def show(product)
-
-  # Business logic.
-  product.title = "Showing #{product.name}"
-  
-  # Rendering logic.
+  product.title = "Showing #{product.name}"  
   render(product)
-  
 end
 
+# Rendering logic.
 def render(product)
-
-  # Rendering logic.
   puts product
-
 end
 ```
 

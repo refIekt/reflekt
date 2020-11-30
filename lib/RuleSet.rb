@@ -1,12 +1,13 @@
 ################################################################################
-# A collection of rules that validate a value.
+# A collection of rules that validate metadata.
 #
 # @patterns
-#   [Dependency Injection, Builder]
+#   - Dependency Injection
+#   - Builder
 #
 # @hierachy
 #   1. Aggregator
-#   2. RuleSet <- YOU ARE HERE.
+#   2. RuleSet <- YOU ARE HERE
 #   3. Rule
 ################################################################################
 

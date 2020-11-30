@@ -1,7 +1,7 @@
 ################################################################################
-# Meta for input and output. All meta behave the same.
+# Metadata for input and output.
 #
-# @pattern Abstract class.
+# @pattern Abstract class
 # @see lib/meta for each meta.
 ################################################################################
 

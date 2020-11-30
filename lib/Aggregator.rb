@@ -5,7 +5,7 @@
 # @pattern Singleton
 #
 # @hierachy
-#   1. Aggregator <- YOU ARE HERE.
+#   1. Aggregator <- YOU ARE HERE
 #   2. RuleSet
 #   3. Rule
 ################################################################################

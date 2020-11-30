@@ -61,8 +61,13 @@ Separate the final output from the rendering logic so that Reflekt can track cha
 **Don't do:**
 ```ruby
 def show(product)
+
+  # Business logic.
   product.title = "Showing #{product.name}"
+  
+  # Rendering logic.
   puts products
+  
 end
 ```
 
@@ -71,12 +76,20 @@ end
 reflekt_skip :render
 
 def show(product)
+
+  # Business logic.
   product.title = "Showing #{product.name}"
+  
+  # Rendering logic.
   render(product)
+  
 end
 
 def render(product)
+
+  # Rendering logic.
   puts product
+
 end
 ```
 

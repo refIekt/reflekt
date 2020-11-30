@@ -56,16 +56,28 @@ class ExampleClass
 ### Displaying test data
 
 Use `reflekt_skip` on methods that do the final render to the UI to avoid a visual mess of duplicated elements.
-Ensure that there is a dedicated method that renders output, so that Reflekt can track changes in output.
-
-**Do:**
-```ruby
-
-```
+Separate the final output from the rendering logic so that Reflekt can track changes in output.
 
 **Don't do:**
 ```ruby
+def show(product)
+  product.title = "Showing #{product.name}"
+  puts products
+end
+```
 
+**Do:**
+```ruby
+reflekt_skip :render
+
+def show(product)
+  product.title = "Showing #{product.name}"
+  render(product)
+end
+
+def render(product)
+  puts product
+end
 ```
 
 ### Saving test data

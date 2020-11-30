@@ -5,7 +5,6 @@
 #
 # @note Some variables are not accessed via Accessor:
 #   - @reflekt_counts on the instance
-#   - @reflekt_enabled on the instance
 #   - @@reflekt_skipped_methods on the instance's singleton class
 ################################################################################
 

@@ -82,7 +82,7 @@ end
 
 ### Saving test data
 
-If you don't want test data to save to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database, like you would with unit testing. To check when Reflekt is enabled use the `@reflekt_enabled` boolean property on an object, or use `reflekt_skip` on the method that saves to the database.
+If you don't want test data to save to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database. To check when Reflekt is enabled use the `@reflekt_enabled` boolean property on an object, or use `reflekt_skip` on the method that saves to the database.
 
 ## How it works
 

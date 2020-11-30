@@ -1,14 +1,15 @@
 ################################################################################
 # Reflective testing.
 #
-# @author
-#   Maedi Prichard
+# @author Maedi Prichard
 #
 # @flow
-#   1. An Execution is created on method call.
-#   2. Many Refections are created per Execution.
-#   3. Each Reflection executes on cloned data.
-#   4. Flow is returned to the original method.
+#   1. Reflekt is prepended to a class and setup.
+#   2. When a class insantiates so does Reflekt.
+#   3. An Execution is created on method call.
+#   4. Many Refections are created per Execution.
+#   5. Each Reflection executes on cloned data.
+#   6. Flow is returned to the original method.
 #
 # @usage
 #   class ExampleClass
@@ -34,23 +35,24 @@ module Reflekt
 
     @reflekt_counts = {}
 
-    # Get instance methods.
-    # TODO: Include parent methods like "Array.include?".
-    self.class.instance_methods(false).each do |method|
+    # Get child and parent instance methods.
+    parent_instance_methods = self.class.superclass.instance_methods(false)
+    child_instance_methods = self.class.instance_methods(false)
+    instance_methods = parent_instance_methods + child_instance_methods
 
-      # Don't process skipped methods.
-      next if self.class.reflekt_skipped?(method)
+    # TODO: Include core methods like "Array.include?".
+    instance_methods.each do |method|
 
       @reflekt_counts[method] = 0
 
       # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
-        # Don't reflect when limit reached.
-        unless @reflekt_counts[method] >= @@reflekt.reflect_limit
+        # Get current execution.
+        execution = @@reflekt.stack.peek()
 
-          # Get current execution.
-          execution = @@reflekt.stack.peek()
+        # Don't reflect when reflect limit reached or method skipped.
+        unless (@reflekt_counts[method] >= @@reflekt.reflect_limit) || self.class.reflekt_skipped?(method)
 
           # When stack empty or past execution done reflecting.
           if execution.nil? || execution.has_finished_reflecting?
@@ -62,9 +64,12 @@ module Reflekt
 
           end
 
-          # Reflect.
+          ##
+          # Reflect the execution.
+          #
           # The first method call in the Execution creates a Reflection.
           # Subsequent method calls are shadow executions on cloned objects.
+          ##
           if execution.has_empty_reflections? && !execution.is_reflecting?
             execution.is_reflecting = true
 
@@ -105,8 +110,13 @@ module Reflekt
 
         end
 
-        # Continue execution / shadow execution.
-        super *args
+        # Don't execute skipped methods when reflecting.
+        unless execution.is_reflecting? && self.class.reflekt_skipped?(method)
+
+          # Continue execution / shadow execution.
+          super *args
+
+        end
 
       end
 
@@ -197,6 +207,10 @@ module Reflekt
 
     ##
     # Skip a method.
+    #
+    # @note
+    #  Class variables cascade to child classes.
+    #  So a reflekt_skip on the parent class will persist to the child class.
     #
     # @param method [Symbol] The method name.
     ##

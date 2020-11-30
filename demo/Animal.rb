@@ -4,7 +4,6 @@ class Animal
 
   prepend Reflekt
 
-  # TODO: Fix.
   reflekt_skip :talk
 
   def initialize()

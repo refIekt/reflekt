@@ -44,6 +44,19 @@ In terminal run:
 bundle install
 ```
 
+## Configuration
+
+```ruby
+Reflekt.configure do |config|
+  # The amount of reflections to create per method call.
+  config.reflect_amount = 5
+  # The maximum amount of reflections that can be created per instance/method.
+  config.reflect_limit = 10
+end
+```
+
+See `Config.rb` for more configuration options.
+
 ## Test data
 
 You can configure Reflekt to skip "no undo" methods like deletion and sending email:

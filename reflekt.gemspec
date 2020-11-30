@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
     # Core.
     "lib/Accessor.rb",
     "lib/Aggregator.rb",
+    "lib/Config.rb",
     "lib/Control.rb",
     "lib/Execution.rb",
     "lib/MetaBuilder.rb",

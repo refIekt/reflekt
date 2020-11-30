@@ -21,6 +21,7 @@ require 'erb'
 require 'rowdb'
 require 'Accessor'
 require 'Aggregator'
+require 'Config'
 require 'Control'
 require 'Execution'
 require 'Reflection'
@@ -52,13 +53,13 @@ module Reflekt
         execution = @@reflekt.stack.peek()
 
         # Don't reflect when reflect limit reached or method skipped.
-        unless (@reflekt_counts[method] >= @@reflekt.reflect_limit) || self.class.reflekt_skipped?(method)
+        unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || self.class.reflekt_skipped?(method)
 
           # When stack empty or past execution done reflecting.
           if execution.nil? || execution.has_finished_reflecting?
 
             # Create execution.
-            execution = Execution.new(self, method, @@reflekt.reflect_amount, @@reflekt.stack)
+            execution = Execution.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
 
             @@reflekt.stack.push(execution)
 
@@ -127,6 +128,13 @@ module Reflekt
 
   end
 
+  ##
+  # Provide Config instance to block.
+  ##
+  def self.configure
+    yield(@@reflekt.config)
+  end
+
   private
 
   def self.prepended(base)
@@ -144,18 +152,16 @@ module Reflekt
   def self.reflekt_setup_class()
 
     # Receive configuration.
-    $ENV ||= {}
-    $ENV[:reflekt] ||= $ENV[:reflekt] = {}
-    $ENV[:reflekt][:output_directory] = "reflections"
+    @@reflekt.config = Config.new()
 
     # Set configuration.
     @@reflekt.path = File.dirname(File.realpath(__FILE__))
 
     # Get reflections directory path from config or current execution path.
-    if $ENV[:reflekt][:output_path]
-      @@reflekt.output_path = File.join($ENV[:reflekt][:output_path], $ENV[:reflekt][:output_directory])
+    if @@reflekt.config.output_path
+      @@reflekt.output_path = File.join(@@reflekt.config.output_path, @@reflekt.config.output_directory)
     else
-      @@reflekt.output_path = File.join(Dir.pwd, $ENV[:reflekt][:output_directory])
+      @@reflekt.output_path = File.join(Dir.pwd, @@reflekt.config.output_directory)
     end
 
     # Create reflections directory.
@@ -172,27 +178,9 @@ module Reflekt
     # Create shadow stack.
     @@reflekt.stack = ShadowStack.new()
 
-    # Define the rules that apply to meta types.
-    # TODO: Make user configurable.
-    meta_map = {
-      :array  => [ArrayRule],
-      :bool   => [BooleanRule],
-      :int    => [IntegerRule],
-      :string => [StringRule]
-    }
-
     # Create aggregated rule sets.
-    @@reflekt.aggregator = Aggregator.new(meta_map)
+    @@reflekt.aggregator = Aggregator.new(@@reflekt.config.meta_map)
     @@reflekt.aggregator.train(db[:controls])
-
-    # The amount of reflections to create per method call.
-    # TODO: Make user configurable.
-    @@reflekt.reflect_amount = 2
-
-    # Limit the amount of reflections that can be created per instance method.
-    # A method called thousands of times doesn't need that many reflections.
-    # TODO: Make user configurable.
-    @@reflekt.reflect_limit = 10
 
     # Create renderer.
     @@reflekt.renderer = Renderer.new(@@reflekt.path, @@reflekt.output_path)
@@ -223,9 +211,9 @@ module Reflekt
       false
     end
 
-    def reflekt_limit(amount)
-      @@reflekt.reflect_limit = amount
-    end
+    #def reflekt_limit(amount)
+    #  @@reflekt.reflect_limit = amount
+    #end
 
   end
 

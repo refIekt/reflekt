@@ -10,6 +10,7 @@
 
 class Accessor
 
+  attr_accessor :config
   attr_accessor :setup
   attr_accessor :db
   attr_accessor :stack
@@ -17,11 +18,10 @@ class Accessor
   attr_accessor :renderer
   attr_accessor :path
   attr_accessor :output_path
-  attr_accessor :reflect_amount
-  attr_accessor :reflect_limit
 
   def initialize()
 
+    @config = nil
     @setup = nil
     @db = nil
     @stack = nil
@@ -29,8 +29,6 @@ class Accessor
     @renderer = nil
     @path = nil
     @output_path = nil
-    @reflect_amount = nil
-    @reflect_limit = nil
 
   end
 

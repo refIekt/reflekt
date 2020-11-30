@@ -110,10 +110,10 @@ Conceptual differences between testing methodologies:
 | **Replication**   | ❌ Tests run externally   | ❌ Tests run externally       | ✅ Tests run internally   |
 | **Feedback loop** | ❌ Tests run periodically | ❌ Tests run periodically     | ✅ Tests run in real time |
 
-**Tests run internally**
+**Tests run internally**  
 Tests run alongside the normal execution of the program using the exact same code. There is no duplicate code in different files/environments calling the same APIs.
 
-**Tests run in real time**
+**Tests run in real time**  
 Multiple simulations run as you use your application.
 
 **Consider this logic:**  

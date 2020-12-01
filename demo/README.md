@@ -7,7 +7,8 @@ It tells a story of true love while illustrating how Reflekt works.
 
 Run:
 ```
-ruby ./demo/RUNME.rb
+cd demo
+ruby RUNME.rb
 ```
 
-View reflections at `/reflections/index.html`.
+View reflections at `demo/reflections/index.html`.

@@ -2,19 +2,18 @@
 # A snapshot of simulated data.
 #
 # @nomenclature
-#   args/inputs/values are the same thing but at a different stage of lifecycle.
+#   args, inputs/output and meta represent different stages of a value.
 #
 # @hierachy
 #   1. Execution
-#   2. Reflection
-#   3. RuleSet
+#   2. Reflection <- YOU ARE HERE
+#   3. Meta
 ################################################################################
 
+require 'Clone'
 require 'MetaBuilder'
 
 class Reflection
-
-  attr_accessor :clone
 
   ##
   # Create a Reflection.
@@ -41,7 +40,7 @@ class Reflection
     @output = nil
 
     # Clone the execution's calling object.
-    @clone = execution.caller_object.clone
+    @clone = Clone.new(execution)
     @clone_id = nil
 
     # Result.
@@ -79,7 +78,7 @@ class Reflection
       end
 
       # Run reflection.
-      output = @clone.send(@method, *new_args)
+      output = @clone.call(@method, *new_args)
       @output = MetaBuilder.create(output)
 
       # Validate output with aggregated control RuleSets.

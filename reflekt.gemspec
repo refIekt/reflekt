@@ -1,8 +1,8 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '0.9.9'
-  spec.date        = '2020-11-30'
+  spec.version     = '0.9.91'
+  spec.date        = '2020-12-01'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
     # Core.
     "lib/Accessor.rb",
     "lib/Aggregator.rb",
+    "lib/Clone.rb",
     "lib/Config.rb",
     "lib/Control.rb",
     "lib/Execution.rb",

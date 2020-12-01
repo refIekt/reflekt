@@ -1,3 +1,12 @@
+################################################################################
+# A shadow execution.
+#
+# @hierachy
+#   1. Execution <- YOU ARE HERE
+#   2. Reflection
+#   3. Meta
+################################################################################
+
 class Execution
 
   attr_accessor :unique_id

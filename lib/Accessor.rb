@@ -18,6 +18,7 @@ class Accessor
   attr_accessor :renderer
   attr_accessor :path
   attr_accessor :output_path
+  attr_accessor :control_failed
 
   def initialize()
 
@@ -29,6 +30,7 @@ class Accessor
     @renderer = nil
     @path = nil
     @output_path = nil
+    @control_failed = false
 
   end
 

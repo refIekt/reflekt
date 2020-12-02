@@ -15,6 +15,8 @@ require 'MetaBuilder'
 
 class Reflection
 
+  attr_reader :status
+
   ##
   # Create a Reflection.
   #
@@ -36,49 +38,56 @@ class Reflection
     @method = execution.method
 
     # Metadata.
-    @inputs = []
+    @inputs = nil
     @output = nil
 
     # Clone the execution's calling object.
-    @clone = Clone.new(execution)
-    @clone_id = nil
+    # TODO: Abstract away into Clone class.
+    @clone = execution.caller_object.clone
 
     # Result.
     @status = :pass
     @time = Time.now.to_i
+    @message = nil
 
   end
 
   ##
   # Reflect on a method.
   #
-  # Creates a shadow execution stack.
+  # Creates a shadow execution.
   # @param *args [Dynamic] The method's arguments.
   ##
   def reflect(*args)
 
-    # Get aggregated RuleSets.
-    agg_input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
-    agg_output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+    # Get arguments.
+    new_args = []
+    unless args.size == 0
 
-    # Create random arguments.
-    new_args = randomize(args)
+      # Get aggregated RuleSets.
+      agg_input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
+      agg_output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
-    # Create metadata for each argument.
-    @inputs = MetaBuilder.create_many(new_args)
+      # Create random arguments.
+      new_args = randomize(args)
+
+      # Create metadata for each argument.
+      @inputs = MetaBuilder.create_many(new_args)
+
+    end
 
     # Action method with new arguments.
     begin
 
-      # Validate input with aggregated control RuleSets.
-      unless agg_input_rule_sets.nil?
+      # Validate inputs against aggregated control RuleSets.
+      unless args.size == 0 || agg_input_rule_sets.nil?
         unless @aggregator.validate_inputs(new_args, agg_input_rule_sets)
           @status = :fail
         end
       end
 
       # Run reflection.
-      output = @clone.call(@method, *new_args)
+      output = @clone.send(@method, *new_args)
       @output = MetaBuilder.create(output)
 
       # Validate output with aggregated control RuleSets.
@@ -143,11 +152,14 @@ class Reflection
       :method => @method,
       :status => @status,
       :message => @message,
-      :inputs => [],
+      :inputs => nil,
       :output => @output,
     }
-    @inputs.each do |meta|
-      reflection[:inputs] << meta.result()
+    unless @inputs.nil?
+      reflection[:inputs] = []
+      @inputs.each do |meta|
+        reflection[:inputs] << meta.result()
+      end
     end
 
     return reflection

@@ -9,7 +9,8 @@ class Config
   def initialize()
 
     # The amount of reflections to create per method call.
-    @reflect_amount = 2
+    # A control reflection is created in addition to this.
+    @reflect_amount = 5
 
     # The maximum amount of reflections that can be created per instance/method.
     # A method called thousands of times doesn't need that many reflections.

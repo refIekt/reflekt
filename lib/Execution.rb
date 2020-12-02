@@ -28,10 +28,10 @@ class Execution
   #
   # @param object [Object] The calling object.
   # @param method [Symbol] The calling method.
-  # @param number [Integer] The number of reflections to create per execution.
+  # @param reflect_amount [Integer] The number of reflections to create per execution.
   # @param stack [ShadowStack] The shadow execution call stack.
   ##
-  def initialize(caller_object, method, number, stack)
+  def initialize(caller_object, method, reflect_amount, stack)
 
     @time = Time.now.to_i
     @unique_id = @time + rand(1..99999)
@@ -51,7 +51,7 @@ class Execution
 
     # Reflections.
     @control = nil
-    @reflections = Array.new(number)
+    @reflections = Array.new(reflect_amount)
 
     # State.
     if @stack.peek() == nil

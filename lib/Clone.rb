@@ -2,6 +2,10 @@
 # A clone of the instance that a reflection calls methods on,
 # as well as any other instances that those methods may lead to.
 #
+# @note
+#   Not currently in use due to bug where "send" needs to be called directly
+#   on object, not indirectly through clone which results in "undefined method".
+#
 # @hierachy
 #   1. Execution
 #   2. Reflection
@@ -20,7 +24,7 @@ class Clone
 
   end
 
-  def call(method, *new_args)
+  def action(method, *new_args)
     @caller_object_clone.send(method, *new_args)
   end
 

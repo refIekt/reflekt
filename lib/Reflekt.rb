@@ -34,6 +34,7 @@ module Reflekt
 
   def initialize(*args)
 
+    # TODO: Store counts on @@reflekt and key by instance ID.
     @reflekt_counts = {}
 
     # Get child and parent instance methods.
@@ -49,74 +50,88 @@ module Reflekt
       # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
-        # Get current execution.
-        execution = @@reflekt.stack.peek()
+        # Don't reflect further if the control reflection fails.
+        unless @@reflekt.control_failed
 
-        # Don't reflect when reflect limit reached or method skipped.
-        unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || self.class.reflekt_skipped?(method)
+          # Get current execution.
+          execution = @@reflekt.stack.peek()
 
-          # When stack empty or past execution done reflecting.
-          if execution.nil? || execution.has_finished_reflecting?
+          # Don't reflect when reflect limit reached or method skipped.
+          unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || self.class.reflekt_skipped?(method)
 
-            # Create execution.
-            execution = Execution.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
+            # When stack empty or past execution done reflecting.
+            if execution.nil? || execution.has_finished_reflecting?
 
-            @@reflekt.stack.push(execution)
+              # Create execution.
+              execution = Execution.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
 
-          end
-
-          ##
-          # Reflect the execution.
-          #
-          # The first method call in the Execution creates a Reflection.
-          # Subsequent method calls are shadow executions on cloned objects.
-          ##
-          if execution.has_empty_reflections? && !execution.is_reflecting?
-            execution.is_reflecting = true
-
-            # Create control.
-            control = Control.new(execution, 1, @@reflekt.aggregator)
-            execution.control = control
-
-            # Execute control.
-            control.reflect(*args)
-
-            # Save control.
-            @@reflekt.db.get("controls").push(control.result())
-
-            # Multiple reflections per execution.
-            execution.reflections.each_with_index do |value, index|
-
-              # Create reflection.
-              reflection = Reflection.new(execution, index + 1, @@reflekt.aggregator)
-              execution.reflections[index] = reflection
-
-              # Execute reflection.
-              reflection.reflect(*args)
-              @reflekt_counts[method] = @reflekt_counts[method] + 1
-
-              # Save reflection.
-              @@reflekt.db.get("reflections").push(reflection.result())
+              @@reflekt.stack.push(execution)
 
             end
 
-            # Save results.
-            @@reflekt.db.write()
+            ##
+            # Reflect the execution.
+            #
+            # The first method call in the Execution creates a Reflection.
+            # Subsequent method calls are shadow executions on cloned objects.
+            ##
+            if execution.has_empty_reflections? && !execution.is_reflecting?
+              execution.is_reflecting = true
 
-            # Render results.
-            @@reflekt.renderer.render()
+              # Create control.
+              control = Control.new(execution, 0, @@reflekt.aggregator)
+              execution.control = control
 
-            execution.is_reflecting = false
+              # Execute control.
+              control.reflect(*args)
+              if control.status == :fail
+                @@reflekt.control_failed = true
+              else
+
+                # Multiple reflections per execution.
+                execution.reflections.each_with_index do |value, index|
+
+                  # Create reflection.
+                  reflection = Reflection.new(execution, index + 1, @@reflekt.aggregator)
+                  execution.reflections[index] = reflection
+
+                  # Execute reflection.
+                  reflection.reflect(*args)
+                  @reflekt_counts[method] = @reflekt_counts[method] + 1
+
+                  # Save reflection.
+                  @@reflekt.db.get("reflections").push(reflection.result())
+
+                end
+
+                # Save control.
+                @@reflekt.db.get("controls").push(control.result())
+
+                # Save results.
+                @@reflekt.db.write()
+
+                # Render results.
+                @@reflekt.renderer.render()
+                
+              end
+
+              execution.is_reflecting = false
+            end
+
           end
 
-        end
+          # Don't execute skipped methods when reflecting.
+          unless execution.is_reflecting? && self.class.reflekt_skipped?(method)
 
-        # Don't execute skipped methods when reflecting.
-        unless execution.is_reflecting? && self.class.reflekt_skipped?(method)
+            # Continue execution / shadow execution.
+            super *args
 
-          # Continue execution / shadow execution.
+          end
+
+        # Continue execution when control fails.
+        else
+          # Execute error producing code.
           super *args
-
         end
 
       end

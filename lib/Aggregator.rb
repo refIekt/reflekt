@@ -21,6 +21,7 @@ class Aggregator
 
     @meta_map = meta_map
     # Key rule sets by class and method.
+    # TODO: Possible bug "@rule_sets={nil=>{nil=>{:output=>#<RuleSet..."
     @rule_sets = {}
 
   end

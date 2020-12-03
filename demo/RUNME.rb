@@ -1,6 +1,6 @@
-require_relative 'Place.rb'
 require_relative 'Cat.rb'
 require_relative 'Dog.rb'
+require_relative 'Place.rb'
 
 ##
 # Configure Reflekt.
@@ -14,9 +14,6 @@ Reflekt.configure do |config|
   # The amount of reflections to create per method call.
   # A control reflection is created in addition to this.
   config.reflect_amount = 2
-
-  # The amount of reflections that can be created per instance method.
-  config.reflect_limit = 10
 
 end
 

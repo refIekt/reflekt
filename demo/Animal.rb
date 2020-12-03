@@ -2,14 +2,14 @@ require 'reflekt'
 
 class Animal
 
+  # Add Reflekt to this class and its children.
   prepend Reflekt
 
+  # Do not reflect the talk() method on this class or its children.
   reflekt_skip :talk
 
   def initialize()
-
     @in_love = false
-
   end
 
   def talk(sound)
@@ -28,13 +28,14 @@ class Animal
   end
 
   def disobey_parents
-
+    # TODO.
   end
 
   ##
   # @param animal [Animal] The other animal to run away with.
+  ##
   def run_away(animal)
-
+    # TODO.
   end
 
 end

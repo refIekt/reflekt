@@ -10,7 +10,7 @@ class Dog < Animal
   end
 
   def lick()
-
+    # TODO.
   end
 
 end

@@ -25,6 +25,7 @@ class Config
       :array  => [ArrayRule],
       :bool   => [BooleanRule],
       :int    => [IntegerRule],
+      :float  => [FloatRule],
       :string => [StringRule]
     }
 

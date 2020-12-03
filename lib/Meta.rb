@@ -2,7 +2,6 @@
 # Metadata for input and output.
 #
 # @pattern Abstract class
-#
 # @see lib/meta for each meta.
 #
 # @hierachy
@@ -12,6 +11,13 @@
 ################################################################################
 
 class Meta
+
+  ##
+  # Each meta defines its type.
+  ##
+  def initialize()
+    @type = nil
+  end
 
   ##
   # Each meta loads values.

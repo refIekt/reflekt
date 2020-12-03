@@ -30,11 +30,13 @@ Gem::Specification.new do |spec|
     # Meta.
     "lib/meta/ArrayMeta.rb",
     "lib/meta/BooleanMeta.rb",
+    "lib/meta/FloatMeta.rb",
     "lib/meta/IntegerMeta.rb",
     "lib/meta/StringMeta.rb",
     # Rules.
     "lib/rules/ArrayRule.rb",
     "lib/rules/BooleanRule.rb",
+    "lib/rules/FloatRule.rb",
     "lib/rules/IntegerRule.rb",
     "lib/rules/StringRule.rb",
     # UI.

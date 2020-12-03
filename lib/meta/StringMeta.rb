@@ -3,7 +3,10 @@ require 'Meta'
 class StringMeta < Meta
 
   def initialize()
+
+    @type = :string
     @length = nil
+
   end
 
   ##
@@ -15,7 +18,7 @@ class StringMeta < Meta
 
   def result()
     {
-      :type => :string,
+      :type => @type,
       :length => @length
     }
   end

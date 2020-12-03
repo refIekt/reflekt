@@ -3,7 +3,10 @@ require 'Meta'
 class BooleanMeta < Meta
 
   def initialize()
+
+    @type = :bool
     @value = nil
+
   end
 
   ##
@@ -15,7 +18,7 @@ class BooleanMeta < Meta
 
   def result()
     {
-      :type => :bool,
+      :type => @type,
       :value => @value
     }
   end

@@ -4,6 +4,7 @@ class ArrayMeta < Meta
 
   def initialize()
 
+    @type = :array
     @min = nil
     @max = nil
     @length = nil
@@ -23,7 +24,7 @@ class ArrayMeta < Meta
 
   def result()
     {
-      :type => :array,
+      :type => @type,
       :max => @max,
       :min => @min,
       :length => @length

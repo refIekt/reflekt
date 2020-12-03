@@ -13,7 +13,7 @@ class BooleanMeta < Meta
   # @param value [Boolean]
   ##
   def load(value)
-    @value = value
+    @value = value.to_s
   end
 
   def result()

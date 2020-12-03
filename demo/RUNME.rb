@@ -1,4 +1,4 @@
-require_relative 'Location.rb'
+require_relative 'Place.rb'
 require_relative 'Cat.rb'
 require_relative 'Dog.rb'
 
@@ -24,7 +24,7 @@ end
 # They meet on a city street.
 ##
 
-street = Location.new("City Street")
+street = Place.new("City Street")
 
 cat = Cat.new()
 cat.meow("Hi there dog")
@@ -57,14 +57,10 @@ if cat.is_friendly() && dog.is_friendly()
   # They run away together.
   ###
 
-  locations = []
-  paris = Location.new("Paris")
-  berlin = Location.new("Berlin")
-  madrid = Location.new("Madrid")
-
-  locations << paris
-  locations << berlin
-  locations << madrid
+  places = []
+  places << Place.new("Paris")
+  places << Place.new("Berlin")
+  places << Place.new("Madrid")
 
 else
 

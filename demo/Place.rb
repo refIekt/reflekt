@@ -1,6 +1,6 @@
 require 'reflekt'
 
-class Location
+class Place
 
   prepend Reflekt
 

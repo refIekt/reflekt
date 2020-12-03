@@ -6,8 +6,6 @@ class ArrayRule < Rule
 
     @min = nil
     @max = nil
-    @min_length = nil
-    @max_length = nil
 
   end
 
@@ -30,20 +28,6 @@ class ArrayRule < Rule
       @max = meta[:max] if meta[:max] > @max
     end
 
-    # Min length.
-    if @min_length.nil?
-      @min_length = meta[:length]
-    else
-      @min_length = meta[:length] if meta[:length] < @min_length
-    end
-
-    # Max length.
-    if @max_length.nil?
-      @max_length = meta[:length]
-    else
-      @max_length = meta[:length] if meta[:length] > @max_length
-    end
-
   end
 
   ##
@@ -51,13 +35,8 @@ class ArrayRule < Rule
   ##
   def test(value)
 
-    # Min/max value.
     return false if value.min() < @min
     return false if value.max() > @max
-
-    # Min/max length.
-    return false if value.length < @min_length
-    return false if value.length > @max_length
 
     true
   end
@@ -66,9 +45,7 @@ class ArrayRule < Rule
     {
       :type => :array,
       :min => @min,
-      :max => @max,
-      :min_length => @min_length,
-      :max_length => @max_length
+      :max => @max
     }
   end
 

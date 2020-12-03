@@ -2,7 +2,7 @@ Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
   spec.version     = '0.9.10'
-  spec.date        = '2020-12-02'
+  spec.date        = '2020-12-03'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
     "lib/meta/StringMeta.rb",
     # Rules.
     "lib/rules/ArrayRule.rb",
+    "lib/rules/ArrayRangeRule.rb",
     "lib/rules/BooleanRule.rb",
     "lib/rules/FloatRule.rb",
     "lib/rules/IntegerRule.rb",

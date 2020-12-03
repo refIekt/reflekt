@@ -22,7 +22,7 @@ class Config
 
     # The rules that apply to meta types.
     @meta_map = {
-      :array  => [ArrayRule],
+      :array  => [ArrayRule, ArrayRangeRule],
       :bool   => [BooleanRule],
       :int    => [IntegerRule],
       :float  => [FloatRule],

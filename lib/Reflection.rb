@@ -153,13 +153,18 @@ class Reflection
       :status => @status,
       :message => @message,
       :inputs => nil,
-      :output => @output,
+      :output => nil,
     }
+
     unless @inputs.nil?
       reflection[:inputs] = []
       @inputs.each do |meta|
         reflection[:inputs] << meta.result()
       end
+    end
+
+    unless @output.nil?
+      reflection[:output] = @output.result()
     end
 
     return reflection

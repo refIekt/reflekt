@@ -36,13 +36,18 @@ class Control < Reflection
       :status => @status,
       :message => @message,
       :inputs => nil,
-      :output => @output,
+      :output => nil,
     }
+
     unless @inputs.nil?
       control[:inputs] = []
       @inputs.each do |meta|
         control[:inputs] << meta.result()
       end
+    end
+
+    unless @output.nil?
+      control[:output] = @output.result()
     end
 
     return control

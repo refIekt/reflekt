@@ -50,8 +50,8 @@ module Reflekt
       # When method called in flow.
       self.define_singleton_method(method) do |*args|
 
-        # Don't reflect further if the control reflection fails.
-        unless @@reflekt.control_failed
+        # When Reflekt enabled and control reflection has executed without error.
+        if @@reflekt.config.enabled && !@@reflekt.control_failed
 
           # Get current execution.
           execution = @@reflekt.stack.peek()
@@ -85,12 +85,14 @@ module Reflekt
               # Execute control.
               control.reflect(*args)
 
-              # Save control as reflection.
-              @@reflekt.db.get("reflections").push(control.result())
-
+              # When control fails stop reflecting.
               if control.status == :fail
                 @@reflekt.control_failed = true
+              # When control succeeds continue reflecting.
               else
+
+                # Save control as reflection.
+                @@reflekt.db.get("reflections").push(control.result())
 
                 # Multiple reflections per execution.
                 execution.reflections.each_with_index do |value, index|
@@ -132,10 +134,12 @@ module Reflekt
 
           end
 
-        # Continue execution when control fails.
+        # When Reflekt disabled or control reflection failed.
         else
-          # Execute error producing code.
+
+          # Continue execution.
           super *args
+
         end
 
       end

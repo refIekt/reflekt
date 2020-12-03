@@ -1,5 +1,6 @@
 class Config
 
+  attr_accessor :enabled
   attr_accessor :reflect_amount
   attr_accessor :reflect_limit
   attr_accessor :meta_map
@@ -7,6 +8,9 @@ class Config
   attr_accessor :output_directory
 
   def initialize()
+
+    # Reflekt is enabled by default and should be disabled on production.
+    @enabled = true
 
     # The amount of reflections to create per method call.
     # A control reflection is created in addition to this.

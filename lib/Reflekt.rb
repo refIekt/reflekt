@@ -72,8 +72,8 @@ module Reflekt
             ##
             # Reflect the execution.
             #
-            # The first method call in the Execution creates a Reflection.
-            # Subsequent method calls are shadow executions on cloned objects.
+            # The first method call in the execution creates a reflection.
+            # Then method calls are shadow executions which return to the reflection.
             ##
             if execution.has_empty_reflections? && !execution.is_reflecting?
               execution.is_reflecting = true
@@ -84,6 +84,10 @@ module Reflekt
 
               # Execute control.
               control.reflect(*args)
+
+              # Save control as reflection.
+              @@reflekt.db.get("reflections").push(control.result())
+
               if control.status == :fail
                 @@reflekt.control_failed = true
               else
@@ -112,7 +116,7 @@ module Reflekt
 
                 # Render results.
                 @@reflekt.renderer.render()
-                
+
               end
 
               execution.is_reflecting = false

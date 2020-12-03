@@ -9,7 +9,8 @@ require_relative 'Dog.rb'
 Reflekt.configure do |config|
 
   # The amount of reflections to create per method call.
-  config.reflect_amount = 5
+  # A control reflection is created in addition to this.
+  config.reflect_amount = 2
 
   # The amount of reflections that can be created per instance method.
   config.reflect_limit = 10

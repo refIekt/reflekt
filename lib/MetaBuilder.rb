@@ -25,8 +25,7 @@ class MetaBuilder
     case data_type
     when "Array"
       meta = ArrayMeta.new()
-    when "TrueClass"
-    when "FalseClass"
+    when "TrueClass", "FalseClass"
       meta = BooleanMeta.new()
     when "Float"
       meta = FloatMeta.new()

@@ -22,9 +22,14 @@ class RuleSet
   ##
   def initialize(meta_map)
 
+    # The rules that apply to meta types.
     @meta_map = meta_map
+
+    # The types of meta this rule set applies to.
+    # Rules are only validated on their supported meta type.
+    @meta_types = Set.new()
+
     @rules = {}
-    @types = Set.new()
 
   end
 
@@ -38,7 +43,7 @@ class RuleSet
     unless meta.nil? || meta[:type].nil?
 
       meta_type = meta[:type]
-      @types << meta_type
+      @meta_types << meta_type
 
       # Get rule types for this meta type.
       if @meta_map.key? meta_type

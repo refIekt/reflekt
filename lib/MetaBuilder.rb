@@ -6,8 +6,8 @@
 ################################################################################
 
 require 'Meta'
-require_relative './meta/IntegerMeta'
-require_relative './meta/StringMeta'
+# Require all meta.
+Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require file }
 
 class MetaBuilder
 
@@ -19,9 +19,17 @@ class MetaBuilder
   def self.create(value)
 
     meta = nil
+    data_type = value.class.to_s
 
-    # Creates values for matching data type.
-    case value.class.to_s
+    # Create meta type for matching data type.
+    case data_type
+    when "Array"
+      meta = ArrayMeta.new()
+    when "TrueClass"
+    when "FalseClass"
+      meta = BooleanMeta.new()
+    when "Float"
+      meta = FloatMeta.new()
     when "Integer"
       meta = IntegerMeta.new()
     when "String"

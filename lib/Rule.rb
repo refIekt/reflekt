@@ -31,12 +31,20 @@ class Rule
   end
 
   ##
-  # Each rule provides metadata.
+  # Each rule provides results.
   #
   # @return [Hash]
   ##
   def result()
     {}
+  end
+
+  ##
+  # Each rule provides a random example that matches the rule's boundaries.
+  #
+  # @return [Dynamic] A random value.
+  ##
+  def random()
   end
 
 end

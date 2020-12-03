@@ -49,4 +49,8 @@ class IntegerRule < Rule
     }
   end
 
+  def random()
+    rand(@min..@max)
+  end
+
 end

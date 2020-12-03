@@ -54,4 +54,27 @@ class StringRule < Rule
     }
   end
 
+  def random()
+
+    # Build alphabet soup.
+    alpha_numeric = Array('A'..'Z') + Array('a'..'z')
+    10.times do
+      alpha_numeric << ' '
+    end
+
+    # Dip ladle into alphabet soup.
+    last_char = nil
+    string = Array.new(rand(@min_length..@max_length)) do |index|
+      char = alpha_numeric.sample
+      while char == last_char
+        char = alpha_numeric.sample
+      end
+      last_char = char
+      return char
+    end
+
+    return string.join
+
+  end
+
 end

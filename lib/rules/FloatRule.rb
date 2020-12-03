@@ -49,4 +49,8 @@ class FloatRule < Rule
     }
   end
 
+  def random()
+    rand(@min..@max)
+  end
+
 end

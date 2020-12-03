@@ -72,4 +72,16 @@ class ArrayRule < Rule
     }
   end
 
+  def random()
+
+    array = Array.new(rand(@min_length..@max_length))
+
+    array.each_with_index do |item, index|
+      array[index] = rand(@min..@max)
+    end
+
+    return array
+
+  end
+
 end

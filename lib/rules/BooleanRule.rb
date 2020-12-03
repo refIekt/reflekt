@@ -4,9 +4,7 @@ require 'Rule'
 class BooleanRule < Rule
 
   def initialize()
-
     @booleans = Set.new()
-
   end
 
   ##
@@ -26,9 +24,7 @@ class BooleanRule < Rule
   # @param value [Boolean]
   ##
   def test(value)
-
     @booleans.include? value
-
   end
 
   def result()
@@ -37,6 +33,10 @@ class BooleanRule < Rule
       :is_true => @booleans.include?,
       :is_false => @booleans.include?
     }
+  end
+
+  def random()
+    @booleans.to_a.sample
   end
 
 end

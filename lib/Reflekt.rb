@@ -85,10 +85,10 @@ module Reflekt
               # Execute control.
               control.reflect(*args)
 
-              # When control fails stop reflecting.
+              # Stop reflecting when control fails to execute.
               if control.status == :fail
                 @@reflekt.control_failed = true
-              # When control succeeds continue reflecting.
+              # Continue reflecting when control executes succesfully.
               else
 
                 # Save control as reflection.
@@ -106,6 +106,8 @@ module Reflekt
                   @reflekt_counts[method] = @reflekt_counts[method] + 1
 
                   # Save reflection.
+                  p '-- reflection ---'
+                  p reflection.result()
                   @@reflekt.db.get("reflections").push(reflection.result())
 
                 end

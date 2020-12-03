@@ -1,6 +1,6 @@
 ################################################################################
-# Aggregate reflection metadata into rule sets.
-# Validate reflection arguments against aggregates.
+# Aggregate control metadata into rule sets.
+# Validate reflections against aggregated controls.
 #
 # @pattern Singleton
 #
@@ -21,95 +21,36 @@ class Aggregator
 
     @meta_map = meta_map
     # Key rule sets by class and method.
-    # TODO: Possible bug "@rule_sets={nil=>{nil=>{:output=>#<RuleSet..."
+    # TODO: Possible bug "@rule_sets={nil=>{nil=>{"output"=>#<RuleSet..."
     @rule_sets = {}
 
   end
 
   ##
-  # Get aggregated RuleSets for all inputs.
+  # Create aggregated rule sets from control metadata.
   #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  # @return [Array]
+  # @param controls [Array] Controls with metadata.
+  # @TODO Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
   ##
-  def get_input_rule_sets(klass, method)
-    return @rule_sets.dig(klass, method, :inputs)
-  end
+  def train(controls)
 
-  ##
-  # Get an aggregated RuleSet for an input.
-  #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  # @return [RuleSet]
-  ##
-  def get_input_rule_set(klass, method, arg_num)
-    @rule_sets.dig(klass, method, :inputs, arg_num)
-  end
+    p '--- train ---'
+    p controls
 
-  ##
-  # Get an aggregated RuleSet for an output.
-  #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  # @return [RuleSet]
-  ##
-  def get_output_rule_set(klass, method)
-    @rule_sets.dig(klass, method, :output)
-  end
+    # On first use there are no previous controls.
+    return if controls.nil?
 
-  ##
-  # Set an aggregated RuleSet for an input.
-  #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  ##
-  def set_input_rule_set(klass, method, arg_num, rule_set)
-    # Set defaults.
-    @rule_sets[klass] = {} unless @rule_sets.key? klass
-    @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
-    @rule_sets[klass][method][:inputs] = [] unless @rule_sets[klass][method].key? :inputs
-    # Set value.
-    @rule_sets[klass][method][:inputs][arg_num] = rule_set
-  end
+    controls.each do |control|
 
-  ##
-  # Set an aggregated RuleSet for an output.
-  #
-  # @param klass [Symbol]
-  # @param method [Symbol]
-  # @param rule_set [RuleSet]
-  ##
-  def set_output_rule_set(klass, method, rule_set)
-    # Set defaults.
-    @rule_sets[klass] = {} unless @rule_sets.key? klass
-    @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
-    # Set value.
-    @rule_sets[klass][method][:output] = rule_set
-  end
-
-  ##
-  # Create aggregated rule sets from reflection metadata.
-  #
-  # @param reflections [Array] Controls with metadata.
-  ##
-  def train(reflections)
-
-    # On first use there are no previous reflections.
-    return if reflections.nil?
-
-    reflections.each do |reflection|
-
-      klass = reflection[:class]
-      method = reflection[:method]
+      klass = control["class"]
+      method = control["method"]
 
       ##
       # INPUT
       ##
 
-      unless reflection[:inputs].nil?
-        reflection[:inputs].each_with_index do |meta, arg_num|
+      unless control["inputs"].nil?
+        control["inputs"].each_with_index do |meta, arg_num|
 
           # Get rule set.
           rule_set = get_input_rule_set(klass, method, arg_num)
@@ -136,7 +77,7 @@ class Aggregator
       end
 
       # Train on metadata.
-      output_rule_set.train(reflection[:output])
+      output_rule_set.train(control["output"])
 
     end
 
@@ -150,7 +91,7 @@ class Aggregator
   ##
   def validate_inputs(inputs, input_rule_sets)
 
-    # Default to a PASS result.
+    # Default result to PASS.
     result = true
 
     # Validate each argument against each RuleSet for that argument.
@@ -192,6 +133,101 @@ class Aggregator
     end
 
     return result
+
+  end
+
+  ##
+  # Get aggregated RuleSets for all inputs.
+  #
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @return [Array]
+  ##
+  def get_input_rule_sets(klass, method)
+
+    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
+    klass = klass.to_s
+    method = method.to_s
+
+    return @rule_sets.dig(klass, method, "inputs")
+
+  end
+
+  ##
+  # Get an aggregated RuleSet for an output.
+  #
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @return [RuleSet]
+  ##
+  def get_output_rule_set(klass, method)
+
+    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
+    klass = klass.to_s
+    method = method.to_s
+
+    return @rule_sets.dig(klass, method, "output")
+
+  end
+
+  private
+
+  ##
+  # Get an aggregated RuleSet for an input.
+  #
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @return [RuleSet]
+  ##
+  def get_input_rule_set(klass, method, arg_num)
+
+    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
+    klass = klass.to_s
+    method = method.to_s
+
+    return @rule_sets.dig(klass, method, "inputs", arg_num)
+
+  end
+
+  ##
+  # Set an aggregated RuleSet for an input.
+  #
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  ##
+  def set_input_rule_set(klass, method, arg_num, rule_set)
+
+    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
+    klass = klass.to_s
+    method = method.to_s
+
+    # Set defaults.
+    @rule_sets[klass] = {} unless @rule_sets.key? klass
+    @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
+    @rule_sets[klass][method]["inputs"] = [] unless @rule_sets[klass][method].key? "inputs"
+    # Set value.
+    @rule_sets[klass][method]["inputs"][arg_num] = rule_set
+
+  end
+
+  ##
+  # Set an aggregated RuleSet for an output.
+  #
+  # @param klass [Symbol]
+  # @param method [Symbol]
+  # @param rule_set [RuleSet]
+  ##
+  def set_output_rule_set(klass, method, rule_set)
+
+    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
+    klass = klass.to_s
+    method = method.to_s
+
+    # Set defaults.
+    @rule_sets[klass] = {} unless @rule_sets.key? klass
+    @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
+    # Set value.
+    @rule_sets[klass][method]["output"] = rule_set
 
   end
 

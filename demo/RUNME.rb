@@ -39,8 +39,8 @@ if cat.is_friendly() && dog.is_friendly()
   # They show affection.
   ###
 
-  cat.purr()
-  dog.lick(cat)
+  #cat.purr()
+  #dog.lick(cat)
 
   ##
   # They fall in love.

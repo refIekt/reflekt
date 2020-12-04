@@ -106,8 +106,6 @@ module Reflekt
                   @reflekt_counts[method] = @reflekt_counts[method] + 1
 
                   # Save reflection.
-                  p '-- reflection ---'
-                  p reflection.result()
                   @@reflekt.db.get("reflections").push(reflection.result())
 
                 end

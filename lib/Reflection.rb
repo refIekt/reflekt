@@ -121,7 +121,10 @@ class Reflection
 
     random_args = []
 
-    args.each do |arg|
+    args.each_with_index do |arg, index|
+
+      p '--- randomize ---'
+      p agg_input_rule_sets[index]
 
       case arg
       when Integer

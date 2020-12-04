@@ -34,9 +34,6 @@ class Aggregator
   ##
   def train(controls)
 
-    p '--- train ---'
-    p controls
-
     # On first use there are no previous controls.
     return if controls.nil?
 

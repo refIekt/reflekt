@@ -39,9 +39,6 @@ class Control < Reflection
       :output => nil,
     }
 
-    p '--- control result ---'
-    p @inputs
-
     unless @inputs.nil?
       control[:inputs] = []
       @inputs.each do |meta|

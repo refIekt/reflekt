@@ -60,37 +60,39 @@ class Reflection
   ##
   def reflect(*args)
 
-    # Get arguments.
-    new_args = []
+    # Get aggregated rule sets.
+    agg_input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
+    agg_output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+
+    # When arguments exist.
     unless args.size == 0
 
-      # Get aggregated RuleSets.
-      agg_input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
-      agg_output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+      # When aggregated rule sets exist.
+      unless agg_input_rule_sets.nil?
 
-      # Create random arguments.
-      new_args = randomize(args)
+        # Randomize arguments from rule sets.
+        args = randomize(args, agg_input_rule_sets)
+
+        # Validate arguments against aggregated rule sets.
+        unless @aggregator.validate_inputs(args, agg_input_rule_sets)
+          @status = :fail
+        end
+
+      end
 
       # Create metadata for each argument.
-      @inputs = MetaBuilder.create_many(new_args)
+      @inputs = MetaBuilder.create_many(args)
 
     end
 
-    # Action method with new arguments.
+    # Action method with new/old arguments.
     begin
 
-      # Validate inputs against aggregated control RuleSets.
-      unless args.size == 0 || agg_input_rule_sets.nil?
-        unless @aggregator.validate_inputs(new_args, agg_input_rule_sets)
-          @status = :fail
-        end
-      end
-
       # Run reflection.
-      output = @clone.send(@method, *new_args)
+      output = @clone.send(@method, *args)
       @output = MetaBuilder.create(output)
 
-      # Validate output with aggregated control RuleSets.
+      # Validate output with aggregated control rule sets.
       unless agg_output_rule_set.nil?
         unless @aggregator.validate_output(output, agg_output_rule_set)
           @status = :fail
@@ -99,29 +101,35 @@ class Reflection
 
     # When fail.
     rescue StandardError => message
+
       @status = :fail
       @message = message
+
     end
 
   end
 
   ##
-  # Create random values for each argument.
+  # Create random values for each argument from control reflections.
   #
   # @param args [Dynamic] The arguments to create random values for.
+  # @param agg_input_rule_sets [Array] Aggregated rule sets for each argument.
+  #
   # @return [Dynamic] Random arguments.
   ##
-  def randomize(args)
+  def randomize(args, agg_input_rule_sets)
 
     random_args = []
 
     args.each do |arg|
+
       case arg
       when Integer
         random_args << rand(999)
       else
         random_args << arg
       end
+
     end
 
     return random_args

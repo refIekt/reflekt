@@ -145,10 +145,6 @@ class Aggregator
   ##
   def get_input_rule_sets(klass, method)
 
-    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
-    klass = klass.to_s
-    method = method.to_s
-
     return @rule_sets.dig(klass, method, "inputs")
 
   end
@@ -161,10 +157,6 @@ class Aggregator
   # @return [RuleSet]
   ##
   def get_output_rule_set(klass, method)
-
-    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
-    klass = klass.to_s
-    method = method.to_s
 
     return @rule_sets.dig(klass, method, "output")
 
@@ -181,10 +173,6 @@ class Aggregator
   ##
   def get_input_rule_set(klass, method, arg_num)
 
-    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
-    klass = klass.to_s
-    method = method.to_s
-
     return @rule_sets.dig(klass, method, "inputs", arg_num)
 
   end
@@ -196,10 +184,6 @@ class Aggregator
   # @param method [Symbol]
   ##
   def set_input_rule_set(klass, method, arg_num, rule_set)
-
-    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
-    klass = klass.to_s
-    method = method.to_s
 
     # Set defaults.
     @rule_sets[klass] = {} unless @rule_sets.key? klass
@@ -218,10 +202,6 @@ class Aggregator
   # @param rule_set [RuleSet]
   ##
   def set_output_rule_set(klass, method, rule_set)
-
-    # TODO: Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
-    klass = klass.to_s
-    method = method.to_s
 
     # Set defaults.
     @rule_sets[klass] = {} unless @rule_sets.key? klass

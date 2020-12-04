@@ -44,9 +44,9 @@ class RuleSet
     p '--- meta ---'
     p meta
 
-    unless meta.nil? || meta["type"].nil?
+    unless meta.nil? || meta[:type].nil?
 
-      meta_type = meta["type"]
+      meta_type = meta[:type]
       @meta_types << meta_type
 
       p meta_type
@@ -81,7 +81,7 @@ class RuleSet
     meta_type = MetaBuilder.data_type_to_meta_type(value)
 
     @rules.each do |klass, rule|
-      if (rule["type"] == meta_type)
+      if (rule.type == meta_type)
         unless rule.test(value)
            result = false
         end

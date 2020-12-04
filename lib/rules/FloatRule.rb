@@ -4,6 +4,7 @@ class FloatRule < Rule
 
   def initialize()
 
+    @type = :float
     @min = nil
     @max = nil
 
@@ -43,7 +44,7 @@ class FloatRule < Rule
 
   def result()
     {
-      :type => :float,
+      :type => @type,
       :min => @min,
       :max => @max
     }

@@ -7,6 +7,7 @@ class StringRule < Rule
 
   def initialize()
 
+    @type = :string
     @min_length = nil
     @max_length = nil
 
@@ -48,7 +49,7 @@ class StringRule < Rule
 
   def result()
     {
-      :type => :string,
+      :type => @type,
       :min_length => @min_length,
       :max_length => @max_length
     }

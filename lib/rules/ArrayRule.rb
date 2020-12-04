@@ -4,6 +4,7 @@ class ArrayRule < Rule
 
   def initialize()
 
+    @type = :array
     @min = nil
     @max = nil
     @min_length = nil
@@ -64,7 +65,7 @@ class ArrayRule < Rule
 
   def result()
     {
-      :type => :array,
+      :type => @type,
       :min => @min,
       :max => @max,
       :min_length => @min_length,

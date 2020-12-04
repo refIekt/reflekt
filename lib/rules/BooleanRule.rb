@@ -4,7 +4,10 @@ require 'Rule'
 class BooleanRule < Rule
 
   def initialize()
+
+    @type = :bool
     @booleans = Set.new()
+
   end
 
   ##
@@ -29,7 +32,7 @@ class BooleanRule < Rule
 
   def result()
     {
-      :type => :bool,
+      :type => @type,
       :is_true => @booleans.include?,
       :is_false => @booleans.include?
     }

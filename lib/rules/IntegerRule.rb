@@ -4,6 +4,7 @@ class IntegerRule < Rule
 
   def initialize()
 
+    @type = :int
     @min = nil
     @max = nil
 
@@ -43,7 +44,7 @@ class IntegerRule < Rule
 
   def result()
     {
-      :type => :int,
+      :type => @type,
       :min => @min,
       :max => @max
     }

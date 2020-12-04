@@ -13,6 +13,8 @@
 
 class Rule
 
+  attr_reader :type
+
   ##
   # Each rule trains on metadata to determine its boundaries.
   #

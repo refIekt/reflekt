@@ -21,7 +21,6 @@ class Aggregator
 
     @meta_map = meta_map
     # Key rule sets by class and method.
-    # TODO: Possible bug "@rule_sets={nil=>{nil=>{"output"=>#<RuleSet..."
     @rule_sets = {}
 
   end
@@ -39,8 +38,8 @@ class Aggregator
 
     controls.each do |control|
 
-      klass = control["class"]
-      method = control["method"]
+      klass = control["class"].to_sym
+      method = control["method"].to_sym
 
       ##
       # INPUT
@@ -48,6 +47,9 @@ class Aggregator
 
       unless control["inputs"].nil?
         control["inputs"].each_with_index do |meta, arg_num|
+
+          # TODO: Remove once "Fix Rowdb.get(path)" bug fixed.
+          meta = meta.transform_keys(&:to_sym)
 
           # Get rule set.
           rule_set = get_input_rule_set(klass, method, arg_num)
@@ -58,6 +60,9 @@ class Aggregator
 
           # Train on metadata.
           rule_set.train(meta)
+
+          p '-- rule set after train --'
+          p rule_set
 
         end
       end
@@ -78,6 +83,9 @@ class Aggregator
 
     end
 
+    p '--- trained rule_sets ---'
+    p @rule_set
+
   end
 
   ##
@@ -91,14 +99,17 @@ class Aggregator
     # Default result to PASS.
     result = true
 
-    # Validate each argument against each RuleSet for that argument.
+    # Validate each argument against each rule set for that argument.
     inputs.each_with_index do |input, arg_num|
 
       unless input_rule_sets[arg_num].nil?
 
         rule_set = input_rule_sets[arg_num]
 
-        unless rule_set.validate_rule(input)
+        p '--- rule_set rules ---'
+        p rule_set.rules
+
+        unless rule_set.test(input)
           result = false
         end
 
@@ -141,9 +152,7 @@ class Aggregator
   # @return [Array]
   ##
   def get_input_rule_sets(klass, method)
-
-    return @rule_sets.dig(klass, method, "inputs")
-
+    @rule_sets.dig(klass, method, :inputs)
   end
 
   ##
@@ -154,9 +163,7 @@ class Aggregator
   # @return [RuleSet]
   ##
   def get_output_rule_set(klass, method)
-
-    return @rule_sets.dig(klass, method, "output")
-
+    @rule_sets.dig(klass, method, :output)
   end
 
   private
@@ -169,9 +176,7 @@ class Aggregator
   # @return [RuleSet]
   ##
   def get_input_rule_set(klass, method, arg_num)
-
-    return @rule_sets.dig(klass, method, "inputs", arg_num)
-
+    @rule_sets.dig(klass, method, :inputs, arg_num)
   end
 
   ##
@@ -185,9 +190,9 @@ class Aggregator
     # Set defaults.
     @rule_sets[klass] = {} unless @rule_sets.key? klass
     @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
-    @rule_sets[klass][method]["inputs"] = [] unless @rule_sets[klass][method].key? "inputs"
+    @rule_sets[klass][method][:inputs] = [] unless @rule_sets[klass][method].key? :inputs
     # Set value.
-    @rule_sets[klass][method]["inputs"][arg_num] = rule_set
+    @rule_sets[klass][method][:inputs][arg_num] = rule_set
 
   end
 
@@ -204,7 +209,7 @@ class Aggregator
     @rule_sets[klass] = {} unless @rule_sets.key? klass
     @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
     # Set value.
-    @rule_sets[klass][method]["output"] = rule_set
+    @rule_sets[klass][method][:output] = rule_set
 
   end
 

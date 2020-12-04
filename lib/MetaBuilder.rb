@@ -66,11 +66,12 @@ class MetaBuilder
   def self.data_type_to_meta_type(data_type)
 
     meta_types = {
-      Array   => :array,
-      Boolean => :bool,
-      Float   => :float,
-      Integer => :int,
-      String  => :string
+      Array      => :array,
+      TrueClass  => :bool,
+      FalseClass => :bool,
+      Float      => :float,
+      Integer    => :int,
+      String     => :string
     }
 
     return meta_types[data_type]

@@ -81,6 +81,7 @@ class Reflection
       end
 
       # Create metadata for each argument.
+      # TODO: Create metadata for other inputs such as properties on the instance.
       @inputs = MetaBuilder.create_many(args)
 
     end
@@ -122,10 +123,7 @@ class Reflection
     random_args = []
 
     args.each_with_index do |arg, index|
-
-      p '--- randomize ---'
-      p agg_input_rule_sets[index]
-
+      
       case arg
       when Integer
         random_args << rand(999)

@@ -22,11 +22,11 @@ class Config
 
     # The rules that apply to meta types.
     @meta_map = {
-      :array  => [ArrayRule],
-      :bool   => [BooleanRule],
-      :int    => [IntegerRule],
-      :float  => [FloatRule],
-      :string => [StringRule]
+      "array"  => [ArrayRule],
+      "bool"   => [BooleanRule],
+      "int"    => [IntegerRule],
+      "float"  => [FloatRule],
+      "string" => [StringRule]
     }
 
     # An absolute path to the directory that contains the output directory.

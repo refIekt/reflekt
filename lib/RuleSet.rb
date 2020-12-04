@@ -12,6 +12,7 @@
 ################################################################################
 
 require 'set'
+require 'MetaBuilder'
 
 class RuleSet
 
@@ -40,10 +41,16 @@ class RuleSet
   ##
   def train(meta)
 
-    unless meta.nil? || meta[:type].nil?
+    p '--- meta ---'
+    p meta
 
-      meta_type = meta[:type]
+    unless meta.nil? || meta["type"].nil?
+
+      meta_type = meta["type"]
       @meta_types << meta_type
+
+      p meta_type
+      p @meta_types
 
       # Get rule types for this meta type.
       if @meta_map.key? meta_type
@@ -51,7 +58,7 @@ class RuleSet
 
           # Ensure rule exists.
           if @rules[rule_type].nil?
-            @rules << rule_type.new()
+            @rules[rule_type] = rule_type.new()
           end
 
           # Train rule.
@@ -60,10 +67,28 @@ class RuleSet
         end
       end
 
-      return self
+      p '-- rule set train --'
+      p @rules
 
     end
 
+  end
+
+  def test(value)
+    result = true
+
+    # Only test data type on rule of matching meta type.
+    meta_type = MetaBuilder.data_type_to_meta_type(value)
+
+    @rules.each do |klass, rule|
+      if (rule["type"] == meta_type)
+        unless rule.test(value)
+           result = false
+        end
+      end
+    end
+
+    return result
   end
 
   ##
@@ -82,5 +107,6 @@ class RuleSet
     return rules
 
   end
+
 
 end

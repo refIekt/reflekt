@@ -74,7 +74,7 @@ class Reflection
         args = randomize(args, agg_input_rule_sets)
 
         # Validate arguments against aggregated rule sets.
-        unless @aggregator.validate_inputs(args, agg_input_rule_sets)
+        unless @aggregator.test_inputs(args, agg_input_rule_sets)
           @status = :fail
         end
 
@@ -95,7 +95,7 @@ class Reflection
 
       # Validate output with aggregated control rule sets.
       unless agg_output_rule_set.nil?
-        unless @aggregator.validate_output(output, agg_output_rule_set)
+        unless @aggregator.test_output(output, agg_output_rule_set)
           @status = :fail
         end
       end

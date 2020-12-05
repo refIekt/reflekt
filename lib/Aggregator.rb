@@ -28,6 +28,7 @@ class Aggregator
   ##
   # Create aggregated rule sets from control metadata.
   #
+  # @stage Called on setup.
   # @param controls [Array] Controls with metadata.
   # @TODO Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
   ##
@@ -87,10 +88,11 @@ class Aggregator
   ##
   # Validate inputs.
   #
+  # @stage Called when validating a reflection.
   # @param inputs [Array] The method's arguments.
   # @param input_rule_sets [Array] The RuleSets to validate each input with.
   ##
-  def validate_inputs(inputs, input_rule_sets)
+  def test_inputs(inputs, input_rule_sets)
 
     # Default result to PASS.
     result = true
@@ -116,10 +118,11 @@ class Aggregator
   ##
   # Validate output.
   #
+  # @stage Called when validating a reflection.
   # @param output [Dynamic] The method's return value.
   # @param output_rule_set [RuleSet] The RuleSet to validate the output with.
   ##
-  def validate_output(output, output_rule_set)
+  def test_output(output, output_rule_set)
 
     # Default to a PASS result.
     result = true
@@ -127,7 +130,7 @@ class Aggregator
     unless output_rule_set.nil?
 
       # Validate output RuleSet for that argument.
-      unless output_rule_set.validate_rule(output)
+      unless output_rule_set.test(output)
         result = false
       end
 
@@ -140,6 +143,7 @@ class Aggregator
   ##
   # Get aggregated RuleSets for all inputs.
   #
+  # @stage Called when building a reflection.
   # @param klass [Symbol]
   # @param method [Symbol]
   # @return [Array]
@@ -151,6 +155,7 @@ class Aggregator
   ##
   # Get an aggregated RuleSet for an output.
   #
+  # @stage Called when building a reflection.
   # @param klass [Symbol]
   # @param method [Symbol]
   # @return [RuleSet]
@@ -158,6 +163,10 @@ class Aggregator
   def get_output_rule_set(klass, method)
     @rule_sets.dig(klass, method, :output)
   end
+
+  ##############################################################################
+  # HELPERS
+  ##############################################################################
 
   private
 

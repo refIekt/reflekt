@@ -61,22 +61,20 @@ class Reflection
   def reflect(*args)
 
     # Get aggregated rule sets.
-    agg_input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
-    agg_output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+    input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
+    output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
     # When arguments exist.
     unless args.size == 0
 
       # When aggregated rule sets exist.
-      unless agg_input_rule_sets.nil?
+      unless input_rule_sets.nil?
 
         # Randomize arguments from rule sets.
-        args = randomize(args, agg_input_rule_sets)
-        p '- random args -'
-        p args
+        args = randomize(args, input_rule_sets)
 
         # Validate arguments against aggregated rule sets.
-        unless @aggregator.test_inputs(args, agg_input_rule_sets)
+        unless @aggregator.test_inputs(args, input_rule_sets)
           @status = :fail
         end
 
@@ -96,8 +94,8 @@ class Reflection
       @output = MetaBuilder.create(output)
 
       # Validate output with aggregated control rule sets.
-      unless agg_output_rule_set.nil?
-        unless @aggregator.test_output(output, agg_output_rule_set)
+      unless output_rule_set.nil?
+        unless @aggregator.test_output(output, output_rule_set)
           @status = :fail
         end
       end
@@ -116,20 +114,18 @@ class Reflection
   # Create random values for each argument from control reflections.
   #
   # @param args [Dynamic] The arguments to create random values for.
-  # @param agg_input_rule_sets [Array] Aggregated rule sets for each argument.
+  # @param input_rule_sets [Array] Aggregated rule sets for each argument.
   #
   # @return [Dynamic] Random arguments.
   ##
-  def randomize(args, agg_input_rule_sets)
+  def randomize(args, input_rule_sets)
 
     random_args = []
 
     args.each_with_index do |arg, index|
 
       rule_type = Aggregator.value_to_rule_type(arg)
-      agg_rule = agg_input_rule_sets[index].rules[rule_type]
-      p '- agg rule -'
-      p agg_rule
+      agg_rule = input_rule_sets[index].rules[rule_type]
 
       random_args << agg_rule.random()
 

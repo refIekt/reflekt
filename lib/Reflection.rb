@@ -20,6 +20,11 @@ class Reflection
   ##
   # Create a Reflection.
   #
+  # @status
+  #   - :pass The reflection passes the rules.
+  #   - :fail The reflection fails the rules or produces a system error.
+  #   - :error The control reflection produces a system error.
+  #
   # @param execution [Execution] The Execution that created this Reflection.
   # @param number [Integer] Multiple Reflections can be created per Execution.
   # @param aggregator [Aggregator] The aggregated RuleSet for this class/method.
@@ -100,7 +105,7 @@ class Reflection
         end
       end
 
-    # When fail.
+    # When a system error occurs.
     rescue StandardError => message
 
       @status = :fail

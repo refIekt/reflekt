@@ -51,7 +51,7 @@ module Reflekt
       self.define_singleton_method(method) do |*args|
 
         # When Reflekt enabled and control reflection has executed without error.
-        if @@reflekt.config.enabled && !@@reflekt.control_failed
+        if @@reflekt.config.enabled && !@@reflekt.error
 
           # Get current execution.
           execution = @@reflekt.stack.peek()
@@ -86,8 +86,8 @@ module Reflekt
               control.reflect(*args)
 
               # Stop reflecting when control fails to execute.
-              if control.status == :fail
-                @@reflekt.control_failed = true
+              if control.status == :error
+                @@reflekt.error = true
               # Continue reflecting when control executes succesfully.
               else
 

@@ -59,10 +59,10 @@ class Control < Reflection
         end
       end
 
-    # When fail.
+    # When a system error occurs.
     rescue StandardError => message
 
-      @status = :fail
+      @status = :error
       @message = message
 
     end

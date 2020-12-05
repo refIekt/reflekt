@@ -65,16 +65,16 @@ class StringRule < Rule
 
     # Dip ladle into alphabet soup.
     last_char = nil
-    string = Array.new(rand(@min_length..@max_length)) do |index|
+    sentence = Array.new(rand(@min_length..@max_length)) do |index|
       char = alpha_numeric.sample
+      # Put no character next to the same character twice.
       while char == last_char
         char = alpha_numeric.sample
       end
       last_char = char
-      return char
     end
 
-    return string.join
+    return sentence.join
 
   end
 

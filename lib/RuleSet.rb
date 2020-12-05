@@ -41,16 +41,10 @@ class RuleSet
   ##
   def train(meta)
 
-    p '--- meta ---'
-    p meta
-
     unless meta.nil? || meta[:type].nil?
 
       meta_type = meta[:type]
       @meta_types << meta_type
-
-      p meta_type
-      p @meta_types
 
       # Get rule types for this meta type.
       if @meta_map.key? meta_type
@@ -66,9 +60,6 @@ class RuleSet
 
         end
       end
-
-      p '-- rule set train --'
-      p @rules
 
     end
 

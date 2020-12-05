@@ -63,9 +63,6 @@ class Aggregator
           # Train on metadata.
           rule_set.train(meta)
 
-          p '-- rule set after train --'
-          p rule_set
-
         end
       end
 
@@ -84,9 +81,6 @@ class Aggregator
       output_rule_set.train(control["output"])
 
     end
-
-    p '--- trained rule_sets ---'
-    p @rule_set
 
   end
 
@@ -107,9 +101,6 @@ class Aggregator
       unless input_rule_sets[arg_num].nil?
 
         rule_set = input_rule_sets[arg_num]
-
-        p '--- rule_set rules ---'
-        p rule_set.rules
 
         unless rule_set.test(input)
           result = false

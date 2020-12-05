@@ -122,10 +122,10 @@ class Reflection
 
     random_args = []
 
-    args.each_with_index do |arg, index|
+    args.each_with_index do |arg, arg_num|
 
       rule_type = Aggregator.value_to_rule_type(arg)
-      agg_rule = input_rule_sets[index].rules[rule_type]
+      agg_rule = input_rule_sets[arg_num].rules[rule_type]
 
       random_args << agg_rule.random()
 

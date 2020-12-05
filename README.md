@@ -29,7 +29,7 @@ class ExampleClass
 Use the application as usual and test results will start showing up in the `reflections` folder:
 
 <p align="center">
-  <img src="./assets/Screenshot.jpg" raw=true style="margin-left: auto; margin-right: auto;"/>
+  <img src="./assets/Screenshot.png" raw=true style="margin-left: auto; margin-right: auto;"/>
 </p>
 
 ## Installation

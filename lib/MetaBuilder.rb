@@ -63,7 +63,9 @@ class MetaBuilder
   ##
   # @param data_type [Type]
   ##
-  def self.data_type_to_meta_type(data_type)
+  def self.data_type_to_meta_type(value)
+
+    data_type = value.class
 
     meta_types = {
       Array      => :array,

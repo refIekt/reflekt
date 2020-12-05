@@ -164,6 +164,26 @@ class Aggregator
     @rule_sets.dig(klass, method, :output)
   end
 
+  ##
+  # Get the base rule type for a data type.
+  ##
+  def self.value_to_rule_type(value)
+
+    data_type = value.class
+
+    rule_types = {
+      Array      => ArrayRule,
+      TrueClass  => BooleanRule,
+      FalseClass => BooleanRule,
+      Float      => FloatRule,
+      Integer    => IntegerRule,
+      String     => StringRule
+    }
+
+    return rule_types[data_type]
+
+  end
+
   ##############################################################################
   # HELPERS
   ##############################################################################

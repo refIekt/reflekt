@@ -72,6 +72,8 @@ class Reflection
 
         # Randomize arguments from rule sets.
         args = randomize(args, agg_input_rule_sets)
+        p '- random args -'
+        p args
 
         # Validate arguments against aggregated rule sets.
         unless @aggregator.test_inputs(args, agg_input_rule_sets)
@@ -123,13 +125,13 @@ class Reflection
     random_args = []
 
     args.each_with_index do |arg, index|
-      
-      case arg
-      when Integer
-        random_args << rand(999)
-      else
-        random_args << arg
-      end
+
+      rule_type = Aggregator.value_to_rule_type(arg)
+      agg_rule = agg_input_rule_sets[index].rules[rule_type]
+      p '- agg rule -'
+      p agg_rule
+
+      random_args << agg_rule.random()
 
     end
 

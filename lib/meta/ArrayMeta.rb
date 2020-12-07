@@ -22,7 +22,7 @@ class ArrayMeta < Meta
 
   end
 
-  def result()
+  def serialize()
     {
       :type => @type,
       :max => @max,

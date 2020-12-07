@@ -92,7 +92,7 @@ module Reflekt
               else
 
                 # Save control as reflection.
-                @@reflekt.db.get("reflections").push(control.result())
+                @@reflekt.db.get("reflections").push(control.serialize())
 
                 # Multiple reflections per execution.
                 execution.reflections.each_with_index do |value, index|
@@ -106,12 +106,12 @@ module Reflekt
                   @reflekt_counts[method] = @reflekt_counts[method] + 1
 
                   # Save reflection.
-                  @@reflekt.db.get("reflections").push(reflection.result())
+                  @@reflekt.db.get("reflections").push(reflection.serialize())
 
                 end
 
                 # Save control.
-                @@reflekt.db.get("controls").push(control.result())
+                @@reflekt.db.get("controls").push(control.serialize())
 
                 # Save results.
                 @@reflekt.db.write()

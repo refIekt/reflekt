@@ -16,7 +16,7 @@ class BooleanMeta < Meta
     @value = value.to_s
   end
 
-  def result()
+  def serialize()
     {
       :type => @type,
       :value => @value

@@ -16,7 +16,7 @@ class StringMeta < Meta
     @length = value.length
   end
 
-  def result()
+  def serialize()
     {
       :type => @type,
       :length => @length

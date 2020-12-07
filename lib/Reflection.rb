@@ -145,7 +145,7 @@ class Reflection
   #
   # @return [Hash] Reflection metadata.
   ##
-  def result()
+  def serialize()
 
     # The ID of the first execution in the ShadowStack.
     base_id = nil
@@ -171,12 +171,12 @@ class Reflection
     unless @inputs.nil?
       reflection[:inputs] = []
       @inputs.each do |meta|
-        reflection[:inputs] << meta.result()
+        reflection[:inputs] << meta.serialize()
       end
     end
 
     unless @output.nil?
-      reflection[:output] = @output.result()
+      reflection[:output] = @output.serialize()
     end
 
     return reflection

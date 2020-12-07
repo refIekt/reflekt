@@ -28,11 +28,11 @@ class Meta
   end
 
   ##
-  # Each meta provides metadata.
+  # Each meta serializes metadata.
   #
   # @return [Hash]
   ##
-  def result()
+  def serialize()
     {}
   end
 
@@ -44,6 +44,7 @@ class Meta
   # Deserialize metadata.
   #
   # @todo Deserialize should create a Meta object.
+  # @todo Require each Meta type to handle its own deserialization.
   #
   # @param meta [Hash] The metadata to deserialize.
   # @param meta [Hash]
@@ -53,7 +54,7 @@ class Meta
     # Convert nil meta into NullMeta.
     # Meta is nil when there are no @inputs or @output on the method.
     if meta.nil?
-      return NullMeta.new().result()
+      return NullMeta.new().serialize()
     end
 
     # Symbolize keys.

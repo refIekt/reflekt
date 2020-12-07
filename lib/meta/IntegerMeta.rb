@@ -16,7 +16,7 @@ class IntegerMeta < Meta
     @value = value
   end
 
-  def result()
+  def serialize()
     {
       :type => @type,
       :value => @value

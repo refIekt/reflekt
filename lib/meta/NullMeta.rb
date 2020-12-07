@@ -25,7 +25,7 @@ class NullMeta < Meta
     # No need to load a value for null meta.
   end
 
-  def result()
+  def serialize()
     {
       :type => @type,
     }

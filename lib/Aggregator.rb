@@ -174,10 +174,26 @@ class Aggregator
       FalseClass => BooleanRule,
       Float      => FloatRule,
       Integer    => IntegerRule,
+      NilClass   => NullRule,
       String     => StringRule
     }
 
     return rule_types[data_type]
+
+  end
+
+  def self.testable?(args, input_rule_sets)
+
+    args.each_with_index do |arg, arg_num|
+
+      rule_type = value_to_rule_type(arg)
+      if input_rule_sets[arg_num].rules[rule_type].nil?
+        return false
+      end
+
+    end
+
+    return true
 
   end
 

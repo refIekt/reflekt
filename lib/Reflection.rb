@@ -1,6 +1,10 @@
 ################################################################################
 # A snapshot of simulated data.
 #
+# @note
+#   A reflection's random value is within the bounds of aggregated control rule sets
+#   as well as as the arg type being inputted into the current control reflection.
+#
 # @nomenclature
 #   args, inputs/output and meta represent different stages of a value.
 #
@@ -72,14 +76,17 @@ class Reflection
     # When arguments exist.
     unless args.size == 0
 
-      # When aggregated rule sets exist.
+      # Create random arguments from aggregated rule sets.
       unless input_rule_sets.nil?
 
-        # Randomize arguments from rule sets.
-        args = randomize(args, input_rule_sets)
+        # Base random arguments on the types of the current arguments.
+        if Aggregator.testable?(args, input_rule_sets)
 
-        # Validate arguments against aggregated rule sets.
-        unless @aggregator.test_inputs(args, input_rule_sets)
+          args = randomize(args, input_rule_sets)
+
+        # TODO: Fallback to argument types from aggregated control rule sets
+        # when arg types not testable or reflect_amount above 3.
+        else
           @status = :fail
         end
 
@@ -98,7 +105,7 @@ class Reflection
       output = @clone.send(@method, *args)
       @output = MetaBuilder.create(output)
 
-      # Validate output with aggregated control rule sets.
+      # Validate output against aggregated control rule sets.
       unless output_rule_set.nil?
         unless @aggregator.test_output(output, output_rule_set)
           @status = :fail

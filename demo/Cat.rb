@@ -18,7 +18,7 @@ class Cat < Animal
 
   def meow(message)
 
-    message = message.downcase + "eeow!"
+    message = message.to_s.downcase + "eeow!"    
     talk(message)
 
   end

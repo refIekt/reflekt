@@ -76,7 +76,7 @@ class Aggregator
       end
 
       # Train on metadata.
-      output_rule_set.train(control["output"])
+      output_rule_set.train(Meta.deserialize(control["output"]))
 
     end
 

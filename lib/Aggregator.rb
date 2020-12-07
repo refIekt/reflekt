@@ -49,10 +49,7 @@ class Aggregator
       unless control["inputs"].nil?
         control["inputs"].each_with_index do |meta, arg_num|
 
-          # TODO: Remove once "Fix Rowdb.get(path)" bug fixed.
-          meta = meta.transform_keys(&:to_sym)
-          # Deserialize meta type to symbol.
-          meta[:type] = meta[:type].to_sym
+          meta = Meta.deserialize(meta)
 
           # Get rule set.
           rule_set = get_input_rule_set(klass, method, arg_num)

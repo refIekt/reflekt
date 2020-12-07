@@ -36,4 +36,27 @@ class Meta
     {}
   end
 
+  ##############################################################################
+  # CLASS
+  ##############################################################################
+
+  ##
+  # Deserialize metadata.
+  #
+  # @param meta [Hash] The metadata to deserialize.
+  # @param meta [Hash]
+  ##
+  def self.deserialize(meta)
+
+    # Symbolize keys.
+    # TODO: Remove once "Fix Rowdb.get(path)" bug fixed.
+    meta = meta.transform_keys(&:to_sym)
+
+    # Symbolize type value.
+    meta[:type] = meta[:type].to_sym
+
+    return meta
+
+  end
+
 end

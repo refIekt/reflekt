@@ -26,6 +26,7 @@ class Config
       :bool   => [BooleanRule],
       :int    => [IntegerRule],
       :float  => [FloatRule],
+      :null   => [NullRule],
       :string => [StringRule]
     }
 

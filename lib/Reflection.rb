@@ -8,6 +8,11 @@
 #   1. Execution
 #   2. Reflection <- YOU ARE HERE
 #   3. Meta
+#
+# @status
+#   - :pass [Symbol] The reflection passes the rules.
+#   - :fail [Symbol] The reflection fails the rules or produces a system error.
+#   - :error [Symbol] The control reflection produces a system error.
 ################################################################################
 
 require 'Clone'
@@ -19,11 +24,6 @@ class Reflection
 
   ##
   # Create a Reflection.
-  #
-  # @status
-  #   - :pass The reflection passes the rules.
-  #   - :fail The reflection fails the rules or produces a system error.
-  #   - :error The control reflection produces a system error.
   #
   # @param execution [Execution] The Execution that created this Reflection.
   # @param number [Integer] Multiple Reflections can be created per Execution.

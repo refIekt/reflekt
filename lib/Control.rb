@@ -1,12 +1,21 @@
 ################################################################################
 # A shapshot of real data.
 #
-# A control's @number property will always be zero.
+# @note
+#   A control's @number property will always be zero.
+#
+# @nomenclature
+#   args, inputs/output and meta represent different stages of a value.
 #
 # @hierachy
 #   1. Execution
 #   2. Control <- YOU ARE HERE
 #   3. Meta
+#
+# @status
+#   - :pass [Symbol] The reflection passes the rules.
+#   - :fail [Symbol] The reflection fails the rules or produces a system error.
+#   - :error [Symbol] The control reflection produces a system error.
 ################################################################################
 
 require 'Reflection'

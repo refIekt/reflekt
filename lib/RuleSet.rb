@@ -13,6 +13,7 @@
 
 require 'set'
 require 'MetaBuilder'
+require_relative './meta/NullMeta.rb'
 
 class RuleSet
 
@@ -37,39 +38,49 @@ class RuleSet
   ##
   # Train rule set on metadata.
   #
-  # @param meta [Meta] The metadata to train on.
+  # @param meta [Hash] The metadata to train on.
   ##
   def train(meta)
 
-    unless meta.nil? || meta[:type].nil?
+    # Convert nil meta into NullMeta.
+    # Meta is nil when there are no @inputs or @output on the method.
+    if meta.nil?
+      meta = NullMeta.new().result()
+    end
 
-      meta_type = meta[:type]
-      @meta_types << meta_type
+    # Track supported meta types.
+    meta_type = meta[:type]
+    @meta_types << meta_type
 
-      # Get rule types for this meta type.
-      if @meta_map.key? meta_type
-        @meta_map[meta_type].each do |rule_type|
+    # Get rule types for this meta type.
+    if @meta_map.key? meta_type
+      @meta_map[meta_type].each do |rule_type|
 
-          # Ensure rule exists.
-          if @rules[rule_type].nil?
-            @rules[rule_type] = rule_type.new()
-          end
-
-          # Train rule.
-          @rules[rule_type].train(meta)
-
+        # Ensure rule exists.
+        if @rules[rule_type].nil?
+          @rules[rule_type] = rule_type.new()
         end
-      end
 
+        # Train rule.
+        @rules[rule_type].train(meta)
+
+      end
     end
 
   end
 
+  ##
+  # @param value [Dynamic]
+  ##
   def test(value)
-    result = true
 
-    # Only test data type on rule of matching meta type.
+    result = true
     meta_type = MetaBuilder.data_type_to_meta_type(value)
+
+    # Fail if value's meta type not testable by rule set.
+    unless @meta_types.include? meta_type
+      return false
+    end
 
     @rules.each do |klass, rule|
       if (rule.type == meta_type)
@@ -80,6 +91,7 @@ class RuleSet
     end
 
     return result
+    
   end
 
   ##

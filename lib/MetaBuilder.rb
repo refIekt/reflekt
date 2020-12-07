@@ -73,6 +73,7 @@ class MetaBuilder
       FalseClass => :bool,
       Float      => :float,
       Integer    => :int,
+      NilClass   => :null,
       String     => :string
     }
 

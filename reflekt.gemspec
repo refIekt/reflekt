@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '1.0.1'
+  spec.version     = '1.0.2'
   spec.date        = '2020-12-06'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
@@ -32,12 +32,14 @@ Gem::Specification.new do |spec|
     "lib/meta/BooleanMeta.rb",
     "lib/meta/FloatMeta.rb",
     "lib/meta/IntegerMeta.rb",
+    "lib/meta/NullMeta.rb",
     "lib/meta/StringMeta.rb",
     # Rules.
     "lib/rules/ArrayRule.rb",
     "lib/rules/BooleanRule.rb",
     "lib/rules/FloatRule.rb",
     "lib/rules/IntegerRule.rb",
+    "lib/rules/NullRule.rb",
     "lib/rules/StringRule.rb",
     # UI.
     "lib/web/bundle.js",

@@ -42,12 +42,6 @@ class RuleSet
   ##
   def train(meta)
 
-    # Convert nil meta into NullMeta.
-    # Meta is nil when there are no @inputs or @output on the method.
-    if meta.nil?
-      meta = NullMeta.new().result()
-    end
-
     # Track supported meta types.
     meta_type = meta[:type]
     @meta_types << meta_type
@@ -91,7 +85,7 @@ class RuleSet
     end
 
     return result
-    
+
   end
 
   ##

@@ -27,14 +27,16 @@ class BooleanRule < Rule
   # @param value [Boolean]
   ##
   def test(value)
-    @booleans.include? value
+
+    # Booleans are stored as strings.
+    @booleans.include? value.to_s
+
   end
 
   def result()
     {
       :type => @type,
-      :is_true => @booleans.include?,
-      :is_false => @booleans.include?
+      :booleans => @booleans
     }
   end
 

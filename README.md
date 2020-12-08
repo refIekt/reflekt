@@ -105,7 +105,7 @@ end
 
 ### Saving test data
 
-Use `reflekt_skip` on the method that saves to the database. If you still want to save test data to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database.
+Use `reflekt_skip` on the method that saves to the database to avoid persisting test data. If you still want to save test data to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database.
 
 ## How it works
 

@@ -151,7 +151,7 @@ The loop:
 2. A `Control` is created per method call, tracking input and output
 3. A set of rules are created from each `Control` on how the program works
 4. Many `Reflection`s are created per method call, containing random input and output
-5. Each `Reflection` is tested to pass or fail the set of rules defined by each `Control`
+5. Each `Reflection` is tested to pass or fail the set of rules previously defined by each `Control`
 6. Results are saved to the `/reflections` directory
 7. Your application returns its output
 

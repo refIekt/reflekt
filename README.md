@@ -155,4 +155,4 @@ The loop:
 6. Results are saved to the `/reflections` directory
 7. Your application returns its output
 
-This feedback loop create better results the more you develop and use your application.
+This feedback loop creates better results the more you develop and use your application.

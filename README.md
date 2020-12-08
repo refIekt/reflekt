@@ -124,13 +124,13 @@ Conceptual differences between testing methodologies:
 | **Automation**    | ❌ Defined manually       | ❌ Defined semi-automatically | ✅ Defined automatically  |
 | **Granularity**   | ✅ Tests PASS or FAIL     | ✅ Tests PASS or FAIL         | ✅ Tests PASS or FAIL     |
 | **Replication**   | ❌ Tests run externally   | ❌ Tests run externally       | ✅ Tests run internally   |
-| **Feedback loop** | ❌ Tests run periodically | ❌ Tests run periodically     | ✅ Tests run in real time |
+| **Feedback**      | ❌ Tests run periodically | ❌ Tests run periodically     | ✅ Tests run in real time |
 
 **Tests run internally**  
 Tests run alongside the normal execution of the program using the exact same code. There is no duplicate code in different files/environments calling the same APIs.
 
 **Tests run in real time**  
-Multiple simulations run as you use your application.
+Multiple simulations run as you develop and use your application.
 
 **Consider this logic:**  
 1. Tests often check that things work (in the positive)  
@@ -138,7 +138,21 @@ Multiple simulations run as you use your application.
 3. Tests should check more often for the negative  
 4. This can be automated
 
-## FAQ
+## Feedback loop
 
-**Q.** Can I use it alongside test driven development too?  
-**A.** Yes!
+Reflekt builds itself as you build your application.
+
+Terminology:
+* `Reflection` - A snapshot of random data
+* `Control` - A shapshot of real data (a subtype of `Reflection`)
+
+The loop:
+1. You write code and run it
+2. A `Control` is created per method call, tracking input and output
+3. A set of rules are created from each `Control` on how the program works
+4. Many `Reflection`s are created per method call, containing random input and output
+5. Each `Reflection` is tested to pass or fail the set of rules defined by each `Control`
+6. Results are saved to the `/reflections` directory
+7. Your application returns its output
+
+This feedback loop create better results the more you develop and use your application.

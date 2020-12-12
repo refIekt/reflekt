@@ -1,5 +1,5 @@
 ################################################################################
-# A snapshot of simulated data.
+# A snapshot of random data.
 #
 # @note
 #   A reflection's random value is within the bounds of aggregated control rule sets
@@ -78,18 +78,7 @@ class Reflection
 
       # Create random arguments from aggregated rule sets.
       unless input_rule_sets.nil?
-
-        # Base random arguments on the types of the current arguments.
-        if Aggregator.testable?(args, input_rule_sets)
-
-          args = randomize(args, input_rule_sets)
-
-        # TODO: Fallback to argument types from aggregated control rule sets
-        # when arg types not testable or reflect_amount above 3.
-        else
-          @status = :fail
-        end
-
+        args = randomize(args, input_rule_sets)
       end
 
       # Create metadata for each argument.
@@ -125,7 +114,7 @@ class Reflection
   ##
   # Create random values for each argument from control reflections.
   #
-  # @param args [Dynamic] The arguments to create random values for.
+  # @param args [Dynamic] The arguments to mirror random values for.
   # @param input_rule_sets [Array] Aggregated rule sets for each argument.
   #
   # @return [Dynamic] Random arguments.
@@ -136,9 +125,11 @@ class Reflection
 
     args.each_with_index do |arg, arg_num|
 
-      rule_type = Aggregator.value_to_rule_type(arg)
-      agg_rule = input_rule_sets[arg_num].rules[rule_type]
+      # Get a random rule in the rule set.
+      rules = input_rule_sets[arg_num].rules
+      agg_rule = rules[rules.keys.sample]
 
+      # Create a random value that follows that rule.
       random_args << agg_rule.random()
 
     end

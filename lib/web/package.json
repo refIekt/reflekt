@@ -1,6 +1,6 @@
 {
   "name": "reflekt-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Serves the UI and writes to the DB.",
   "main": "server.js",
   "scripts": {

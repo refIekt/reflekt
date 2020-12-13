@@ -14,10 +14,10 @@
 
 class Clone
 
-  def initialize(execution)
+  def initialize(action)
 
-    # Clone the execution's calling object.
-    @caller_object_clone = execution.caller_object.clone
+    # Clone the action's calling object.
+    @caller_object_clone = action.caller_object.clone
 
     # TODO: Clone any other instances that this clone references.
     # TODO: Replace clone's references to these new instances.

@@ -26,7 +26,7 @@ class Control < Reflection
   ##
   # Reflect on a method.
   #
-  # Creates a shadow execution.
+  # Creates a shadow action.
   # @param *args [Dynamic] The method's arguments.
   ##
   def reflect(*args)

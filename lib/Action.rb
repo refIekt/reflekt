@@ -1,5 +1,5 @@
 ################################################################################
-# A shadow execution.
+# A shadow action.
 #
 # @hierachy
 #   1. Action <- YOU ARE HERE
@@ -28,8 +28,8 @@ class Action
   #
   # @param object [Object] The calling object.
   # @param method [Symbol] The calling method.
-  # @param reflect_amount [Integer] The number of reflections to create per execution.
-  # @param stack [ShadowStack] The shadow execution call stack.
+  # @param reflect_amount [Integer] The number of reflections to create per action.
+  # @param stack [ShadowStack] The shadow action call stack.
   ##
   def initialize(caller_object, method, reflect_amount, stack)
 

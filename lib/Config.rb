@@ -31,7 +31,7 @@ class Config
     }
 
     # An absolute path to the directory that contains the output directory.
-    # Defaults to current execution path.
+    # Defaults to current action path.
     @output_path = nil
 
     # Name of output directory.

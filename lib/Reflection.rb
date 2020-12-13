@@ -29,30 +29,30 @@ class Reflection
   ##
   # Create a Reflection.
   #
-  # @param execution [Action] The Action that created this Reflection.
+  # @param action [Action] The Action that created this Reflection.
   # @param number [Integer] Multiple Reflections can be created per Action.
   # @param aggregator [Aggregator] The aggregated RuleSet for this class/method.
   ##
-  def initialize(execution, number, aggregator)
+  def initialize(action, number, aggregator)
 
-    @execution = execution
-    @unique_id = execution.unique_id + number
+    @action = action
+    @unique_id = action.unique_id + number
     @number = number
 
     # Dependency.
     @aggregator = aggregator
 
     # Caller.
-    @klass = execution.klass
-    @method = execution.method
+    @klass = action.klass
+    @method = action.method
 
     # Metadata.
     @inputs = nil
     @output = nil
 
-    # Clone the execution's calling object.
+    # Clone the action's calling object.
     # TODO: Abstract away into Clone class.
-    @clone = execution.caller_object.clone
+    @clone = action.caller_object.clone
 
     # Result.
     @status = :pass
@@ -64,7 +64,7 @@ class Reflection
   ##
   # Reflect on a method.
   #
-  # Creates a shadow execution.
+  # Creates a shadow action.
   # @param *args [Dynamic] The method's arguments.
   ##
   def reflect(*args)
@@ -141,22 +141,28 @@ class Reflection
   ##
   # Get the results of the reflection.
   #
+  # @keys
+  #   - eid [Integer] Execution ID
+  #   - aid [Integer] Action ID
+  #   - rid [Integer] Reflection ID
+  #   - num [Integer] Reflection number
+  #
   # @return [Hash] Reflection metadata.
   ##
   def serialize()
 
-    # The ID of the first execution in the ShadowStack.
-    base_id = nil
-    unless @execution.base == nil
-      base_id = @execution.base.unique_id
+    # Create execution ID from the ID of the first action in the ShadowStack.
+    execution_id = @action.unique_id
+    unless @action.base.nil?
+      execution_id = @action.base.unique_id
     end
 
     # Build reflection.
     reflection = {
-      :base_id => base_id,
-      :exe_id => @execution.unique_id,
-      :ref_id => @unique_id,
-      :ref_num => @number,
+      :eid => execution_id,
+      :aid => @action.unique_id,
+      :rid => @unique_id,
+      :num => @number,
       :time => @time,
       :class => @klass,
       :method => @method,

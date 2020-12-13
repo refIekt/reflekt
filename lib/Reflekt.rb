@@ -53,34 +53,34 @@ module Reflekt
         # When Reflekt enabled and control reflection has executed without error.
         if @@reflekt.config.enabled && !@@reflekt.error
 
-          # Get current execution.
-          execution = @@reflekt.stack.peek()
+          # Get current action.
+          action = @@reflekt.stack.peek()
 
           # Don't reflect when reflect limit reached or method skipped.
           unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || self.class.reflekt_skipped?(method)
 
-            # When stack empty or past execution done reflecting.
-            if execution.nil? || execution.has_finished_reflecting?
+            # When stack empty or past action done reflecting.
+            if action.nil? || action.has_finished_reflecting?
 
-              # Create execution.
-              execution = Action.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
+              # Create action.
+              action = Action.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
 
-              @@reflekt.stack.push(execution)
+              @@reflekt.stack.push(action)
 
             end
 
             ##
-            # Reflect the execution.
+            # Reflect the action.
             #
-            # The first method call in the execution creates a reflection.
-            # Then method calls are shadow executions which return to the reflection.
+            # The first method call in the action creates a reflection.
+            # Then method calls are shadow actions which return to the reflection.
             ##
-            if execution.has_empty_reflections? && !execution.is_reflecting?
-              execution.is_reflecting = true
+            if action.has_empty_reflections? && !action.is_reflecting?
+              action.is_reflecting = true
 
               # Create control.
-              control = Control.new(execution, 0, @@reflekt.aggregator)
-              execution.control = control
+              control = Control.new(action, 0, @@reflekt.aggregator)
+              action.control = control
 
               # Execute control.
               control.reflect(*args)
@@ -94,12 +94,12 @@ module Reflekt
                 # Save control as a reflection when it introduces new rules.
                 @@reflekt.db.get("reflections").push(control.serialize()) # if control.status == :fail
 
-                # Multiple reflections per execution.
-                execution.reflections.each_with_index do |value, index|
+                # Multiple reflections per action.
+                action.reflections.each_with_index do |value, index|
 
                   # Create reflection.
-                  reflection = Reflection.new(execution, index + 1, @@reflekt.aggregator)
-                  execution.reflections[index] = reflection
+                  reflection = Reflection.new(action, index + 1, @@reflekt.aggregator)
+                  action.reflections[index] = reflection
 
                   # Execute reflection.
                   reflection.reflect(*args)
@@ -121,15 +121,15 @@ module Reflekt
 
               end
 
-              execution.is_reflecting = false
+              action.is_reflecting = false
             end
 
           end
 
           # Don't execute skipped methods when reflecting.
-          unless execution.is_reflecting? && self.class.reflekt_skipped?(method)
+          unless action.is_reflecting? && self.class.reflekt_skipped?(method)
 
-            # Continue execution / shadow execution.
+            # Continue action / shadow action.
             super *args
 
           end
@@ -137,7 +137,7 @@ module Reflekt
         # When Reflekt disabled or control reflection failed.
         else
 
-          # Continue execution.
+          # Continue action.
           super *args
 
         end
@@ -180,7 +180,7 @@ module Reflekt
     # Set configuration.
     @@reflekt.path = File.dirname(File.realpath(__FILE__))
 
-    # Get reflections directory path from config or current execution path.
+    # Get reflections directory path from config or current action path.
     if @@reflekt.config.output_path
       @@reflekt.output_path = File.join(@@reflekt.config.output_path, @@reflekt.config.output_directory)
     else

@@ -1,5 +1,5 @@
 ################################################################################
-# Track the executions in a shadow call stack.
+# Track the actions in a shadow call stack.
 #
 # @pattern Stack
 ################################################################################
@@ -22,22 +22,22 @@ class ShadowStack
   ##
   # Place Action at the top of stack.
   #
-  # @param execution [Action] The execution to place.
-  # @return [Action] The placed execution.
+  # @param action [Action] The action to place.
+  # @return [Action] The placed action.
   ##
-  def push(execution)
+  def push(action)
 
-    # Place first execution at bottom of stack.
+    # Place first action at bottom of stack.
     if @bottom.nil?
-      @bottom = execution
-    # Connect subsequent executions to each other.
+      @bottom = action
+    # Connect subsequent actions to each other.
     else
-      @top.parent = execution
-      execution.child = @top
+      @top.parent = action
+      action.child = @top
     end
 
-    # Place execution at top of stack.
-    @top = execution
+    # Place action at top of stack.
+    @top = action
 
   end
 

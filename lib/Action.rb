@@ -29,7 +29,7 @@ class Action
   # @param object [Object] The calling object.
   # @param method [Symbol] The calling method.
   # @param reflect_amount [Integer] The number of reflections to create per action.
-  # @param stack [ShadowStack] The shadow action call stack.
+  # @param stack [ActionStack] The shadow action call stack.
   ##
   def initialize(caller_object, method, reflect_amount, stack)
 

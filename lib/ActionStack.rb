@@ -4,7 +4,7 @@
 # @pattern Stack
 ################################################################################
 
-class ShadowStack
+class ActionStack
 
   def initialize()
     @bottom = nil

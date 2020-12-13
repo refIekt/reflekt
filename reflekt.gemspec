@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
     # Core.
     "lib/Accessor.rb",
     "lib/Action.rb",
+    "lib/ActionStack.rb",
     "lib/Aggregator.rb",
     "lib/Clone.rb",
     "lib/Config.rb",
@@ -26,7 +27,6 @@ Gem::Specification.new do |spec|
     "lib/Renderer.rb",
     "lib/Rule.rb",
     "lib/RuleSet.rb",
-    "lib/ShadowStack.rb",
     # Meta.
     "lib/meta/ArrayMeta.rb",
     "lib/meta/BooleanMeta.rb",

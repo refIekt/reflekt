@@ -151,7 +151,7 @@ class Reflection
   ##
   def serialize()
 
-    # Create execution ID from the ID of the first action in the ShadowStack.
+    # Create execution ID from the ID of the first action in the ActionStack.
     execution_id = @action.unique_id
     unless @action.base.nil?
       execution_id = @action.base.unique_id

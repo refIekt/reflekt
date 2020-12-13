@@ -26,7 +26,7 @@ require 'Control'
 require 'Action'
 require 'Reflection'
 require 'Renderer'
-require 'ShadowStack'
+require 'ActionStack'
 # Require all rules.
 Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require file }
 
@@ -199,7 +199,7 @@ module Reflekt
     db = @@reflekt.db.value()
 
     # Create shadow stack.
-    @@reflekt.stack = ShadowStack.new()
+    @@reflekt.stack = ActionStack.new()
 
     # Create aggregated rule sets.
     @@reflekt.aggregator = Aggregator.new(@@reflekt.config.meta_map)

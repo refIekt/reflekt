@@ -82,7 +82,7 @@ class Reflection
       end
 
       # Create metadata for each argument.
-      # TODO: Create metadata for other inputs such as properties on the instance.
+      # TODO: Create metadata for other inputs such as instance variables.
       @inputs = MetaBuilder.create_many(args)
 
     end

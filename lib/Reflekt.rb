@@ -91,8 +91,8 @@ module Reflekt
               # Continue reflecting when control executes succesfully.
               else
 
-                # Save control as reflection.
-                @@reflekt.db.get("reflections").push(control.serialize())
+                # Save control as a reflection when it introduces new rules.
+                @@reflekt.db.get("reflections").push(control.serialize()) # if control.status == :fail
 
                 # Multiple reflections per execution.
                 execution.reflections.each_with_index do |value, index|
@@ -110,8 +110,8 @@ module Reflekt
 
                 end
 
-                # Save control.
-                @@reflekt.db.get("controls").push(control.serialize())
+                # Save control when it introduces new rules.
+                @@reflekt.db.get("controls").push(control.serialize()) # if control.status == :fail
 
                 # Save results.
                 @@reflekt.db.write()

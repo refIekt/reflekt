@@ -31,17 +31,22 @@ class Control < Reflection
   ##
   def reflect(*args)
 
-    # Get aggregated rule sets.
+    # Get trained rule sets.
     input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
     output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+
+    ## When no trained rule sets consider this a new control.
+    #if input_rule_sets.nil?
+    #  @status = :fail
+    #end
 
     # When arguments exist.
     unless args.size == 0
 
-      # When aggregated rule sets exist.
+      # When trained rule sets exist.
       unless input_rule_sets.nil?
 
-        # Validate arguments against aggregated rule sets.
+        # Validate arguments against trained rule sets.
         unless @aggregator.test_inputs(args, input_rule_sets)
           @status = :fail
         end
@@ -49,7 +54,7 @@ class Control < Reflection
       end
 
       # Create metadata for each argument.
-      # TODO: Create metadata for other inputs such as properties on the instance.
+      # TODO: Create metadata for other inputs such as instance variables.
       @inputs = MetaBuilder.create_many(args)
 
     end

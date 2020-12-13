@@ -20,10 +20,10 @@ class ShadowStack
   end
 
   ##
-  # Place Execution at the top of stack.
+  # Place Action at the top of stack.
   #
-  # @param execution [Execution] The execution to place.
-  # @return [Execution] The placed execution.
+  # @param execution [Action] The execution to place.
+  # @return [Action] The placed execution.
   ##
   def push(execution)
 

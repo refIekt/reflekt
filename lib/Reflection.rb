@@ -9,7 +9,7 @@
 #   args, inputs/output and meta represent different stages of a value.
 #
 # @hierachy
-#   1. Execution
+#   1. Action
 #   2. Reflection <- YOU ARE HERE
 #   3. Meta
 #
@@ -29,8 +29,8 @@ class Reflection
   ##
   # Create a Reflection.
   #
-  # @param execution [Execution] The Execution that created this Reflection.
-  # @param number [Integer] Multiple Reflections can be created per Execution.
+  # @param execution [Action] The Action that created this Reflection.
+  # @param number [Integer] Multiple Reflections can be created per Action.
   # @param aggregator [Aggregator] The aggregated RuleSet for this class/method.
   ##
   def initialize(execution, number, aggregator)

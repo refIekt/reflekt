@@ -2,12 +2,12 @@
 # A shadow execution.
 #
 # @hierachy
-#   1. Execution <- YOU ARE HERE
+#   1. Action <- YOU ARE HERE
 #   2. Reflection
 #   3. Meta
 ################################################################################
 
-class Execution
+class Action
 
   attr_accessor :unique_id
   attr_accessor :caller_object
@@ -24,7 +24,7 @@ class Execution
   attr_accessor :is_base
 
   ##
-  # Create Execution.
+  # Create Action.
   #
   # @param object [Object] The calling object.
   # @param method [Symbol] The calling method.
@@ -69,7 +69,7 @@ class Execution
   end
 
   ##
-  # Is the Execution currently reflecting methods?
+  # Is the Action currently reflecting methods?
   ##
   def is_reflecting?
     @is_reflecting

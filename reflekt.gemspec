@@ -14,11 +14,11 @@ Gem::Specification.new do |spec|
   spec.files = [
     # Core.
     "lib/Accessor.rb",
+    "lib/Action.rb",
     "lib/Aggregator.rb",
     "lib/Clone.rb",
     "lib/Config.rb",
     "lib/Control.rb",
-    "lib/Execution.rb",
     "lib/MetaBuilder.rb",
     "lib/Meta.rb",
     "lib/Reflection.rb",

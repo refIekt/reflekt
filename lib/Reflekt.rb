@@ -6,8 +6,8 @@
 # @flow
 #   1. Reflekt is prepended to a class and setup.
 #   2. When a class insantiates so does Reflekt.
-#   3. An Execution is created on method call.
-#   4. Many Refections are created per Execution.
+#   3. An Action is created on method call.
+#   4. Many Refections are created per Action.
 #   5. Each Reflection executes on cloned data.
 #   6. Flow is returned to the original method.
 #
@@ -23,7 +23,7 @@ require 'Accessor'
 require 'Aggregator'
 require 'Config'
 require 'Control'
-require 'Execution'
+require 'Action'
 require 'Reflection'
 require 'Renderer'
 require 'ShadowStack'
@@ -63,7 +63,7 @@ module Reflekt
             if execution.nil? || execution.has_finished_reflecting?
 
               # Create execution.
-              execution = Execution.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
+              execution = Action.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
 
               @@reflekt.stack.push(execution)
 

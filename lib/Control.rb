@@ -8,7 +8,7 @@
 #   args, inputs/output and meta represent different stages of a value.
 #
 # @hierachy
-#   1. Execution
+#   1. Action
 #   2. Control <- YOU ARE HERE
 #   3. Meta
 #

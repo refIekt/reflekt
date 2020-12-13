@@ -7,7 +7,7 @@
 #   on object, not indirectly through clone which results in "undefined method".
 #
 # @hierachy
-#   1. Execution
+#   1. Action
 #   2. Reflection
 #   3. Clone <- YOU ARE HERE
 ################################################################################

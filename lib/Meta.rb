@@ -5,7 +5,7 @@
 # @see lib/meta for each meta.
 #
 # @hierachy
-#   1. Execution
+#   1. Action
 #   2. Reflection
 #   3. Meta <- YOU ARE HERE
 ################################################################################

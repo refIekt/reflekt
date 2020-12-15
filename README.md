@@ -115,6 +115,26 @@ When a method is called in the usual flow of an application, Reflekt runs multip
   <img src="./assets/Flowchart.svg" raw=true width="600" style="margin-left: auto; margin-right: auto;"/>
 </p>
 
+
+### Feedback loop
+
+Reflekt builds itself as you build your application.
+
+Terminology:
+* `Reflection` - A snapshot of random data
+* `Control` - A shapshot of real data (a subtype of `Reflection`)
+
+The loop:
+1. You write code and run it
+2. A `Control` reflection is created per method call, tracking input and output
+3. A set of rules are created from each `Control` on how the program works
+4. Many `Experiment` reflections are created per method call, containing random input and output
+5. Each `Experiment` is tested to pass or fail the set of rules previously defined by each `Control`
+6. Results are saved to the `/reflections` directory
+7. Your application returns its output
+
+This feedback loop creates better results the more you develop and use your application.
+
 ## Comparison
 
 Conceptual differences between testing methodologies:
@@ -137,22 +157,3 @@ Multiple simulations run as you develop and use your application.
 2. Errors happen when things break (in the negative)  
 3. Tests should check more often for the negative  
 4. This can be automated
-
-## Feedback loop
-
-Reflekt builds itself as you build your application.
-
-Terminology:
-* `Reflection` - A snapshot of random data
-* `Control` - A shapshot of real data (a subtype of `Reflection`)
-
-The loop:
-1. You write code and run it
-2. A `Control` is created per method call, tracking input and output
-3. A set of rules are created from each `Control` on how the program works
-4. Many `Reflection`s are created per method call, containing random input and output
-5. Each `Reflection` is tested to pass or fail the set of rules previously defined by each `Control`
-6. Results are saved to the `/reflections` directory
-7. Your application returns its output
-
-This feedback loop creates better results the more you develop and use your application.

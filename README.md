@@ -121,8 +121,8 @@ When a method is called in the usual flow of an application, Reflekt runs multip
 Reflekt builds itself as you build your application.
 
 Terminology:
-* `Reflection` - A snapshot of random data
-* `Control` - A shapshot of real data (a subtype of `Reflection`)
+* `Control` - A shapshot of real data (a subclass of `Reflection`)
+* `Experiment` - A shapshot of random data (a subclass of `Reflection`)
 
 The loop:
 1. You write code and run it

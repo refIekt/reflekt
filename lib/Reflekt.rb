@@ -20,13 +20,13 @@ require 'set'
 require 'erb'
 require 'rowdb'
 require 'Accessor'
+require 'Action'
+require 'ActionStack'
 require 'Aggregator'
 require 'Config'
 require 'Control'
-require 'Action'
 require 'Reflection'
 require 'Renderer'
-require 'ActionStack'
 # Require all rules.
 Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require file }
 
@@ -91,8 +91,8 @@ module Reflekt
               # Continue reflecting when control executes succesfully.
               else
 
-                # Save control as a reflection when it introduces new rules.
-                @@reflekt.db.get("reflections").push(control.serialize()) # if control.status == :fail
+                # Save control as a reflection.
+                @@reflekt.db.get("reflections").push(control.serialize())
 
                 # Multiple reflections per action.
                 action.reflections.each_with_index do |value, index|
@@ -110,8 +110,8 @@ module Reflekt
 
                 end
 
-                # Save control when it introduces new rules.
-                @@reflekt.db.get("controls").push(control.serialize()) # if control.status == :fail
+                # Save control.
+                @@reflekt.db.get("controls").push(control.serialize())
 
                 # Save results.
                 @@reflekt.db.write()

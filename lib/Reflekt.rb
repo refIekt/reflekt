@@ -22,7 +22,7 @@ require 'rowdb'
 require 'Accessor'
 require 'Action'
 require 'ActionStack'
-require 'Aggregator'
+require 'RuleSetAggregator'
 require 'Config'
 require 'Control'
 require 'Experiment'
@@ -202,7 +202,7 @@ module Reflekt
     @@reflekt.stack = ActionStack.new()
 
     # Create aggregated rule sets.
-    @@reflekt.aggregator = Aggregator.new(@@reflekt.config.meta_map)
+    @@reflekt.aggregator = RuleSetAggregator.new(@@reflekt.config.meta_map)
     @@reflekt.aggregator.train(db[:controls])
 
     # Create renderer.

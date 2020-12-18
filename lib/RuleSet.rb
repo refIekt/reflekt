@@ -6,7 +6,7 @@
 #   - Builder
 #
 # @hierachy
-#   1. Aggregator
+#   1. RuleSetAggregator
 #   2. RuleSet <- YOU ARE HERE
 #   3. Rule
 ################################################################################

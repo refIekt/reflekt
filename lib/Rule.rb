@@ -4,7 +4,7 @@
 # @pattern Abstract class
 #
 # @hierachy
-#   1. Aggregator
+#   1. RuleSetAggregator
 #   2. RuleSet
 #   3. Rule <- YOU ARE HERE
 #

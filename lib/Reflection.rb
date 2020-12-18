@@ -29,7 +29,7 @@ class Reflection
   #
   # @param action [Action] The Action that created this Reflection.
   # @param number [Integer] Multiple Reflections can be created per Action.
-  # @param aggregator [Aggregator] The aggregated RuleSet for this class/method.
+  # @param aggregator [RuleSetAggregator] The aggregated RuleSet for this class/method.
   ##
   def initialize(action, number, aggregator)
 

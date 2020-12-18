@@ -5,14 +5,14 @@
 # @pattern Singleton
 #
 # @hierachy
-#   1. Aggregator <- YOU ARE HERE
+#   1. RuleSetAggregator <- YOU ARE HERE
 #   2. RuleSet
 #   3. Rule
 ################################################################################
 
 require 'RuleSet'
 
-class Aggregator
+class RuleSetAggregator
 
   ##
   # @param meta_map [Hash] The rules that apply to each meta type.

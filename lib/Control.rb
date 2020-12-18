@@ -2,7 +2,7 @@
 # A shapshot of real data.
 #
 # @note
-#   A control's @number property will always be zero.
+#   A control's @number will always be 0.
 #
 # @nomenclature
 #   args, inputs/output and meta represent different stages of a value.
@@ -35,22 +35,19 @@ class Control < Reflection
     input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
     output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
-    ## When no trained rule sets consider this a new control.
-    #if input_rule_sets.nil?
-    #  @status = :fail
-    #end
+    # Fail when no trained rule sets.
+    if input_rule_sets.nil?
+      @status = :fail
+    end
 
     # When arguments exist.
     unless args.size == 0
 
-      # When trained rule sets exist.
+      # Validate arguments against trained rule sets.
       unless input_rule_sets.nil?
-
-        # Validate arguments against trained rule sets.
         unless @aggregator.test_inputs(args, input_rule_sets)
           @status = :fail
         end
-
       end
 
       # Create metadata for each argument.
@@ -59,7 +56,7 @@ class Control < Reflection
 
     end
 
-    # Action method with new/old arguments.
+    # Action method with real arguments.
     begin
 
       # Run reflection.

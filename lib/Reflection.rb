@@ -73,6 +73,11 @@ class Reflection
     input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
     output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
+    # Fail when no trained rule sets.
+    if input_rule_sets.nil?
+      @status = :fail
+    end
+
     # When arguments exist.
     unless args.size == 0
 
@@ -87,7 +92,7 @@ class Reflection
 
     end
 
-    # Action method with new/old arguments.
+    # Action method with random arguments.
     begin
 
       # Run reflection.
@@ -151,7 +156,7 @@ class Reflection
   ##
   def serialize()
 
-    # Create execution ID from the ID of the first action in the ActionStack.
+    # Create execution ID from the ID of the first action in   the ActionStack.
     execution_id = @action.unique_id
     unless @action.base.nil?
       execution_id = @action.base.unique_id

@@ -33,7 +33,7 @@ dog.bark("Hello cat")
 # They are friendly to each other.
 ##
 
-if cat.is_friendly() && dog.is_friendly()
+if cat.is_friendly()
 
   ##
   # They show affection.

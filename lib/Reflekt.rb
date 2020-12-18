@@ -25,7 +25,7 @@ require 'ActionStack'
 require 'Aggregator'
 require 'Config'
 require 'Control'
-require 'Reflection'
+require 'Experiment'
 require 'Renderer'
 # Require all rules.
 Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require file }
@@ -75,7 +75,7 @@ module Reflekt
             # The first method call in the action creates a reflection.
             # Then method calls are shadow actions which return to the reflection.
             ##
-            if action.has_empty_reflections? && !action.is_reflecting?
+            if action.has_empty_experiments? && !action.is_reflecting?
               action.is_reflecting = true
 
               # Create control.
@@ -94,19 +94,19 @@ module Reflekt
                 # Save control as a reflection.
                 @@reflekt.db.get("reflections").push(control.serialize())
 
-                # Multiple reflections per action.
-                action.reflections.each_with_index do |value, index|
+                # Multiple experiments per action.
+                action.experiments.each_with_index do |value, index|
 
-                  # Create reflection.
-                  reflection = Reflection.new(action, index + 1, @@reflekt.aggregator)
-                  action.reflections[index] = reflection
+                  # Create experiment.
+                  experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
+                  action.experiments[index] = experiment
 
-                  # Execute reflection.
-                  reflection.reflect(*args)
+                  # Execute experiment.
+                  experiment.reflect(*args)
                   @reflekt_counts[method] = @reflekt_counts[method] + 1
 
-                  # Save reflection.
-                  @@reflekt.db.get("reflections").push(reflection.serialize())
+                  # Save experiment.
+                  @@reflekt.db.get("reflections").push(experiment.serialize())
 
                 end
 

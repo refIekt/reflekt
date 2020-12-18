@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '1.0.5'
+  spec.version     = '1.0.6'
   spec.date        = '2020-12-18'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
@@ -20,6 +20,7 @@ Gem::Specification.new do |spec|
     "lib/Clone.rb",
     "lib/Config.rb",
     "lib/Control.rb",
+    "lib/Experiment.rb",
     "lib/MetaBuilder.rb",
     "lib/Meta.rb",
     "lib/Reflection.rb",

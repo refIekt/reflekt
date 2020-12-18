@@ -1,15 +1,15 @@
 ################################################################################
-# A shapshot of real data.
+# A snapshot of random data.
 #
 # @note
-#   A control's @number will always be 0.
+#   A reflection's random values are generated from aggregated control rule sets.
 #
 # @nomenclature
 #   args, inputs/output and meta represent different stages of a value.
 #
 # @hierachy
 #   1. Action
-#   2. Control <- YOU ARE HERE
+#   2. Experiment <- YOU ARE HERE
 #   3. Meta
 #
 # @status
@@ -21,7 +21,7 @@
 require 'Reflection'
 require 'MetaBuilder'
 
-class Control < Reflection
+class Experiment < Reflection
 
   ##
   # Reflect on a method.
@@ -31,7 +31,7 @@ class Control < Reflection
   ##
   def reflect(*args)
 
-    # Get trained rule sets.
+    # Get aggregated rule sets.
     input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
     output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
@@ -43,11 +43,9 @@ class Control < Reflection
     # When arguments exist.
     unless args.size == 0
 
-      # Validate arguments against trained rule sets.
+      # Create random arguments from aggregated rule sets.
       unless input_rule_sets.nil?
-        unless @aggregator.test_inputs(args, input_rule_sets)
-          @status = :fail
-        end
+        args = randomize(args, input_rule_sets)
       end
 
       # Create metadata for each argument.
@@ -56,14 +54,14 @@ class Control < Reflection
 
     end
 
-    # Action method with real arguments.
+    # Action method with random arguments.
     begin
 
       # Run reflection.
       output = @clone.send(@method, *args)
       @output = MetaBuilder.create(output)
 
-      # Validate output with aggregated control rule sets.
+      # Validate output against aggregated control rule sets.
       unless output_rule_set.nil?
         unless @aggregator.test_output(output, output_rule_set)
           @status = :fail
@@ -73,7 +71,7 @@ class Control < Reflection
     # When a system error occurs.
     rescue StandardError => message
 
-      @status = :error
+      @status = :fail
       @message = message
 
     end

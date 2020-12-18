@@ -19,7 +19,7 @@ class Action
   attr_accessor :parent
   attr_accessor :child
   attr_accessor :control
-  attr_accessor :reflections
+  attr_accessor :experiments
   attr_accessor :is_reflecting
   attr_accessor :is_base
 
@@ -28,7 +28,7 @@ class Action
   #
   # @param object [Object] The calling object.
   # @param method [Symbol] The calling method.
-  # @param reflect_amount [Integer] The number of reflections to create per action.
+  # @param reflect_amount [Integer] The number of experiments to create per action.
   # @param stack [ActionStack] The shadow action call stack.
   ##
   def initialize(caller_object, method, reflect_amount, stack)
@@ -51,7 +51,7 @@ class Action
 
     # Reflections.
     @control = nil
-    @reflections = Array.new(reflect_amount)
+    @experiments = Array.new(reflect_amount)
 
     # State.
     if @stack.peek() == nil
@@ -64,8 +64,8 @@ class Action
 
   end
 
-  def has_empty_reflections?
-    @reflections.include? nil
+  def has_empty_experiments?
+    @experiments.include? nil
   end
 
   ##
@@ -79,7 +79,7 @@ class Action
     if is_reflecting?
       return false
     end
-    if has_empty_reflections?
+    if has_empty_experiments?
       return false
     end
     return true

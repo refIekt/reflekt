@@ -16,7 +16,7 @@ class Meta
   # Each meta defines its type.
   ##
   def initialize()
-    @type = nil
+    @type = :null
   end
 
   ##
@@ -28,12 +28,12 @@ class Meta
   end
 
   ##
-  # Each meta serializes metadata.
-  #
   # @return [Hash]
   ##
   def serialize()
-    {}
+    {
+      :type => @type
+    }
   end
 
   ##############################################################################

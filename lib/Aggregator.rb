@@ -46,21 +46,13 @@ class Aggregator
       # INPUT
       ##
 
-      unless control["inputs"].nil?
+      # Singular null input.
+      if control["inputs"].nil?
+        train_input(klass, method, nil, 0)
+      # Multiple inputs.
+      else
         control["inputs"].each_with_index do |meta, arg_num|
-
-          meta = Meta.deserialize(meta)
-
-          # Get rule set.
-          rule_set = get_input_rule_set(klass, method, arg_num)
-          if rule_set.nil?
-            rule_set = RuleSet.new(@meta_map)
-            set_input_rule_set(klass, method, arg_num, rule_set)
-          end
-
-          # Train on metadata.
-          rule_set.train(meta)
-
+          train_input(klass, method, meta, arg_num)
         end
       end
 
@@ -82,10 +74,27 @@ class Aggregator
 
   end
 
+  def train_input(klass, method, meta, arg_num)
+
+    # Get deserialized meta.
+    meta = Meta.deserialize(meta)
+
+    # Get rule set.
+    rule_set = get_input_rule_set(klass, method, arg_num)
+    if rule_set.nil?
+      rule_set = RuleSet.new(@meta_map)
+      set_input_rule_set(klass, method, arg_num, rule_set)
+    end
+
+    # Train on metadata.
+    rule_set.train(meta)
+
+  end
+
   ##
   # Validate inputs.
   #
-  # @stage Called when validating a reflection.
+  # @stage Called when validating a control reflection.
   # @param inputs [Array] The method's arguments.
   # @param input_rule_sets [Array] The RuleSets to validate each input with.
   ##

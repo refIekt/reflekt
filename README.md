@@ -116,7 +116,7 @@ When a method is called in the usual flow of an application, Reflekt runs multip
 </p>
 
 
-### Feedback loop
+### Control-Experiment loop
 
 Reflekt builds itself as you build your application.
 

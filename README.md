@@ -120,11 +120,11 @@ When a method is called in the usual flow of an application, Reflekt runs multip
 
 Reflekt builds itself as you build your application.
 
-Terminology:
+**Terminology:**
 * `Control` - A shapshot of real data (a subclass of `Reflection`)
 * `Experiment` - A shapshot of random data (a subclass of `Reflection`)
 
-The loop:
+**The loop:**
 1. You write code and run it
 2. A `Control` reflection is created per method call, tracking input and output
 3. A set of rules are created from each `Control` on how the program works
@@ -160,6 +160,8 @@ Multiple simulations run as you develop and use your application.
 
 ## Philosophy
 
-**To keep coding fun.** There are too many layers these days. It doesn't just make coding less fun, it makes it harder for new programmers to learn programming.  
-**To stop duplicate code.** RIP DRY. You use to hear that a lot but not anymore. Traditional tests are just duplicate code, we don't need them.  
-**To test code better.** By completly automating testing we get 100% coverage and test for situations we never thought possible.  
+**To keep coding fun.** There are too many layers these days. It doesn't just make coding less fun, it makes it harder for new programmers to learn programming.
+
+**To stop duplicate code.** RIP DRY. You use to hear that a lot but not anymore. Traditional tests are just duplicate code, we don't need them.
+
+**To test code better.** By completly automating testing we get 100% coverage and test for situations we never thought possible.

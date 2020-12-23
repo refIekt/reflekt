@@ -5,7 +5,7 @@
 # @see lib/meta for each meta.
 ################################################################################
 
-require 'Meta'
+require 'meta'
 # Require all meta.
 Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require file }
 

@@ -19,14 +19,14 @@
 require 'set'
 require 'erb'
 require 'rowdb'
-require 'Accessor'
-require 'Action'
-require 'ActionStack'
-require 'RuleSetAggregator'
-require 'Config'
-require 'Control'
-require 'Experiment'
-require 'Renderer'
+require 'accessor'
+require 'action'
+require 'action_stack'
+require 'config'
+require 'control'
+require 'experiment'
+require 'renderer'
+require 'rule_set_aggregator'
 # Require all rules.
 Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require file }
 

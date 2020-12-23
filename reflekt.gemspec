@@ -2,7 +2,7 @@ Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
   spec.version     = '1.0.6'
-  spec.date        = '2020-12-18'
+  spec.date        = '2020-12-23'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
@@ -13,21 +13,21 @@ Gem::Specification.new do |spec|
 
   spec.files = [
     # Core.
-    "lib/Accessor.rb",
-    "lib/Action.rb",
-    "lib/ActionStack.rb",
-    "lib/Clone.rb",
-    "lib/Config.rb",
-    "lib/Control.rb",
-    "lib/Experiment.rb",
-    "lib/MetaBuilder.rb",
-    "lib/Meta.rb",
-    "lib/Reflection.rb",
-    "lib/Reflekt.rb",
-    "lib/Renderer.rb",
-    "lib/Rule.rb",
-    "lib/RuleSet.rb",
-    "lib/RuleSetAggregator.rb",
+    "lib/accessor.rb",
+    "lib/action.rb",
+    "lib/action_stack.rb",
+    "lib/clone.rb",
+    "lib/config.rb",
+    "lib/control.rb",
+    "lib/experiment.rb",
+    "lib/meta_builder.rb",
+    "lib/meta.rb",
+    "lib/reflection.rb",
+    "lib/reflekt.rb",
+    "lib/renderer.rb",
+    "lib/rule.rb",
+    "lib/rule_set.rb",
+    "lib/rule_set_aggregator.rb",
     # Meta.
     "lib/meta/ArrayMeta.rb",
     "lib/meta/BooleanMeta.rb",

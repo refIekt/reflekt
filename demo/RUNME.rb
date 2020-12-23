@@ -1,3 +1,5 @@
+require_relative '../lib/reflekt.rb'
+
 require_relative 'Cat.rb'
 require_relative 'Dog.rb'
 require_relative 'Place.rb'
@@ -11,7 +13,7 @@ Reflekt.configure do |config|
   # Reflekt is enabled by default and should be disabled on production.
   config.enabled = true
 
-  # The amount of reflections to create per method call.
+  # The amount of experiment reflections to create per method call.
   # A control reflection is created in addition to this.
   config.reflect_amount = 2
 

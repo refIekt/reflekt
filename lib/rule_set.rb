@@ -13,7 +13,7 @@
 
 require 'set'
 require_relative 'meta_builder'
-require_relative 'meta/NullMeta.rb'
+require_relative 'meta/null_meta.rb'
 
 class RuleSet
 

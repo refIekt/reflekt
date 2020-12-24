@@ -2,7 +2,7 @@ Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
   spec.version     = '1.0.6'
-  spec.date        = '2020-12-23'
+  spec.date        = '2020-12-24'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
@@ -29,19 +29,19 @@ Gem::Specification.new do |spec|
     "lib/rule_set.rb",
     "lib/rule_set_aggregator.rb",
     # Meta.
-    "lib/meta/ArrayMeta.rb",
-    "lib/meta/BooleanMeta.rb",
-    "lib/meta/FloatMeta.rb",
-    "lib/meta/IntegerMeta.rb",
-    "lib/meta/NullMeta.rb",
-    "lib/meta/StringMeta.rb",
+    "lib/meta/array_meta.rb",
+    "lib/meta/boolean_meta.rb",
+    "lib/meta/float_meta.rb",
+    "lib/meta/integer_meta.rb",
+    "lib/meta/null_meta.rb",
+    "lib/meta/string_meta.rb",
     # Rules.
-    "lib/rules/ArrayRule.rb",
-    "lib/rules/BooleanRule.rb",
-    "lib/rules/FloatRule.rb",
-    "lib/rules/IntegerRule.rb",
-    "lib/rules/NullRule.rb",
-    "lib/rules/StringRule.rb",
+    "lib/rules/array_rule.rb",
+    "lib/rules/boolean_rule.rb",
+    "lib/rules/float_rule.rb",
+    "lib/rules/integer_rule.rb",
+    "lib/rules/null_rule.rb",
+    "lib/rules/string_rule.rb",
     # UI.
     "lib/web/bundle.js",
     "lib/web/gitignore.txt",

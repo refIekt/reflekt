@@ -1,8 +1,6 @@
-require_relative '../lib/reflekt.rb'
-
-require_relative 'Cat.rb'
-require_relative 'Dog.rb'
-require_relative 'Place.rb'
+require_relative 'cat'
+require_relative 'dog'
+require_relative 'place'
 
 ##
 # Configure Reflekt.

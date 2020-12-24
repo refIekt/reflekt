@@ -1,4 +1,4 @@
-require_relative 'Animal.rb'
+require_relative 'animal'
 
 class Dog < Animal
 

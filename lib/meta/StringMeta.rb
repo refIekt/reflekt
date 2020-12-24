@@ -1,4 +1,4 @@
-require 'Meta'
+require 'meta'
 
 class StringMeta < Meta
 

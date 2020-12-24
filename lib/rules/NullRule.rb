@@ -1,4 +1,4 @@
-require 'Rule'
+require 'rule'
 
 class NullRule < Rule
 

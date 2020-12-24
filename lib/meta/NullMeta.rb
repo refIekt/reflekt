@@ -10,7 +10,7 @@
 #   3. Meta <- YOU ARE HERE
 ################################################################################
 
-require 'Meta'
+require 'meta'
 
 class NullMeta < Meta
 

@@ -18,8 +18,8 @@
 #   - :error [Symbol] The control reflection produces a system error.
 ################################################################################
 
-require 'Reflection'
-require 'MetaBuilder'
+require 'reflection'
+require 'meta_builder'
 
 class Control < Reflection
 

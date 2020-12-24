@@ -1,5 +1,5 @@
 require 'set'
-require 'rule'
+require_relative '../rule'
 
 class BooleanRule < Rule
 

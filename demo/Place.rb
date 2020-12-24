@@ -1,4 +1,4 @@
-require 'reflekt'
+require_relative '../lib/reflekt'
 
 class Place
 

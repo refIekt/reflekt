@@ -1,4 +1,4 @@
-require 'rule'
+require_relative '../rule'
 
 class ArrayRule < Rule
 

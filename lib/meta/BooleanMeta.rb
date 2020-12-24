@@ -1,4 +1,4 @@
-require 'meta'
+require_relative '../meta'
 
 class BooleanMeta < Meta
 

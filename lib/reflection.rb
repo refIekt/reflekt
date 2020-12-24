@@ -17,8 +17,8 @@
 #   - :error [Symbol] The control reflection produces a system error.
 ################################################################################
 
-require 'clone'
-require 'meta_builder'
+require_relative 'clone'
+require_relative 'meta_builder'
 
 class Reflection
 

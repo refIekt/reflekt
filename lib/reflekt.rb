@@ -19,16 +19,16 @@
 require 'set'
 require 'erb'
 require 'rowdb'
-require 'accessor'
-require 'action'
-require 'action_stack'
-require 'config'
-require 'control'
-require 'experiment'
-require 'renderer'
-require 'rule_set_aggregator'
+require_relative 'accessor'
+require_relative 'action'
+require_relative 'action_stack'
+require_relative 'config'
+require_relative 'control'
+require_relative 'experiment'
+require_relative 'renderer'
+require_relative 'rule_set_aggregator'
 # Require all rules.
-Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require_relative file }
 
 module Reflekt
 

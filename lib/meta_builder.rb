@@ -5,9 +5,9 @@
 # @see lib/meta for each meta.
 ################################################################################
 
-require 'meta'
+require_relative 'meta'
 # Require all meta.
-Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require_relative file }
 
 class MetaBuilder
 

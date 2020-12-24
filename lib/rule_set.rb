@@ -12,8 +12,8 @@
 ################################################################################
 
 require 'set'
-require 'meta_builder'
-require_relative './meta/NullMeta.rb'
+require_relative 'meta_builder'
+require_relative 'meta/NullMeta.rb'
 
 class RuleSet
 

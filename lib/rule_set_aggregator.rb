@@ -10,7 +10,7 @@
 #   3. Rule
 ################################################################################
 
-require 'rule_set'
+require_relative 'rule_set'
 
 class RuleSetAggregator
 

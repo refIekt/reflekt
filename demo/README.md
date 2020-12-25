@@ -7,6 +7,7 @@ It tells a story of true love while illustrating how Reflekt works.
 
 Run:
 ```
+gem install reflekt
 cd demo
 ruby RUNME.rb
 ```

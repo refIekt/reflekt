@@ -44,6 +44,11 @@ In terminal run:
 bundle install
 ```
 
+Or:
+```
+gem install reflekt
+```
+
 ## Configuration
 
 ```ruby

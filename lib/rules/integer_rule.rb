@@ -1,5 +1,6 @@
 require_relative '../rule'
 
+module Reflekt
 class IntegerRule < Rule
 
   def initialize()
@@ -54,4 +55,5 @@ class IntegerRule < Rule
     rand(@min..@max)
   end
 
+end
 end

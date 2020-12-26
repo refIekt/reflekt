@@ -4,6 +4,7 @@
 # @pattern Stack
 ################################################################################
 
+module Reflekt
 class ActionStack
 
   def initialize()
@@ -41,4 +42,5 @@ class ActionStack
 
   end
 
+end
 end

@@ -7,6 +7,7 @@
 #   3. Meta
 ################################################################################
 
+module Reflekt
 class Action
 
   attr_accessor :unique_id
@@ -85,4 +86,5 @@ class Action
     return true
   end
 
+end
 end

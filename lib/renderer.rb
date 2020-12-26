@@ -1,3 +1,4 @@
+module Reflekt
 class Renderer
 
   def initialize(path, output_path)
@@ -36,4 +37,5 @@ class Renderer
   end
 
 
+end
 end

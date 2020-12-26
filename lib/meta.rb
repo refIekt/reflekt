@@ -10,6 +10,7 @@
 #   3. Meta <- YOU ARE HERE
 ################################################################################
 
+module Reflekt
 class Meta
 
   ##
@@ -68,4 +69,5 @@ class Meta
 
   end
 
+end
 end

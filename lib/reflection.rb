@@ -20,6 +20,7 @@
 require_relative 'clone'
 require_relative 'meta_builder'
 
+module Reflekt
 class Reflection
 
   attr_reader :status
@@ -145,4 +146,5 @@ class Reflection
 
   end
 
+end
 end

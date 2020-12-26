@@ -1,5 +1,6 @@
 require_relative '../meta'
 
+module Reflekt
 class ArrayMeta < Meta
 
   def initialize()
@@ -31,4 +32,5 @@ class ArrayMeta < Meta
     }
   end
 
+end
 end

@@ -21,6 +21,7 @@
 require_relative 'reflection'
 require_relative 'meta_builder'
 
+module Reflekt
 class Control < Reflection
 
   ##
@@ -80,4 +81,5 @@ class Control < Reflection
 
   end
 
+end
 end

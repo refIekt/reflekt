@@ -1,5 +1,6 @@
 require_relative '../meta'
 
+module Reflekt
 class FloatMeta < Meta
 
   def initialize()
@@ -23,4 +24,5 @@ class FloatMeta < Meta
     }
   end
 
+end
 end

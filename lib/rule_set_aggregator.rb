@@ -12,6 +12,7 @@
 
 require_relative 'rule_set'
 
+module Reflekt
 class RuleSetAggregator
 
   ##
@@ -257,4 +258,5 @@ class RuleSetAggregator
 
   end
 
+end
 end

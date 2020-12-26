@@ -1,5 +1,6 @@
 require_relative '../rule'
 
+module Reflekt
 class ArrayRule < Rule
 
   def initialize()
@@ -85,4 +86,5 @@ class ArrayRule < Rule
 
   end
 
+end
 end

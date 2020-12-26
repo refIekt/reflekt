@@ -1,5 +1,6 @@
 require_relative '../rule'
 
+module Reflekt
 class StringRule < Rule
 
   attr_accessor :min_length
@@ -78,4 +79,5 @@ class StringRule < Rule
 
   end
 
+end
 end

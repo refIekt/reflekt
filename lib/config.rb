@@ -1,3 +1,4 @@
+module Reflekt
 class Config
 
   attr_accessor :enabled
@@ -39,4 +40,5 @@ class Config
 
   end
 
+end
 end

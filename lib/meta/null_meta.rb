@@ -12,6 +12,7 @@
 
 require_relative '../meta'
 
+module Reflekt
 class NullMeta < Meta
 
   def initialize()
@@ -31,4 +32,5 @@ class NullMeta < Meta
     }
   end
 
+end
 end

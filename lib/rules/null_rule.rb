@@ -1,5 +1,6 @@
 require_relative '../rule'
 
+module Reflekt
 class NullRule < Rule
 
   def initialize()
@@ -30,4 +31,5 @@ class NullRule < Rule
     nil
   end
 
+end
 end

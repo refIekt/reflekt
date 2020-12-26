@@ -9,6 +9,7 @@ require_relative 'meta'
 # Require all meta.
 Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require_relative file }
 
+module Reflekt
 class MetaBuilder
 
   ##
@@ -81,4 +82,5 @@ class MetaBuilder
 
   end
 
+end
 end

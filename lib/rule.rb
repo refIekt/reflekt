@@ -11,6 +11,7 @@
 # @see lib/rules for rules.
 ################################################################################
 
+module Reflekt
 class Rule
 
   attr_reader :type
@@ -49,4 +50,5 @@ class Rule
   def random()
   end
 
+end
 end

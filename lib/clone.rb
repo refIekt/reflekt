@@ -12,6 +12,7 @@
 #   3. Clone <- YOU ARE HERE
 ################################################################################
 
+module Reflekt
 class Clone
 
   def initialize(action)
@@ -28,4 +29,5 @@ class Clone
     @caller_object_clone.send(method, *new_args)
   end
 
+end
 end

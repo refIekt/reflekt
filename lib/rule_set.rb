@@ -15,6 +15,7 @@ require 'set'
 require_relative 'meta_builder'
 require_relative 'meta/null_meta.rb'
 
+module Reflekt
 class RuleSet
 
   attr_accessor :rules
@@ -106,4 +107,5 @@ class RuleSet
   end
 
 
+end
 end

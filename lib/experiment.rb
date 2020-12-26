@@ -21,6 +21,7 @@
 require_relative 'reflection'
 require_relative 'meta_builder'
 
+module Reflekt
 class Experiment < Reflection
 
   ##
@@ -78,4 +79,5 @@ class Experiment < Reflection
 
   end
 
+end
 end

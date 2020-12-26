@@ -1,6 +1,7 @@
 require 'set'
 require_relative '../rule'
 
+module Reflekt
 class BooleanRule < Rule
 
   def initialize()
@@ -44,4 +45,5 @@ class BooleanRule < Rule
     @booleans.to_a.sample
   end
 
+end
 end

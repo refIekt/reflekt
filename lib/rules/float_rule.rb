@@ -1,5 +1,6 @@
 require_relative '../rule'
 
+module Reflekt
 class FloatRule < Rule
 
   def initialize()
@@ -54,4 +55,5 @@ class FloatRule < Rule
     rand(@min..@max)
   end
 
+end
 end

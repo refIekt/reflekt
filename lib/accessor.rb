@@ -8,6 +8,7 @@
 #   - @@reflekt_skipped_methods on the instance's singleton class
 ################################################################################
 
+module Reflekt
 class Accessor
 
   attr_accessor :config
@@ -34,4 +35,5 @@ class Accessor
 
   end
 
+end
 end

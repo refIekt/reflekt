@@ -167,6 +167,6 @@ Multiple simulations run as you develop and use your application.
 
 **To keep coding fun.** There are too many layers these days. It doesn't just make coding less fun, it makes it harder for new programmers to learn programming.
 
-**To stop duplicate code.** RIP DRY. You use to hear that a lot but not anymore. Traditional tests are just duplicate code, we don't need them.
+**To stop duplicate code.** RIP DRY. You use to hear “Don’t Repeat Yourself” a lot but not anymore. Traditional tests are just duplicate code, we don't need them.
 
 **To test code better.** By completly automating testing we get 100% coverage and test for situations we never thought possible.

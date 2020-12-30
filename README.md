@@ -87,7 +87,7 @@ def show(product)
   product.title = "Showing #{product.name}"
 
   # Rendering logic.
-  puts products
+  puts product
 
 end
 ```

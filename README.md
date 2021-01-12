@@ -136,7 +136,7 @@ Reflekt builds itself as you build your application.
 4. Many `Experiment` reflections are created per method call, containing random input and output
 5. Each `Experiment` is tested to pass or fail the set of rules previously defined by each `Control`
 6. Results are saved to the `/reflections` directory
-7. Your application returns its output
+7. Your application returns its usual output
 
 This feedback loop creates better results the more you develop and use your application.
 

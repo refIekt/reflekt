@@ -22,6 +22,8 @@ Traditional testing is fine but it's not perfect. Tests often check for a golden
 
 Add `prepend Reflekt` inside a class:
 ```ruby
+require 'reflekt'
+
 class ExampleClass
   prepend Reflekt
 ```  

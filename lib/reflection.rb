@@ -71,33 +71,6 @@ class Reflection
   end
 
   ##
-  # Create random values for each argument from control reflections.
-  #
-  # @param args [Dynamic] The arguments to mirror random values for.
-  # @param input_rule_sets [Array] Aggregated rule sets for each argument.
-  #
-  # @return [Dynamic] Random arguments.
-  ##
-  def randomize(args, input_rule_sets)
-
-    random_args = []
-
-    args.each_with_index do |arg, arg_num|
-
-      # Get a random rule in the rule set.
-      rules = input_rule_sets[arg_num].rules
-      agg_rule = rules[rules.keys.sample]
-
-      # Create a random value that follows that rule.
-      random_args << agg_rule.random()
-
-    end
-
-    return random_args
-
-  end
-
-  ##
   # Get the results of the reflection.
   #
   # @keys

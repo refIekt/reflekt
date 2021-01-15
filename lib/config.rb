@@ -28,6 +28,7 @@ class Config
       :int    => [IntegerRule],
       :float  => [FloatRule],
       :null   => [NullRule],
+      :object => [ObjectRule],
       :string => [StringRule]
     }
 

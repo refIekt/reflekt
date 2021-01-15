@@ -13,7 +13,12 @@ module Reflekt
 class MetaBuilder
 
   ##
-  # Create meta.
+  # Create meta type for matching data type.
+  #
+  # @flow
+  #   1. First return basic type
+  #   2. Then return custom type
+  #   3. Then return "nil" type
   #
   # @param value
   ##
@@ -22,7 +27,6 @@ class MetaBuilder
     meta = nil
     data_type = value.class.to_s
 
-    # Create meta type for matching data type.
     case data_type
     when "Array"
       meta = ArrayMeta.new()
@@ -34,6 +38,10 @@ class MetaBuilder
       meta = IntegerMeta.new()
     when "String"
       meta = StringMeta.new()
+    else
+      unless value.nil?
+        meta = ObjectMeta.new()
+      end
     end
 
     unless meta.nil?
@@ -78,7 +86,13 @@ class MetaBuilder
       String     => :string
     }
 
-    return meta_types[data_type]
+    if meta_types.key? data_type
+      return meta_types[data_type]
+    elsif value.nil?
+      return nil
+    else
+      return :object
+    end
 
   end
 

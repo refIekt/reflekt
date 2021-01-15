@@ -18,13 +18,22 @@ class Animal
 
   ##
   # @return [Boolean] Random true or false value.
+  #
+  # TODO: Whoops, big bug here. If the control reflection uses a random value,
+  #       then the actual execution could use a different random value.
+  #       The control and the execution need to be synced up. Either track
+  #       control random values via methods like ".sample" or add an
+  #      "is_random :method" helper for methods that return a random value.
+  #       Then keep track of random values and replay them in execution.
+  #       The former gets into monkey patching territory, the latter into DSL.
   ##
   def is_friendly()
     [true, false].sample
   end
 
-  def fall_in_love
+  def fall_in_love(animal)
     @in_love = true
+    @lover = animal
   end
 
   def disobey_parents

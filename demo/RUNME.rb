@@ -19,6 +19,7 @@ end
 
 ##
 # They meet on a city street.
+# @tests Instantiation
 ##
 
 street = Place.new("City Street")
@@ -31,27 +32,35 @@ dog.bark("Hello cat")
 
 ##
 # They are friendly to each other.
+# @tests Boolean
 ##
 
 if cat.is_friendly()
 
   ##
-  # They show affection.
-  ###
-
-  #cat.purr()
-  #dog.lick(cat)
-
-  ##
   # They fall in love.
+  # @tests Variable assignment
   ##
+
+  cat.fall_in_love(dog)
+  dog.fall_in_love(cat)
 
   ##
   # Their family don't approve.
+  # @tests Moves the plot forward
   ##
+
+  FATHER_WHO_NEVER_APPROVES = "I disapprove of your romance and everything!"
+  MOTHER_WHO_MAYBE_APPROVES = "I am also pretty critical of new boyfriends."
+
+  cat.meow("Hi mum and dad, this is the love of my life!")
+  dog.bark("Nice to meet you folks!")
+  puts FATHER_WHO_NEVER_APPROVES
+  puts MOTHER_WHO_MAYBE_APPROVES
 
   ##
   # They run away together.
+  # @tests Loops
   ###
 
   places = []

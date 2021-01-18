@@ -26,9 +26,16 @@ class Animal
   #      "is_random :method" helper for methods that return a random value.
   #       Then keep track of random values and replay them in execution.
   #       The former gets into monkey patching territory, the latter into DSL.
+  #
+  # SEE:
+  #   This can be a random true/false value when this bug fixed:
+  #   https://github.com/refIekt/reflekt/issues/6
+  #
+  # CODE:
+  #   [true, false].sample
   ##
   def is_friendly()
-    [true, false].sample
+    true
   end
 
   def fall_in_love(animal)

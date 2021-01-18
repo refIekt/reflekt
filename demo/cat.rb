@@ -21,8 +21,6 @@ class Cat < Animal
   end
 
   def is_friendly()
-    # TODO: This can be a random true/false value when this bug fixed:
-    # https://github.com/refIekt/reflekt/issues/6
     false
   end
 

@@ -58,7 +58,7 @@ class StringRule < Rule
 
   def random()
 
-    # Build alphabet soup.
+    # Pour alphabet soup.
     alpha_numeric = Array('A'..'Z') + Array('a'..'z')
     10.times do
       alpha_numeric << ' '

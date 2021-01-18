@@ -127,7 +127,7 @@ class RuleSetAggregator
   #
   # @stage Called when validating a reflection.
   # @param output [Dynamic] The method's return value.
-  # @param output_rule_set [RuleSet] The RuleSet to validate the output with.
+  # @param output_rule_set [RuleSet] The rule set to validate the output with.
   ##
   def test_output(output, output_rule_set)
 
@@ -136,7 +136,7 @@ class RuleSetAggregator
 
     unless output_rule_set.nil?
 
-      # Validate output RuleSet for that argument.
+      # Validate output rule set for that argument.
       unless output_rule_set.test(output)
         result = false
       end

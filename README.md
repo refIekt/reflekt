@@ -148,7 +148,7 @@ Conceptual differences between testing methodologies:
 
 |                   | Traditional testing       | Generative testing           | Reflective testing        |
 --------------------|---------------------------|------------------------------|---------------------------|
-| **Automation**    | ❌ Defined manually       | ❌ Defined semi-automatically | ✅ Defined automatically  |
+| **Automation**    | ❌ Defined manually       | ❎ Defined semi-automatically | ✅ Defined automatically  |
 | **Granularity**   | ✅ Tests PASS or FAIL     | ✅ Tests PASS or FAIL         | ✅ Tests PASS or FAIL     |
 | **Replication**   | ❌ Tests run externally   | ❌ Tests run externally       | ✅ Tests run internally   |
 | **Feedback**      | ❌ Tests run periodically | ❌ Tests run periodically     | ✅ Tests run in real time |

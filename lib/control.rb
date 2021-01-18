@@ -65,10 +65,8 @@ class Control < Reflection
       @output = MetaBuilder.create(output)
 
       # Validate output with aggregated control rule sets.
-      unless output_rule_set.nil?
-        unless @aggregator.test_output(output, output_rule_set)
-          @status = :fail
-        end
+      unless @aggregator.test_output(output, output_rule_set)
+        @status = :fail
       end
 
     # When a system error occurs.
@@ -76,6 +74,10 @@ class Control < Reflection
 
       @status = :error
       @message = message
+
+      p '--- REFLEKT ERROR: Method not reflected. ---'
+      p "Method: #{@method}"
+      p "Message: #{@message}"
 
     end
 

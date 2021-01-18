@@ -69,5 +69,9 @@ class Meta
 
   end
 
+  def self.numeric? value
+    Float(value) != nil rescue false
+  end
+
 end
 end

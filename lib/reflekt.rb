@@ -73,7 +73,7 @@ module Reflekt
             # Reflect the action.
             #
             # The first method call in the action creates a reflection.
-            # Then method calls are shadow actions which return to the reflection.
+            # Subsequent method calls are shadow actions which return to the reflection.
             ##
             if action.has_empty_experiments? && !action.is_reflecting?
               action.is_reflecting = true
@@ -127,6 +127,7 @@ module Reflekt
           end
 
           # Don't execute skipped methods when reflecting.
+          # TODO: action != nil
           unless action.is_reflecting? && self.class.reflekt_skipped?(method)
 
             # Continue action / shadow action.

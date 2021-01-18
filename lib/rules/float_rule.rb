@@ -37,8 +37,11 @@ class FloatRule < Rule
   ##
   def test(value)
 
-    return false if value < @min
-    return false if value > @max
+    # Numbers only; if the value is a string then there will be no min/max.
+    unless @min.nil? || @max.nil?
+      return false if value < @min
+      return false if value > @max
+    end
 
     true
   end

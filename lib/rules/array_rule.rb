@@ -18,18 +18,24 @@ class ArrayRule < Rule
   ##
   def train(meta)
 
-    # Min value.
-    if @min.nil?
-      @min = meta[:min]
-    else
-      @min = meta[:min] if meta[:min] < @min
-    end
+    if Meta.numeric? meta[:min]
 
-    # Max value.
-    if @max.nil?
-      @max = meta[:max]
-    else
-      @max = meta[:max] if meta[:max] > @max
+      # Min value.
+      meta_min = meta[:min].to_i
+      if @min.nil?
+        @min = meta_min
+      else
+        @min = meta_min if meta_min < @min
+      end
+
+      # Max value.
+      meta_max = meta[:max].to_i
+      if @max.nil?
+        @max = meta_max
+      else
+        @max = meta_max if meta_max > @max
+      end
+
     end
 
     # Min length.
@@ -53,13 +59,25 @@ class ArrayRule < Rule
   ##
   def test(value)
 
-    # Min/max value.
-    return false if value.min() < @min
-    return false if value.max() > @max
+    # Empty value.
+    # Fixes: NoMethodError: undefined method `<' for nil:NilClass
+    return true if value.empty? && @min_length == 0 && @max_length == 0
 
-    # Min/max length.
-    return false if value.length < @min_length
-    return false if value.length > @max_length
+    unless value.empty?
+
+      # Numbers only; if the value is a string then there will be no min/max.
+      unless @min.nil? || @max.nil?
+        return false if value.min() < @min
+        return false if value.max() > @max
+      end
+
+      p value
+
+      # Min/max length.
+      return false if value.length < @min_length
+      return false if value.length > @max_length
+
+    end
 
     true
   end

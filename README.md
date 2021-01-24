@@ -67,7 +67,7 @@ end
 
 See `Config.rb` for more configuration options.
 
-## Test data
+## Skipping actions
 
 You can configure Reflekt to skip "no undo" methods like deletion and sending email:
 
@@ -76,7 +76,9 @@ class ExampleClass
   reflekt_skip :method_name
 ```
 
-### Displaying test data
+Use `reflekt_skip` on the method that saves to the database to avoid persisting test data. If you still want to save test data to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database.
+
+## Skipping render
 
 Use `reflekt_skip` on methods that do the final render to the UI to avoid a visual mess of duplicated elements.
 Separate the final output from the rendering logic so that Reflekt can track changes in output.
@@ -109,10 +111,6 @@ def render(product)
   puts product
 end
 ```
-
-### Saving test data
-
-Use `reflekt_skip` on the method that saves to the database to avoid persisting test data. If you still want to save test data to the database then use [dependency injection](https://www.reddit.com/r/programming/comments/iz3rks/if_youre_not_practicing_within_the_scope_of_a/g6i1ex3/) to connect to a dummy database.
 
 ## How it works
 

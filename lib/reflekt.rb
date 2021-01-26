@@ -110,10 +110,8 @@ module Reflekt
 
                 end
 
-                # Save control.
-                @@reflekt.db.get("controls").push(control.serialize())
-
                 # Save results.
+                @@reflekt.db.get("controls").push(control.serialize())
                 @@reflekt.db.write()
 
                 # Render results.

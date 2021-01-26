@@ -169,23 +169,22 @@ module Reflekt
 
   end
 
+  ##
   # Setup class.
+  #
+  # @paths
+  #   - package_path [String] Absolute path to the library itself.
+  #   - project_path [String] Absolute path to the project root.
+  #   - output_path [String] Name of the reflections directory.
+  ##
   def self.reflekt_setup_class()
-
-    # Receive configuration.
     @@reflekt.config = Config.new()
+    @@reflekt.stack = ActionStack.new()
 
-    # Set configuration.
-    @@reflekt.path = File.dirname(File.realpath(__FILE__))
-
-    # Get reflections directory path from config or current action path.
-    if @@reflekt.config.output_path
-      @@reflekt.output_path = File.join(@@reflekt.config.output_path, @@reflekt.config.output_directory)
-    else
-      @@reflekt.output_path = File.join(Dir.pwd, @@reflekt.config.output_directory)
-    end
-
-    # Create reflections directory.
+    # Setup paths.
+    @@reflekt.package_path = File.dirname(File.realpath(__FILE__))
+    @@reflekt.project_path = @@reflekt.config.project_path
+    @@reflekt.output_path = File.join(@@reflekt.project_path, @@reflekt.config.output_directory)
     unless Dir.exist? @@reflekt.output_path
       Dir.mkdir(@@reflekt.output_path)
     end

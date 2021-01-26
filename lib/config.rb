@@ -5,7 +5,7 @@ module Reflekt
     attr_accessor :reflect_amount
     attr_accessor :reflect_limit
     attr_accessor :meta_map
-    attr_accessor :output_path
+    attr_accessor :project_path
     attr_accessor :output_directory
 
     def initialize()
@@ -35,9 +35,9 @@ module Reflekt
         :string => [StringRule]
       }
 
-      # An absolute path to the directory that contains the output directory.
+      # An absolute path to the project root directory.
       # Defaults to current execution path.
-      @output_path = nil
+      @project_path = Dir.pwd
 
       # Name of output directory.
       @output_directory = "reflections"

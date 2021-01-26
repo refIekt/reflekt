@@ -37,21 +37,20 @@ module Reflekt
       }
     end
 
-    ##############################################################################
+    ############################################################################
     # CLASS
-    ##############################################################################
+    ############################################################################
 
     ##
     # Deserialize metadata.
     #
-    # @todo Deserialize should create a Meta object.
-    # @todo Require each Meta type to handle its own deserialization.
+    # TODO: Deserialize should create a Meta object.
+    # TODO: Require each Meta type to handle its own deserialization.
     #
     # @param meta [Hash] The metadata to deserialize.
     # @param meta [Hash]
     ##
     def self.deserialize(meta)
-
       # Convert nil meta into NullMeta.
       # Meta is nil when there are no @inputs or @output on the method.
       if meta.nil?
@@ -66,7 +65,10 @@ module Reflekt
       meta[:type] = meta[:type].to_sym
 
       return meta
+    end
 
+    def self.numeric? value
+      Float(value) != nil rescue false
     end
 
   end

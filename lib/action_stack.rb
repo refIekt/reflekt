@@ -27,7 +27,7 @@ module Reflekt
     # @return [Action] The placed action.
     ##
     def push(action)
-      # Place first action at bottom of stack.
+      # First time? Place action at bottom of stack.
       if @bottom.nil?
         @bottom = action
       # Connect subsequent actions to each other.

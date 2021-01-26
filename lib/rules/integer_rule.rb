@@ -32,9 +32,11 @@ module Reflekt
     # @param value [Integer]
     ##
     def test(value)
-      return false if value < @min
-      return false if value > @max
-      true
+      # Numbers only; if the value is a string then there will be no min/max.
+      unless @min.nil? || @max.nil?
+        return false if value < @min
+        return false if value > @max
+      end
     end
 
     def result()

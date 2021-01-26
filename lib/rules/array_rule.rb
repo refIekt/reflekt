@@ -15,19 +15,22 @@ module Reflekt
     # @param meta [ArrayMeta]
     ##
     def train(meta)
+      if Meta.numeric? meta[:min]
+        # Min value.
+        meta_min = meta[:min].to_i
+        if @min.nil?
+          @min = meta_min
+        else
+          @min = meta_min if meta_min < @min
+        end
 
-      # Min value.
-      if @min.nil?
-        @min = meta[:min]
-      else
-        @min = meta[:min] if meta[:min] < @min
-      end
-
-      # Max value.
-      if @max.nil?
-        @max = meta[:max]
-      else
-        @max = meta[:max] if meta[:max] > @max
+        # Max value.
+        meta_max = meta[:max].to_i
+        if @max.nil?
+          @max = meta_max
+        else
+          @max = meta_max if meta_max > @max
+        end
       end
 
       # Min length.
@@ -43,21 +46,26 @@ module Reflekt
       else
         @max_length = meta[:length] if meta[:length] > @max_length
       end
-
     end
 
     ##
     # @param value [Array]
     ##
     def test(value)
+      # Handle empty value.
+      return true if value.empty? && @min_length == 0 && @max_length == 0
 
-      # Min/max value.
-      return false if value.min() < @min
-      return false if value.max() > @max
+      unless value.empty?
+        # Numbers only; if the value is a string then there will be no min/max.
+        unless @min.nil? || @max.nil?
+          return false if value.min() < @min
+          return false if value.max() > @max
+        end
 
-      # Min/max length.
-      return false if value.length < @min_length
-      return false if value.length > @max_length
+        # Min/max length.
+        return false if value.length < @min_length
+        return false if value.length > @max_length
+      end
 
       true
     end

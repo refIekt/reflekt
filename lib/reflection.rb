@@ -33,7 +33,6 @@ module Reflekt
     # @param aggregator [RuleSetAggregator] The aggregated RuleSet for this class/method.
     ##
     def initialize(action, number, aggregator)
-
       @action = action
       @unique_id = action.unique_id + number
       @number = number
@@ -57,7 +56,6 @@ module Reflekt
       @status = :pass
       @time = Time.now.to_i
       @message = nil
-
     end
 
     ##

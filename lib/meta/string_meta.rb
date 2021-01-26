@@ -4,10 +4,8 @@ module Reflekt
   class StringMeta < Meta
 
     def initialize()
-
       @type = :string
       @length = nil
-  
     end
 
     ##

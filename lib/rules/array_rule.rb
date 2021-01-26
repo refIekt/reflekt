@@ -4,13 +4,11 @@ module Reflekt
   class ArrayRule < Rule
 
     def initialize()
-
       @type = :array
       @min = nil
       @max = nil
       @min_length = nil
       @max_length = nil
-
     end
 
     ##
@@ -75,7 +73,6 @@ module Reflekt
     end
 
     def random()
-
       array = Array.new(rand(@min_length..@max_length))
 
       array.each_with_index do |item, index|
@@ -83,7 +80,6 @@ module Reflekt
       end
 
       return array
-
     end
 
   end

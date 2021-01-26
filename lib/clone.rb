@@ -16,13 +16,11 @@ module Reflekt
   class Clone
 
     def initialize(action)
-
       # Clone the action's calling object.
       @caller_object_clone = action.caller_object.clone
 
       # TODO: Clone any other instances that this clone references.
       # TODO: Replace clone's references to these new instances.
-
     end
 
     def action(method, *new_args)

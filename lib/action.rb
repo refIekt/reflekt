@@ -33,7 +33,6 @@ module Reflekt
     # @param stack [ActionStack] The shadow action call stack.
     ##
     def initialize(caller_object, method, reflect_amount, stack)
-
       @time = Time.now.to_i
       @unique_id = @time + rand(1..99999)
       @base = nil
@@ -62,7 +61,6 @@ module Reflekt
         @base = @stack.base()
       end
       @is_reflecting = false
-
     end
 
     def has_empty_experiments?

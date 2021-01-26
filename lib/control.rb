@@ -31,7 +31,6 @@ module Reflekt
     # @param *args [Dynamic] The method's arguments.
     ##
     def reflect(*args)
-
       # Get trained rule sets.
       input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
       output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
@@ -43,7 +42,6 @@ module Reflekt
 
       # When arguments exist.
       unless args.size == 0
-
         # Validate arguments against trained rule sets.
         unless input_rule_sets.nil?
           unless @aggregator.test_inputs(args, input_rule_sets)
@@ -54,12 +52,10 @@ module Reflekt
         # Create metadata for each argument.
         # TODO: Create metadata for other inputs such as instance variables.
         @inputs = MetaBuilder.create_many(args)
-
       end
 
       # Action method with real arguments.
       begin
-
         # Run reflection.
         output = @clone.send(@method, *args)
         @output = MetaBuilder.create(output)
@@ -71,14 +67,13 @@ module Reflekt
 
       # When a system error occurs.
       rescue StandardError => message
-
         @status = :error
         @message = message
 
+        # TODO: Write log entry to /reflections/errors.txt
         p '--- REFLEKT ERROR: Method not reflected. ---'
         p "Method: #{@method}"
         p "Message: #{@message}"
-
       end
 
     end

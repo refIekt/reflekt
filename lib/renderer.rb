@@ -2,10 +2,8 @@ module Reflekt
   class Renderer
 
     def initialize(path, output_path)
-
       @path = path
       @output_path = output_path
-
     end
 
     ##

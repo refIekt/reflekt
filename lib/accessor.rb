@@ -22,7 +22,6 @@ module Reflekt
     attr_accessor :error
 
     def initialize()
-
       @config = nil
       @setup = nil
       @db = nil
@@ -32,7 +31,6 @@ module Reflekt
       @path = nil
       @output_path = nil
       @error = false
-
     end
 
   end

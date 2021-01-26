@@ -43,7 +43,6 @@ module Reflekt
 
       # When arguments exist.
       unless args.size == 0
-
         # Create random arguments from aggregated rule sets.
         unless input_rule_sets.nil?
           args = randomize(args, input_rule_sets)
@@ -52,12 +51,10 @@ module Reflekt
         # Create metadata for each argument.
         # TODO: Create metadata for other inputs such as instance variables.
         @inputs = MetaBuilder.create_many(args)
-
       end
 
       # Action method with random arguments.
       begin
-
         # Run reflection.
         output = @clone.send(@method, *args)
         @output = MetaBuilder.create(output)
@@ -71,10 +68,8 @@ module Reflekt
 
       # When a system error occurs.
       rescue StandardError => message
-
         @status = :fail
         @message = message
-
       end
 
     end
@@ -88,22 +83,18 @@ module Reflekt
     # @return [Dynamic] Random arguments.
     ##
     def randomize(args, input_rule_sets)
-
       random_args = []
 
       args.each_with_index do |arg, arg_num|
-
         # Get a random rule in the rule set.
         rules = input_rule_sets[arg_num].rules
         agg_rule = rules[rules.keys.sample]
 
         # Create a random value that follows that rule.
         random_args << agg_rule.random()
-
       end
 
       return random_args
-
     end
 
   end

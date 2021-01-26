@@ -27,7 +27,6 @@ module Reflekt
     # @return [Action] The placed action.
     ##
     def push(action)
-
       # Place first action at bottom of stack.
       if @bottom.nil?
         @bottom = action
@@ -39,7 +38,6 @@ module Reflekt
 
       # Place action at top of stack.
       @top = action
-
     end
 
   end

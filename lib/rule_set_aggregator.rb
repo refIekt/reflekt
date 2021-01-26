@@ -19,11 +19,9 @@ module Reflekt
     # @param meta_map [Hash] The rules that apply to each meta type.
     ##
     def initialize(meta_map)
-
       @meta_map = meta_map
       # Key rule sets by class and method.
       @rule_sets = {}
-
     end
 
     ##

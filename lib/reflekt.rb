@@ -3,14 +3,6 @@
 #
 # @author Maedi Prichard
 #
-# @flow
-#   1. Reflekt is prepended to a class and setup.
-#   2. When a class insantiates so does Reflekt.
-#   3. An Action is created on method call.
-#   4. Many Refections are created per Action.
-#   5. Each Reflection executes on cloned data.
-#   6. Flow is returned to the original method.
-#
 # @usage
 #   class ExampleClass
 #     prepend Reflekt
@@ -33,25 +25,31 @@ Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require_relative file }
 module Reflekt
 
   ##
-  # Setup Reflect-Execute loop to run before normal execution.
+  # Reflect-Execute loop.
   #
-  # @scope
-  #   self [Object] Refers to the class that Reflekt is prepended to.
+  # Reflect each method before it executes.
+  #
+  # @loop
+  #   1. Reflekt is prepended to a class and setup.
+  #   2. When a class insantiates so does Reflekt.
+  #   3. An Action is created on method call.
+  #   4. Many Refections are created per Action.
+  #   5. Each Reflection executes on cloned data.
+  #   6. Flow is returned to the original method.
+  #
+  # @see https://reflekt.dev/docs/reflect-execute-loop
+  #
+  # @scope self [Object] Refers to the class that Reflekt is prepended to.
   ##
   def initialize(*args)
 
-    # TODO: Store counts on @@reflekt and key by instance ID.
+    # TODO: Store counts on @@reflekt.counts and key by instance ID.
     @reflekt_counts = {}
 
-    # Get child and parent instance methods.
-    parent_instance_methods = self.class.superclass.instance_methods(false)
-    child_instance_methods = self.class.instance_methods(false)
-    instance_methods = parent_instance_methods + child_instance_methods
-
-    # TODO: Include core methods like "Array.include?".
-    instance_methods.each do |method|
+    # Override methods.
+    Reflekt.get_methods(self).each do |method|
       @reflekt_counts[method] = 0
-      Reflekt.reflect_execute_loop(method)
+      Reflekt.override_method(self, method)
     end
 
     # Continue initialization.
@@ -59,10 +57,28 @@ module Reflekt
 
   end
 
-  def self.reflect_execute_loop(method)
+  ##
+  # Get child and parent instance methods.
+  #
+  # TODO: Include methods from all ancestors.
+  # TODO: Include core methods like "Array.include?".
+  ##
+  def self.get_methods(klass)
+    child_instance_methods = klass.class.instance_methods(false)
+    parent_instance_methods = klass.class.superclass.instance_methods(false)
+    return child_instance_methods + parent_instance_methods
+  end
+
+  ##
+  # Override a method.
+  #
+  # @param klass [Dynamic] The class to override.
+  # @param method [Method] The method to override.
+  ##
+  def self.override_method(klass, method)
 
     # When method called in flow.
-    self.define_singleton_method(method) do |*args|
+    klass.define_singleton_method(method) do |*args|
 
       # When Reflekt enabled and control has reflected so far without error.
       if @@reflekt.config.enabled && !@@reflekt.error
@@ -71,11 +87,11 @@ module Reflekt
         action = @@reflekt.stack.peek()
 
         # Don't reflect when reflect limit reached or method skipped.
-        unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || self.class.reflekt_skipped?(method)
+        unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || klass.class.reflekt_skipped?(method)
 
           # Create action when stack empty or past action done reflecting.
           if action.nil? || action.has_finished_reflecting?
-            action = Action.new(self, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
+            action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
             @@reflekt.stack.push(action)
           end
 
@@ -135,7 +151,7 @@ module Reflekt
         end
 
         # Don't execute skipped methods when reflecting.
-        unless action.is_reflecting? && self.class.reflekt_skipped?(method)
+        unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
           # Continue action / shadow action.
           super *args
         end
@@ -199,7 +215,7 @@ module Reflekt
     @@reflekt.aggregator.train(db[:controls])
 
     # Setup renderer.
-    @@reflekt.renderer = Renderer.new(@@reflekt.project_path, @@reflekt.output_path)
+    @@reflekt.renderer = Renderer.new(@@reflekt.package_path, @@reflekt.output_path)
 
     return true
   end

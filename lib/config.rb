@@ -20,7 +20,7 @@ module Reflekt
       # A control reflection is created in addition to this.
       @reflect_amount = 5
 
-      # The maximum amount of reflections that can be created per instance/method.
+      # The maximum amount of reflections that can be created per instance per method.
       # A method called thousands of times doesn't need that many reflections.
       @reflect_limit = 10
 

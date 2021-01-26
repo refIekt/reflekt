@@ -6,7 +6,7 @@
 ################################################################################
 
 require_relative 'meta'
-# Require all meta.
+# Require all meta from the meta directory.
 Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require_relative file }
 
 module Reflekt
@@ -15,12 +15,12 @@ module Reflekt
     ##
     # Create meta type for matching data type.
     #
-    # @flow
+    # @logic
     #   1. First return basic type
     #   2. Then return custom type
     #   3. Then return "nil" type
     #
-    # @param value
+    # @param value [Dynamic] Any input or output.
     ##
     def self.create(value)
 
@@ -58,7 +58,7 @@ module Reflekt
     # @param values
     ##
     def self.create_many(values)
-  
+
       meta = []
 
       values.each do |value|

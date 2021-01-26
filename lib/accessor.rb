@@ -1,5 +1,5 @@
 ################################################################################
-# Access variables via one object to avoid polluting the caller class scope.
+# Access variables via one object to avoid polluting the caller's scope.
 #
 # @pattern Singleton
 #
@@ -9,31 +9,31 @@
 ################################################################################
 
 module Reflekt
-class Accessor
+  class Accessor
 
-  attr_accessor :config
-  attr_accessor :setup
-  attr_accessor :db
-  attr_accessor :stack
-  attr_accessor :aggregator
-  attr_accessor :renderer
-  attr_accessor :path
-  attr_accessor :output_path
-  attr_accessor :error
+    attr_accessor :config
+    attr_accessor :setup
+    attr_accessor :db
+    attr_accessor :stack
+    attr_accessor :aggregator
+    attr_accessor :renderer
+    attr_accessor :path
+    attr_accessor :output_path
+    attr_accessor :error
 
-  def initialize()
+    def initialize()
 
-    @config = nil
-    @setup = nil
-    @db = nil
-    @stack = nil
-    @aggregator = nil
-    @renderer = nil
-    @path = nil
-    @output_path = nil
-    @error = false
+      @config = nil
+      @setup = nil
+      @db = nil
+      @stack = nil
+      @aggregator = nil
+      @renderer = nil
+      @path = nil
+      @output_path = nil
+      @error = false
+
+    end
 
   end
-
-end
 end

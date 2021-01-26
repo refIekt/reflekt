@@ -16,96 +16,95 @@ require_relative 'meta_builder'
 require_relative 'meta/null_meta.rb'
 
 module Reflekt
-class RuleSet
+  class RuleSet
 
-  attr_accessor :rules
+    attr_accessor :rules
 
-  ##
-  # @param meta_map [Hash] The rules to apply to each data type.
-  ##
-  def initialize(meta_map)
+    ##
+    # @param meta_map [Hash] The rules to apply to each data type.
+    ##
+    def initialize(meta_map)
 
-    # The rules that apply to meta types.
-    @meta_map = meta_map
+      # The rules that apply to meta types.
+      @meta_map = meta_map
 
-    # The types of meta this rule set applies to.
-    # Rules are only validated on their supported meta type.
-    @meta_types = Set.new()
+      # The types of meta this rule set applies to.
+      # Rules are only validated on their supported meta type.
+      @meta_types = Set.new()
 
-    @rules = {}
+      @rules = {}
 
-  end
-
-  ##
-  # Train rule set on metadata.
-  #
-  # @param meta [Hash] The metadata to train on.
-  ##
-  def train(meta)
-
-    # Track supported meta types.
-    meta_type = meta[:type]
-    @meta_types << meta_type
-
-    # Get rule types for this meta type.
-    if @meta_map.key? meta_type
-      @meta_map[meta_type].each do |rule_type|
-
-        # Ensure rule exists.
-        if @rules[rule_type].nil?
-          @rules[rule_type] = rule_type.new()
-        end
-
-        # Train rule.
-        @rules[rule_type].train(meta)
-
-      end
     end
 
-  end
+    ##
+    # Train rule set on metadata.
+    #
+    # @param meta [Hash] The metadata to train on.
+    ##
+    def train(meta)
 
-  ##
-  # @param value [Dynamic]
-  ##
-  def test(value)
+      # Track supported meta types.
+      meta_type = meta[:type]
+      @meta_types << meta_type
 
-    result = true
-    meta_type = MetaBuilder.data_type_to_meta_type(value)
+      # Get rule types for this meta type.
+      if @meta_map.key? meta_type
+        @meta_map[meta_type].each do |rule_type|
 
-    # Fail if value's meta type not testable by rule set.
-    unless @meta_types.include? meta_type
-      return false
-    end
+          # Ensure rule exists.
+          if @rules[rule_type].nil?
+            @rules[rule_type] = rule_type.new()
+          end
 
-    @rules.each do |klass, rule|
-      if (rule.type == meta_type)
-        unless rule.test(value)
-           result = false
+          # Train rule.
+          @rules[rule_type].train(meta)
+
         end
       end
+
     end
 
-    return result
+    ##
+    # @param value [Dynamic]
+    ##
+    def test(value)
 
-  end
+      result = true
+      meta_type = MetaBuilder.data_type_to_meta_type(value)
 
-  ##
-  # Get the results of the rules.
-  #
-  # @return [Array] The rules.
-  ##
-  def result()
+      # Fail if value's meta type not testable by rule set.
+      unless @meta_types.include? meta_type
+        return false
+      end
 
-    rules = {}
+      @rules.each do |klass, rule|
+        if (rule.type == meta_type)
+          unless rule.test(value)
+             result = false
+          end
+        end
+      end
 
-    @rules.each do |key, rule|
-      rules[rule.class] = rule.result()
+      return result
+
+    end
+  
+    ##
+    # Get the results of the rules.
+    #
+    # @return [Array] The rules.
+    ##
+    def result()
+
+      rules = {}
+
+      @rules.each do |key, rule|
+        rules[rule.class] = rule.result()
+      end
+
+      return rules
+
     end
 
-    return rules
-
   end
-
-
-end
 end

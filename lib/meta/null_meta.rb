@@ -13,24 +13,24 @@
 require_relative '../meta'
 
 module Reflekt
-class NullMeta < Meta
-
-  def initialize()
-    @type = :null
+  class NullMeta < Meta
+  
+    def initialize()
+      @type = :null
+    end
+  
+    ##
+    # @param value [NilClass]
+    ##
+    def load(value)
+      # No need to load a value for null meta.
+    end
+  
+    def serialize()
+      {
+        :type => @type,
+      }
+    end
+  
   end
-
-  ##
-  # @param value [NilClass]
-  ##
-  def load(value)
-    # No need to load a value for null meta.
-  end
-
-  def serialize()
-    {
-      :type => @type,
-    }
-  end
-
-end
 end

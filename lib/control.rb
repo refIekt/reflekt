@@ -22,66 +22,66 @@ require_relative 'reflection'
 require_relative 'meta_builder'
 
 module Reflekt
-class Control < Reflection
+  class Control < Reflection
 
-  ##
-  # Reflect on a method.
-  #
-  # Create a shadow action.
-  # @param *args [Dynamic] The method's arguments.
-  ##
-  def reflect(*args)
+    ##
+    # Reflect on a method.
+    #
+    # Create a shadow action.
+    # @param *args [Dynamic] The method's arguments.
+    ##
+    def reflect(*args)
 
-    # Get trained rule sets.
-    input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
-    output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
+      # Get trained rule sets.
+      input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
+      output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
 
-    # Fail when no trained rule sets.
-    if input_rule_sets.nil?
-      @status = :fail
-    end
-
-    # When arguments exist.
-    unless args.size == 0
-
-      # Validate arguments against trained rule sets.
-      unless input_rule_sets.nil?
-        unless @aggregator.test_inputs(args, input_rule_sets)
-          @status = :fail
-        end
-      end
-
-      # Create metadata for each argument.
-      # TODO: Create metadata for other inputs such as instance variables.
-      @inputs = MetaBuilder.create_many(args)
-
-    end
-
-    # Action method with real arguments.
-    begin
-
-      # Run reflection.
-      output = @clone.send(@method, *args)
-      @output = MetaBuilder.create(output)
-
-      # Validate output with aggregated control rule sets.
-      unless @aggregator.test_output(output, output_rule_set)
+      # Fail when no trained rule sets.
+      if input_rule_sets.nil?
         @status = :fail
       end
 
-    # When a system error occurs.
-    rescue StandardError => message
+      # When arguments exist.
+      unless args.size == 0
 
-      @status = :error
-      @message = message
+        # Validate arguments against trained rule sets.
+        unless input_rule_sets.nil?
+          unless @aggregator.test_inputs(args, input_rule_sets)
+            @status = :fail
+          end
+        end
 
-      p '--- REFLEKT ERROR: Method not reflected. ---'
-      p "Method: #{@method}"
-      p "Message: #{@message}"
+        # Create metadata for each argument.
+        # TODO: Create metadata for other inputs such as instance variables.
+        @inputs = MetaBuilder.create_many(args)
+
+      end
+
+      # Action method with real arguments.
+      begin
+
+        # Run reflection.
+        output = @clone.send(@method, *args)
+        @output = MetaBuilder.create(output)
+
+        # Validate output with aggregated control rule sets.
+        unless @aggregator.test_output(output, output_rule_set)
+          @status = :fail
+        end
+
+      # When a system error occurs.
+      rescue StandardError => message
+
+        @status = :error
+        @message = message
+
+        p '--- REFLEKT ERROR: Method not reflected. ---'
+        p "Method: #{@method}"
+        p "Message: #{@message}"
+
+      end
 
     end
 
   end
-
-end
 end

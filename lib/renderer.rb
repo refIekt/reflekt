@@ -1,41 +1,40 @@
 module Reflekt
-class Renderer
+  class Renderer
 
-  def initialize(path, output_path)
+    def initialize(path, output_path)
 
-    @path = path
-    @output_path = output_path
+      @path = path
+      @output_path = output_path
 
-  end
+    end
 
-  ##
-  # Place files in output path.
-  ##
-  def render()
+    ##
+    # Place files in output path.
+    ##
+    def render()
 
-    filenames = [
-      "bundle.js",
-      "index.html",
-      "package-lock.json",
-      "package.json",
-      "README.md",
-      "server.js"
-    ]
+      filenames = [
+        "bundle.js",
+        "index.html",
+        "package-lock.json",
+        "package.json",
+        "README.md",
+        "server.js"
+      ]
 
-    filenames.each do |filename|
-      file = File.read(File.join(@path, "web", filename))
-      File.open(File.join(@output_path, filename), 'w+') do |f|
+      filenames.each do |filename|
+        file = File.read(File.join(@path, "web", filename))
+        File.open(File.join(@output_path, filename), 'w+') do |f|
+          f.write file
+        end
+      end
+
+      file = File.read(File.join(@path, "web", "gitignore.txt"))
+      File.open(File.join(@output_path, ".gitignore"), 'w+') do |f|
         f.write file
       end
-    end
 
-    file = File.read(File.join(@path, "web", "gitignore.txt"))
-    File.open(File.join(@output_path, ".gitignore"), 'w+') do |f|
-      f.write file
     end
 
   end
-
-
-end
 end

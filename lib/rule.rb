@@ -12,43 +12,43 @@
 ################################################################################
 
 module Reflekt
-class Rule
+  class Rule
 
-  attr_reader :type
+    attr_reader :type
 
-  ##
-  # Each rule trains on metadata to determine its boundaries.
-  #
-  # @param meta [Meta]
-  ##
-  def train(meta)
+    ##
+    # Each rule trains on metadata to determine its boundaries.
+    #
+    # @param meta [Meta]
+    ##
+    def train(meta)
+    end
+
+    ##
+    # Each rule validates a value with its boundaries.
+    #
+    # @param value [Dynamic]
+    # @return [Boolean] Whether the value passes or fails.
+    ##
+    def test(value)
+    end
+
+    ##
+    # Each rule provides results.
+    #
+    # @return [Hash]
+    ##
+    def result()
+      {}
+    end
+
+    ##
+    # Each rule provides a random example that matches the rule's boundaries.
+    #
+    # @return [Dynamic] A random value.
+    ##
+    def random()
+    end
+
   end
-
-  ##
-  # Each rule validates a value with its boundaries.
-  #
-  # @param value [Dynamic]
-  # @return [Boolean] Whether the value passes or fails.
-  ##
-  def test(value)
-  end
-
-  ##
-  # Each rule provides results.
-  #
-  # @return [Hash]
-  ##
-  def result()
-    {}
-  end
-
-  ##
-  # Each rule provides a random example that matches the rule's boundaries.
-  #
-  # @return [Dynamic] A random value.
-  ##
-  def random()
-  end
-
-end
 end

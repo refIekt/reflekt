@@ -1,14 +1,14 @@
 Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
-  spec.version     = '1.0.9'
-  spec.date        = '2021-01-15'
+  spec.version     = '1.0.10'
+  spec.date        = '2021-01-26'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
   spec.summary     = "Reflective testing."
   spec.description = "Testing that's completely automated."
-  spec.homepage    = 'https://github.com/refIekt/reflekt'
+  spec.homepage    = 'https://reflekt.dev'
   spec.license     = 'MPL-2.0'
 
   spec.files = [

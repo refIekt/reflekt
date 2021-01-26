@@ -1,14 +1,14 @@
 PATH
   remote: .
   specs:
-    reflekt (1.0.9)
+    reflekt (1.0.10)
       rowdb
 
 GEM
   remote: https://rubygems.org/
   specs:
-    oj (3.11.0)
-    rowdb (0.6.3)
+    oj (3.11.1)
+    rowdb (0.6.4)
       oj
       rudash
     rudash (4.1.2)
@@ -20,4 +20,4 @@ DEPENDENCIES
   reflekt!
 
 BUNDLED WITH
-   2.1.4
+   2.2.6

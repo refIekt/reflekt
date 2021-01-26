@@ -12,7 +12,6 @@ module Reflekt
   class Accessor
 
     attr_accessor :config
-    attr_accessor :setup
     attr_accessor :db
     attr_accessor :stack
     attr_accessor :aggregator
@@ -24,7 +23,6 @@ module Reflekt
 
     def initialize()
       @config = nil
-      @setup = nil
       @db = nil
       @stack = nil
       @aggregator = nil

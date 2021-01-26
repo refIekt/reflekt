@@ -99,7 +99,7 @@ module Reflekt
           # Reflect the action.
           #
           # The first method call in the action creates a reflection.
-          # Then method calls are shadow actions which return to the reflection.
+          # Subsequent method calls are shadow actions which return to the reflection.
           ##
           if action.has_empty_experiments? && !action.is_reflecting?
             action.is_reflecting = true
@@ -170,6 +170,8 @@ module Reflekt
   # Configure Config singleton.
   ##
   def self.configure
+    reflekt_setup_class
+
     yield(@@reflekt.config)
   end
 
@@ -179,9 +181,7 @@ module Reflekt
     # Prepend class methods to the instance's singleton class.
     base.singleton_class.prepend(SingletonClassMethods)
 
-    # Setup class.
-    @@reflekt = Accessor.new()
-    @@reflekt.setup ||= reflekt_setup_class
+    reflekt_setup_class
   end
 
   ##
@@ -193,6 +193,11 @@ module Reflekt
   #   - output_path [String] Name of the reflections directory.
   ##
   def self.reflekt_setup_class()
+
+    # Only setup once.
+    return if defined? @@reflekt
+
+    @@reflekt = Accessor.new()
     @@reflekt.config = Config.new()
     @@reflekt.stack = ActionStack.new()
 

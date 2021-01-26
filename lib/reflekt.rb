@@ -30,12 +30,12 @@ module Reflekt
   # Reflect each method before it executes.
   #
   # @loop
-  #   1. Reflekt is prepended to a class and setup.
-  #   2. When a class insantiates so does Reflekt.
-  #   3. An Action is created on method call.
-  #   4. Many Refections are created per Action.
-  #   5. Each Reflection executes on cloned data.
-  #   6. Flow is returned to the original method.
+  #   1. Reflekt is prepended to a class and setup
+  #   2. The method is overridden on class instantiation
+  #   3. An Action is created on method call
+  #   4. Many Refections are created per Action
+  #   5. Each Reflection executes on cloned data
+  #   6. Flow is returned to the original method
   #
   # @see https://reflekt.dev/docs/reflect-execute-loop
   #
@@ -170,7 +170,7 @@ module Reflekt
   # Configure Config singleton.
   ##
   def self.configure
-    reflekt_setup_class
+    reflekt_setup_class()
 
     yield(@@reflekt.config)
   end
@@ -181,7 +181,7 @@ module Reflekt
     # Prepend class methods to the instance's singleton class.
     base.singleton_class.prepend(SingletonClassMethods)
 
-    reflekt_setup_class
+    reflekt_setup_class()
   end
 
   ##

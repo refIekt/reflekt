@@ -2,7 +2,7 @@ Gem::Specification.new do |spec|
 
   spec.name        = 'reflekt'
   spec.version     = '1.0.10'
-  spec.date        = '2021-01-26'
+  spec.date        = '2021-02-08'
   spec.authors     = ["Maedi Prichard"]
   spec.email       = 'maediprichard@gmail.com'
 
@@ -56,5 +56,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rowdb"
+  spec.add_dependency "lit-cli"
 
 end

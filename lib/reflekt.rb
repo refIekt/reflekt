@@ -11,6 +11,8 @@
 require 'set'
 require 'erb'
 require 'rowdb'
+require 'lit_cli'
+
 require_relative 'accessor'
 require_relative 'action'
 require_relative 'action_stack'
@@ -19,15 +21,18 @@ require_relative 'control'
 require_relative 'experiment'
 require_relative 'renderer'
 require_relative 'rule_set_aggregator'
+
 # Require all rules in rules directory.
 Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require_relative file }
 
 module Reflekt
 
+  include LitCLI
+
   ##
   # Reflect-Execute loop.
   #
-  # Reflect each method before it executes.
+  # Reflect each method before finally executing it.
   #
   # @loop
   #   1. Reflekt is prepended to a class and setup
@@ -35,7 +40,7 @@ module Reflekt
   #   3. An Action is created on method call
   #   4. Many Refections are created per Action
   #   5. Each Reflection executes on cloned data
-  #   6. Flow is returned to the original method
+  #   6. The original method executes
   #
   # @see https://reflekt.dev/docs/reflect-execute-loop
   #
@@ -43,13 +48,19 @@ module Reflekt
   ##
   def initialize(*args)
 
-    # TODO: Store counts on @@reflekt.counts and key by instance ID.
-    @reflekt_counts = {}
+    if @@reflekt.config.enabled
+      @reflekt_initialized = false
+      @reflekt_counts = {} # TODO: Store on @@reflekt.counts, key by instance ID.
 
-    # Override methods.
-    Reflekt.get_methods(self).each do |method|
-      @reflekt_counts[method] = 0
-      Reflekt.override_method(self, method)
+      🔥 "Initialize #{self.class}", :info, :setup
+
+      # Override methods.
+      Reflekt.get_methods(self).each do |method|
+        @reflekt_counts[method] = 0
+        Reflekt.override_method(self, method)
+      end
+
+      @reflekt_initialized = true
     end
 
     # Continue initialization.
@@ -76,21 +87,24 @@ module Reflekt
   # @param method [Method] The method to override.
   ##
   def self.override_method(klass, method)
-
-    # When method called in flow.
     klass.define_singleton_method(method) do |*args|
 
-      # When Reflekt enabled and control has reflected so far without error.
-      if @@reflekt.config.enabled && !@@reflekt.error
+      # When method called in flow.
+      if @reflekt_initialized
+        unless @@reflekt.error
 
-        # Get current action.
-        action = @@reflekt.stack.peek()
+          🔥 "#{klass.class}.#{method}() called.", :info, :action
 
-        # Don't reflect when reflect limit reached or method skipped.
-        unless (@reflekt_counts[method] >= @@reflekt.config.reflect_limit) || klass.class.reflekt_skipped?(method)
+          # Get current action.
+          action = @@reflekt.stack.peek()
+          if action.nil?
+            🔥 "First action ever created.", :info, :action
+            action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
+            @@reflekt.stack.push(action)
+          end
 
-          # Create action when stack empty or past action done reflecting.
-          if action.nil? || action.has_finished_reflecting?
+          # New action when old action done reflecting.
+          if action.has_finished_reflecting?
             action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
             @@reflekt.stack.push(action)
           end
@@ -104,66 +118,65 @@ module Reflekt
           if action.has_empty_experiments? && !action.is_reflecting?
             action.is_reflecting = true
 
-            # Create control.
+            🔥 "Create control for #{method} action and reflect", :info, :control
             control = Control.new(action, 0, @@reflekt.aggregator)
             action.control = control
+            unless klass.class.reflekt_skipped?(method) || (@reflekt_counts[method] >= @@reflekt.config.reflect_limit)
+              control.reflect(*args)
+            end
 
-            # Execute control.
-            control.reflect(*args)
+            unless control.status == :error
+
+              ## Save control as a reflection.
+              #@@reflekt.db.get("reflections").push(control.serialize())
+
+              ## Multiple experiments per action.
+              #action.experiments.each_with_index do |value, index|
+
+              #  # Create experiment.
+              #  experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
+              #  action.experiments[index] = experiment
+
+              #  # Reflect experiment.
+              #  experiment.reflect(*args)
+              #  @reflekt_counts[method] = @reflekt_counts[method] + 1
+
+              #  # Save experiment.
+              #  @@reflekt.db.get("reflections").push(experiment.serialize())
+
+              #end
+
+              ## Save results.
+              #@@reflekt.db.get("controls").push(control.serialize())
+              #@@reflekt.db.write()
+
+              ## Render results.
+              #@@reflekt.renderer.render()
 
             # Stop reflecting when control fails to execute.
-            if control.status == :error
-              @@reflekt.error = true
-            # Continue reflecting when control executes succesfully.
             else
-
-              # Save control as a reflection.
-              @@reflekt.db.get("reflections").push(control.serialize())
-
-              # Multiple experiments per action.
-              action.experiments.each_with_index do |value, index|
-
-                # Create experiment.
-                experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
-                action.experiments[index] = experiment
-
-                # Execute experiment.
-                experiment.reflect(*args)
-                @reflekt_counts[method] = @reflekt_counts[method] + 1
-
-                # Save experiment.
-                @@reflekt.db.get("reflections").push(experiment.serialize())
-
-              end
-
-              # Save results.
-              @@reflekt.db.get("controls").push(control.serialize())
-              @@reflekt.db.write()
-
-              # Render results.
-              @@reflekt.renderer.render()
-
+              @@reflekt.error = true
             end
 
             action.is_reflecting = false
           end
 
-        end
+          # Don't execute skipped methods when reflecting.
+          unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
+            🔥 "Continue original execution / shadow execution.", :info, :action
+            super *args
+          end
 
-        # Don't execute skipped methods when reflecting.
-        unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
-          # Continue action / shadow action.
+        # Finish execution when control reflection fails.
+        else
           super *args
         end
-
-      # When Reflekt disabled or control reflection failed.
+      # When method called in constructor.
       else
-        # Continue action.
+        🔥 "#{klass} #{method}() is not reflected in constructor.", :info, :setup
         super *args
       end
-
     end
-
   end
 
   ##
@@ -221,6 +234,23 @@ module Reflekt
 
     # Setup renderer.
     @@reflekt.renderer = Renderer.new(@@reflekt.package_path, @@reflekt.output_path)
+
+    LitCLI.configure do |config|
+      config.types = {
+        :info => { icon: "ℹ", color: :blue },
+        :pass => { icon: "✔", color: :green },
+        :warn => { icon: "⚠", color: :yellow },
+        :fail => { icon: "⨯", color: :red },
+        :error => { icon: "!", color: :red },
+        :debug => { icon: "?", color: :purple },
+      }
+      config.types = {
+        :setup => { styles: [:dim, :bold, :upcase] },
+        :action => { color: :red, styles: [:bold, :upcase] },
+        :control => { color: :blue, styles: [:bold, :upcase] },
+        :experiment => { color: :green, styles: [:bold, :upcase] },
+      }
+    end
 
     return true
   end

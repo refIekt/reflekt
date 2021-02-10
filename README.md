@@ -10,6 +10,8 @@
   <a href="https://rubygems.org/gems/reflekt">
     <img src="https://badge.fury.io/rb/reflekt.svg" alt="Gem Version" />
   </a>
+  <img src="https://img.shields.io/github/languages/code-size/refIekt/reflekt" alt="GitHub code size in bytes">
+  <img src="https://img.shields.io/gem/dt/reflekt">
 </p>
 
 *Reflective testing.*

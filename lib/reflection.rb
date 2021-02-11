@@ -22,6 +22,7 @@ require_relative 'meta_builder'
 
 module Reflekt
   class Reflection
+    include LitCLI
 
     attr_reader :status
 
@@ -101,6 +102,7 @@ module Reflekt
         :inputs => nil,
         :output => nil,
       }
+      lit "Save meta for #{@method}()", :save, :meta, @klass
 
       unless @inputs.nil?
         reflection[:inputs] = []

@@ -50,6 +50,7 @@ module Reflekt
 
         # Create metadata for each argument.
         # TODO: Create metadata for other inputs such as instance variables.
+        lit "Build meta for #{@method}(): #{args}", :info, :meta, @klass
         @inputs = MetaBuilder.create_many(args)
       end
 

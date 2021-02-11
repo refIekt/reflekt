@@ -81,7 +81,7 @@ module Reflekt
       if has_empty_experiments?
         return false
       end
-      return true
+      true
     end
 
   end

@@ -26,7 +26,6 @@ require_relative 'rule_set_aggregator'
 Dir[File.join(__dir__, 'rules', '*.rb')].each { |file| require_relative file }
 
 module Reflekt
-
   include LitCLI
 
   ##
@@ -52,7 +51,7 @@ module Reflekt
       @reflekt_initialized = false
       @reflekt_counts = {} # TODO: Store on @@reflekt.counts, key by instance ID.
 
-      🔥 "Initialize #{self.class}", :info, :setup
+      🔥"Initialize", :info, :setup, self.class
 
       # Override methods.
       Reflekt.get_methods(self).each do |method|
@@ -83,6 +82,11 @@ module Reflekt
   ##
   # Override a method.
   #
+  # A method call is tracked as an action.
+  # The first method call creates reflections.
+  # Subsequent method calls execute these reflections.
+  # The final execution returns real data to the original caller.
+  #
   # @param klass [Dynamic] The class to override.
   # @param method [Method] The method to override.
   ##
@@ -93,65 +97,57 @@ module Reflekt
       if @reflekt_initialized
         unless @@reflekt.error
 
-          🔥 "#{klass.class}.#{method}() called.", :info, :action
-
           # Get current action.
           action = @@reflekt.stack.peek()
-          if action.nil?
-            🔥 "First action ever created.", :info, :action
-            action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
-            @@reflekt.stack.push(action)
-          end
-
-          # New action when old action done reflecting.
-          if action.has_finished_reflecting?
-            action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
-            @@reflekt.stack.push(action)
-          end
 
           ##
-          # Reflect the action.
-          #
-          # The first method call in the action creates a reflection.
-          # Subsequent method calls are shadow actions which return to the reflection.
+          # Reflect.
           ##
-          if action.has_empty_experiments? && !action.is_reflecting?
+          if action.nil? || action.has_finished_reflecting?
+
+            # New action when old action done reflecting.
+            🔥"Create action for #{method}()", :info, :action, klass.class
+            action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
             action.is_reflecting = true
+            @@reflekt.stack.push(action)
 
-            🔥 "Create control for #{method} action and reflect", :info, :control
+            🔥"Create control for #{method}()", :info, :control, klass.class
             control = Control.new(action, 0, @@reflekt.aggregator)
             action.control = control
+
             unless klass.class.reflekt_skipped?(method) || (@reflekt_counts[method] >= @@reflekt.config.reflect_limit)
               control.reflect(*args)
+              🔥"Reflected control for #{action.method}()", control.status, :control, klass.class
             end
 
             unless control.status == :error
 
-              ## Save control as a reflection.
-              #@@reflekt.db.get("reflections").push(control.serialize())
+              # Save control as a reflection.
+              @@reflekt.db.get("reflections").push(control.serialize())
 
-              ## Multiple experiments per action.
-              #action.experiments.each_with_index do |value, index|
+              # Multiple experiments per action.
+              action.experiments.each_with_index do |value, index|
 
-              #  # Create experiment.
-              #  experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
-              #  action.experiments[index] = experiment
+                🔥""
+                🔥"Create experiment ##{index + 1} for #{method}()", :info, :experiment, klass.class
+                experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
+                action.experiments[index] = experiment
 
-              #  # Reflect experiment.
-              #  experiment.reflect(*args)
-              #  @reflekt_counts[method] = @reflekt_counts[method] + 1
+                # Reflect experiment.
+                experiment.reflect(*args)
+                @reflekt_counts[method] = @reflekt_counts[method] + 1
+                🔥"Reflected experiment ##{index + 1} for #{action.method}()", experiment.status, :experiment, klass.class
 
-              #  # Save experiment.
-              #  @@reflekt.db.get("reflections").push(experiment.serialize())
+                # Save experiment.
+                @@reflekt.db.get("reflections").push(experiment.serialize())
+              end
 
-              #end
+              # Save results.
+              @@reflekt.db.get("controls").push(control.serialize())
+              @@reflekt.db.write()
 
-              ## Save results.
-              #@@reflekt.db.get("controls").push(control.serialize())
-              #@@reflekt.db.write()
-
-              ## Render results.
-              #@@reflekt.renderer.render()
+              # Render results.
+              @@reflekt.renderer.render()
 
             # Stop reflecting when control fails to execute.
             else
@@ -159,21 +155,32 @@ module Reflekt
             end
 
             action.is_reflecting = false
-          end
 
-          # Don't execute skipped methods when reflecting.
-          unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
-            🔥 "Continue original execution / shadow execution.", :info, :action
+          ##
+          # Execute.
+          ##
+          elsif action.is_reflecting
+            🔥"Reflect #{method}()", :info, :reflect, klass.class
+
+            # Don't execute skipped methods when reflecting.
+            unless klass.class.reflekt_skipped?(method)
+              # TODO: After the last experiment for an action is completed,
+              #       this line appears to be called one more time unnecessarily.
+              🔥"Shadow execute #{method}()", :info, :execute, klass.class
+              super *args
+            end
+          else
+            🔥"Execute #{method}()", :info, :execute, klass.class
             super *args
           end
 
-        # Finish execution when control reflection fails.
+        # Finish execution if control encounters unrecoverable error.
         else
           super *args
         end
       # When method called in constructor.
       else
-        🔥 "#{klass} #{method}() is not reflected in constructor.", :info, :setup
+        🔥"#{method}() not reflected in constructor", :info, :setup, klass.class
         super *args
       end
     end
@@ -236,19 +243,24 @@ module Reflekt
     @@reflekt.renderer = Renderer.new(@@reflekt.package_path, @@reflekt.output_path)
 
     LitCLI.configure do |config|
-      config.types = {
-        :info => { icon: "ℹ", color: :blue },
-        :pass => { icon: "✔", color: :green },
-        :warn => { icon: "⚠", color: :yellow },
-        :fail => { icon: "⨯", color: :red },
-        :error => { icon: "!", color: :red },
-        :debug => { icon: "?", color: :purple },
+      config.statuses = {
+        :info => { icon: "ℹ", color: :blue, styles: [:upcase] },
+        :pass => { icon: "✔", color: :green, styles: [:upcase] },
+        :save => { icon: "✔", color: :green, styles: [:upcase] },
+        :warn => { icon: "⚠", color: :yellow, styles: [:upcase] },
+        :fail => { icon: "⨯", color: :red, styles: [:upcase] },
+        :error => { icon: "!", color: :red, styles: [:upcase] },
+        :debug => { icon: "?", color: :purple, styles: [:upcase] },
       }
       config.types = {
-        :setup => { styles: [:dim, :bold, :upcase] },
-        :action => { color: :red, styles: [:bold, :upcase] },
-        :control => { color: :blue, styles: [:bold, :upcase] },
-        :experiment => { color: :green, styles: [:bold, :upcase] },
+        :setup => { styles: [:dim, :bold, :capitalize] },
+        :event => { color: :yellow, styles: [:bold, :capitalize] },
+        :reflect => { color: :yellow, styles: [:bold, :capitalize] },
+        :action => { color: :red, styles: [:bold, :capitalize] },
+        :control => { color: :blue, styles: [:bold, :capitalize] },
+        :experiment => { color: :green, styles: [:bold, :capitalize] },
+        :execute => { color: :purple, styles: [:bold, :capitalize] },
+        :meta => { color: :blue, styles: [:bold, :capitalize] },
       }
     end
 

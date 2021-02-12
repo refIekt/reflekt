@@ -20,8 +20,8 @@ module Reflekt
     attr_accessor :child
     attr_accessor :control
     attr_accessor :experiments
+    attr_accessor :is_actioned
     attr_accessor :is_reflecting
-    attr_accessor :has_executed
     attr_accessor :is_base
 
     ##
@@ -54,18 +54,17 @@ module Reflekt
       @experiments = Array.new(reflect_amount)
 
       # State.
+      @is_reflecting = false
       if @stack.peek() == nil
         @is_base = true
       else
         @is_base = false
         @base = @stack.base()
       end
-      @is_reflecting = true
-      @has_executed = false
     end
 
-    def has_empty_experiments?
-      @experiments.include? nil
+    def is_actioned?
+      @is_actioned
     end
 
     # Is the action currently reflecting methods?
@@ -73,15 +72,14 @@ module Reflekt
       @is_reflecting
     end
 
-    # Has the original method call executed?
-    def has_executed?
-      @has_executed
+    def has_empty_experiments?
+      @experiments.include? nil
     end
 
     def has_finished_loop?
+      return false if is_actioned? == false
       return false if is_reflecting?
       return false if has_empty_experiments?
-      return false if @has_executed == false
 
       true
     end

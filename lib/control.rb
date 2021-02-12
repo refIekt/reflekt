@@ -71,12 +71,8 @@ module Reflekt
         @message = message
 
         # TODO: Write log entry to /reflections/errors.txt
-        p '--- REFLEKT ERROR: Method not reflected. ---'
-        p "Method: #{@method}"
-        p "Message: #{@message}"
+        🔥"#{@method}() not reflected", :error, :control, @klass.class
       end
-
     end
-
   end
 end

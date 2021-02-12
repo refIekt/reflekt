@@ -100,78 +100,70 @@ module Reflekt
           🔥"Get current action", :info, :action, klass.class
           action = @@reflekt.stack.peek()
 
-          ##
-          # Reflect.
-          ##
+          # New action when old action done reflecting.
           if action.nil? || action.has_finished_loop?
-
-            # New action when old action done reflecting.
             🔥"Create action for #{method}()", :info, :action, klass.class
             action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
             @@reflekt.stack.push(action)
+          end
 
-            🔥"Create control for #{method}()", :info, :control, klass.class
-            control = Control.new(action, 0, @@reflekt.aggregator)
-            action.control = control
+          ##
+          # Reflect.
+          ##
+          unless action.is_actioned?
+            action.is_actioned = true
+            action.is_reflecting = true
+            unless klass.class.reflekt_skipped?(method) || @reflekt_counts[method] >= @@reflekt.config.reflect_limit
 
-            unless klass.class.reflekt_skipped?(method) || (@reflekt_counts[method] >= @@reflekt.config.reflect_limit)
+              🔥"Create control for #{method}()", :info, :control, klass.class
+              control = Control.new(action, 0, @@reflekt.aggregator)
+              action.control = control
+
               control.reflect(*args)
               🔥"Reflected control for #{action.method}()", control.status, :control, klass.class
-            end
 
-            unless control.status == :error
+              unless control.status == :error
+                # Save control as a reflection.
+                @@reflekt.db.get("reflections").push(control.serialize())
 
-              # Save control as a reflection.
-              @@reflekt.db.get("reflections").push(control.serialize())
+                # Multiple experiments per action.
+                action.experiments.each_with_index do |value, index|
 
-              # Multiple experiments per action.
-              action.experiments.each_with_index do |value, index|
+                  🔥""
+                  🔥"Create experiment ##{index + 1} for #{method}()", :info, :experiment, klass.class
+                  experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
+                  action.experiments[index] = experiment
 
-                🔥""
-                🔥"Create experiment ##{index + 1} for #{method}()", :info, :experiment, klass.class
-                experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
-                action.experiments[index] = experiment
+                  # Reflect experiment.
+                  experiment.reflect(*args)
+                  @reflekt_counts[method] = @reflekt_counts[method] + 1
+                  🔥"Reflected experiment ##{index + 1} for #{action.method}()", experiment.status, :experiment, klass.class
 
-                # Reflect experiment.
-                experiment.reflect(*args)
-                @reflekt_counts[method] = @reflekt_counts[method] + 1
-                🔥"Reflected experiment ##{index + 1} for #{action.method}()", experiment.status, :experiment, klass.class
+                  # Save experiment.
+                  @@reflekt.db.get("reflections").push(experiment.serialize())
+                end
 
-                # Save experiment.
-                @@reflekt.db.get("reflections").push(experiment.serialize())
+                # Save results.
+                @@reflekt.db.get("controls").push(control.serialize())
+                @@reflekt.db.write()
+
+                # Render results.
+                @@reflekt.renderer.render()
+
+              # Stop reflecting when control fails to execute.
+              else
+                @@reflekt.error = true
               end
 
-              # Save results.
-              @@reflekt.db.get("controls").push(control.serialize())
-              @@reflekt.db.write()
-
-              # Render results.
-              @@reflekt.renderer.render()
-
-            # Stop reflecting when control fails to execute.
-            else
-              @@reflekt.error = true
             end
-
             action.is_reflecting = false
+          end
 
-          ##
-          # Shadow execute.
-          ##
-          elsif action.is_reflecting
-            🔥"Reflect #{method}()", :info, :reflect, klass.class
-
-            # Don't execute skipped methods when reflecting.
-            unless klass.class.reflekt_skipped?(method)
-              🔥"Shadow execute #{method}()", :info, :execute, klass.class
-              super *args
-            end
           ##
           # Execute.
           ##
-          else
+          unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
             🔥"Execute #{method}()", :info, :execute, klass.class
-            action.has_executed = true
             super *args
           end
 
@@ -179,6 +171,7 @@ module Reflekt
         else
           super *args
         end
+
       # When method called in constructor.
       else
         🔥"Reflection unsupported in constructor for #{method}()", :info, :setup, klass.class

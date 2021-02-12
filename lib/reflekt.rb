@@ -97,18 +97,17 @@ module Reflekt
       if @reflekt_initialized
         unless @@reflekt.error
 
-          # Get current action.
+          🔥"Get current action", :info, :action, klass.class
           action = @@reflekt.stack.peek()
 
           ##
           # Reflect.
           ##
-          if action.nil? || action.has_finished_reflecting?
+          if action.nil? || action.has_finished_loop?
 
             # New action when old action done reflecting.
             🔥"Create action for #{method}()", :info, :action, klass.class
             action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
-            action.is_reflecting = true
             @@reflekt.stack.push(action)
 
             🔥"Create control for #{method}()", :info, :control, klass.class
@@ -157,20 +156,22 @@ module Reflekt
             action.is_reflecting = false
 
           ##
-          # Execute.
+          # Shadow execute.
           ##
           elsif action.is_reflecting
             🔥"Reflect #{method}()", :info, :reflect, klass.class
 
             # Don't execute skipped methods when reflecting.
             unless klass.class.reflekt_skipped?(method)
-              # TODO: After the last experiment for an action is completed,
-              #       this line appears to be called one more time unnecessarily.
               🔥"Shadow execute #{method}()", :info, :execute, klass.class
               super *args
             end
+          ##
+          # Execute.
+          ##
           else
             🔥"Execute #{method}()", :info, :execute, klass.class
+            action.has_executed = true
             super *args
           end
 
@@ -180,7 +181,7 @@ module Reflekt
         end
       # When method called in constructor.
       else
-        🔥"#{method}() not reflected in constructor", :info, :setup, klass.class
+        🔥"Reflection unsupported in constructor for #{method}()", :info, :setup, klass.class
         super *args
       end
     end

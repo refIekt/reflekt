@@ -9,14 +9,14 @@ GEM
   remote: https://rubygems.org/
   specs:
     coderay (1.1.3)
-    lit-cli (0.6.0)
+    lit-cli (0.6.3)
       pastel
       pry
     method_source (1.0.0)
     oj (3.11.2)
     pastel (0.8.0)
       tty-color (~> 0.5)
-    pry (0.13.1)
+    pry (0.14.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
     rowdb (0.6.4)

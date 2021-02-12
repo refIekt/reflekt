@@ -9,7 +9,6 @@
 
 module Reflekt
   class Action
-
     attr_accessor :unique_id
     attr_accessor :caller_object
     attr_accessor :caller_id
@@ -22,6 +21,7 @@ module Reflekt
     attr_accessor :control
     attr_accessor :experiments
     attr_accessor :is_reflecting
+    attr_accessor :has_executed
     attr_accessor :is_base
 
     ##
@@ -60,29 +60,30 @@ module Reflekt
         @is_base = false
         @base = @stack.base()
       end
-      @is_reflecting = false
+      @is_reflecting = true
+      @has_executed = false
     end
 
     def has_empty_experiments?
       @experiments.include? nil
     end
 
-    ##
-    # Is the Action currently reflecting methods?
-    ##
+    # Is the action currently reflecting methods?
     def is_reflecting?
       @is_reflecting
     end
 
-    def has_finished_reflecting?
-      if is_reflecting?
-        return false
-      end
-      if has_empty_experiments?
-        return false
-      end
-      true
+    # Has the original method call executed?
+    def has_executed?
+      @has_executed
     end
 
+    def has_finished_loop?
+      return false if is_reflecting?
+      return false if has_empty_experiments?
+      return false if @has_executed == false
+
+      true
+    end
   end
 end

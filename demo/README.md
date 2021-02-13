@@ -9,7 +9,7 @@ Run:
 ```
 gem install reflekt
 cd demo
-ruby RUNME.rb
+ruby run_me.rb
 ```
 
 View reflections at `demo/reflections/index.html`.

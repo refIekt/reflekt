@@ -105,7 +105,7 @@ module Reflekt
 
       # TODO: After the last experiment for an action is completed, serialize()
       #       appears to be called twice. Possibly due to inheritance.
-      🔥"Save meta for #{@method}()", :save, :meta, @klass
+      🔥"> Save meta for #{@method}()", :save, :meta, @klass
 
       unless @inputs.nil?
         reflection[:inputs] = []

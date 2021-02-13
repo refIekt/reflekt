@@ -36,10 +36,11 @@ module Reflekt
   # @loop
   #   1. Reflekt is prepended to a class and setup
   #   2. The method is overridden on class instantiation
-  #   3. An Action is created on method call
-  #   4. Many Refections are created per Action
-  #   5. Each Reflection executes on cloned data
-  #   6. The original method executes
+  #   3. An action is created on method call
+  #   4. A control is created per action
+  #   5. Many refections are created per action
+  #   6. Each Reflection executes on cloned data
+  #   7. The original method executes
   #
   # @see https://reflekt.dev/docs/reflect-execute-loop
   #
@@ -49,13 +50,12 @@ module Reflekt
 
     if @@reflekt.config.enabled
       @reflekt_initialized = false
-      @reflekt_counts = {} # TODO: Store on @@reflekt.counts, key by instance ID.
 
       🔥"Initialize", :info, :setup, self.class
 
       # Override methods.
       Reflekt.get_methods(self).each do |method|
-        @reflekt_counts[method] = 0
+        Reflekt.setup_count(self, method)
         Reflekt.override_method(self, method)
       end
 
@@ -82,10 +82,10 @@ module Reflekt
   ##
   # Override a method.
   #
-  # A method call is tracked as an action.
-  # The first method call creates reflections.
+  # The first method call creates an action.
+  # The action creates reflections.
   # Subsequent method calls execute these reflections.
-  # The final execution returns real data to the original caller.
+  # The final method call executes and returns real data to the original caller.
   #
   # @param klass [Dynamic] The class to override.
   # @param method [Method] The method to override.
@@ -97,78 +97,44 @@ module Reflekt
       if @reflekt_initialized
         unless @@reflekt.error
 
-          🔥"Get current action", :info, :action, klass.class
           action = @@reflekt.stack.peek()
 
           # New action when old action done reflecting.
           if action.nil? || action.has_finished_loop?
-            🔥"Create action for #{method}()", :info, :action, klass.class
-            action = Action.new(klass, method, @@reflekt.config.reflect_amount, @@reflekt.stack)
+            🔥"^ Create action for #{method}()", :info, :action, klass.class
+            action = Action.new(klass, method, @@reflekt.config, @@reflekt.db, @@reflekt.stack, @@reflekt.aggregator)
             @@reflekt.stack.push(action)
           end
 
-          ##
-          # Reflect.
-          ##
-          unless action.is_actioned?
-            action.is_actioned = true
-            action.is_reflecting = true
-            unless klass.class.reflekt_skipped?(method) || @reflekt_counts[method] >= @@reflekt.config.reflect_limit
+          unless klass.class.reflekt_skipped?(method) || Reflekt.count(klass, method) >= @@reflekt.config.reflect_limit
+            unless action.is_actioned?
+              action.is_actioned = true
+              action.is_reflecting = true
 
-              🔥"Create control for #{method}()", :info, :control, klass.class
-              control = Control.new(action, 0, @@reflekt.aggregator)
-              action.control = control
-
-              control.reflect(*args)
-              🔥"Reflected control for #{action.method}()", control.status, :control, klass.class
-
-              unless control.status == :error
-                # Save control as a reflection.
-                @@reflekt.db.get("reflections").push(control.serialize())
-
-                # Multiple experiments per action.
-                action.experiments.each_with_index do |value, index|
-
-                  🔥""
-                  🔥"Create experiment ##{index + 1} for #{method}()", :info, :experiment, klass.class
-                  experiment = Experiment.new(action, index + 1, @@reflekt.aggregator)
-                  action.experiments[index] = experiment
-
-                  # Reflect experiment.
-                  experiment.reflect(*args)
-                  @reflekt_counts[method] = @reflekt_counts[method] + 1
-                  🔥"Reflected experiment ##{index + 1} for #{action.method}()", experiment.status, :experiment, klass.class
-
-                  # Save experiment.
-                  @@reflekt.db.get("reflections").push(experiment.serialize())
-                end
-
-                # Save results.
-                @@reflekt.db.get("controls").push(control.serialize())
-                @@reflekt.db.write()
-
-                # Render results.
-                @@reflekt.renderer.render()
-
-              # Stop reflecting when control fails to execute.
-              else
-                @@reflekt.error = true
+              # Reflect.
+              action.reflect(*args)
+              if action.control.status == :error
+                @@reflekt.error = action.control.message
               end
 
+              # Render results.
+              @@reflekt.renderer.render()
+
+              action.is_reflecting = false
             end
-            action.is_reflecting = false
+          else
+            🔥"> Skip reflection of #{method}()", :skip, :reflect, klass.class
           end
 
-          ##
           # Execute.
-          ##
           unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
-            🔥"Execute #{method}()", :info, :execute, klass.class
+            🔥"> Execute #{method}()", :info, :execute, klass.class
             super *args
           end
 
         # Finish execution if control encounters unrecoverable error.
         else
+          🔥"Reflection error, finishing original execution...", :error, :reflect, klass.class
           super *args
         end
 
@@ -178,6 +144,22 @@ module Reflekt
         super *args
       end
     end
+  end
+
+  def self.setup_count(klass, method)
+    caller_id = klass.object_id
+    @@reflekt.counts[caller_id] = {} unless @@reflekt.counts.has_key? caller_id
+    @@reflekt.counts[caller_id][method] = 0 unless @@reflekt.counts[caller_id].has_key? method
+  end
+
+  def self.count(klass, method)
+    count = @@reflekt.counts.dig(klass.object_id, method) || 0
+    count
+  end
+
+  def self.increase_count(klass, method)
+    caller_id = klass.object_id
+    @@reflekt.counts[caller_id][method] = @@reflekt.counts[caller_id][method] + 1
   end
 
   ##
@@ -204,7 +186,7 @@ module Reflekt
   # @paths
   #   - package_path [String] Absolute path to the library itself.
   #   - project_path [String] Absolute path to the project root.
-  #   - output_path [String] Name of the reflections directory.
+  #   - output_path [String] Absolute path to the reflections directory.
   ##
   def self.reflekt_setup_class()
 
@@ -241,6 +223,7 @@ module Reflekt
         :info => { icon: "ℹ", color: :blue, styles: [:upcase] },
         :pass => { icon: "✔", color: :green, styles: [:upcase] },
         :save => { icon: "✔", color: :green, styles: [:upcase] },
+        :skip => { icon: "⨯", color: :yellow, styles: [:upcase] },
         :warn => { icon: "⚠", color: :yellow, styles: [:upcase] },
         :fail => { icon: "⨯", color: :red, styles: [:upcase] },
         :error => { icon: "!", color: :red, styles: [:upcase] },

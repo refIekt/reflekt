@@ -12,6 +12,7 @@ module Reflekt
   class Accessor
 
     attr_accessor :initialized
+    attr_accessor :counts
     attr_accessor :error
 
     attr_accessor :config
@@ -26,7 +27,8 @@ module Reflekt
 
     def initialize()
       @initialized = false
-      @error = false
+      @counts = {}
+      @error = nil
 
       @config = nil
       @db = nil

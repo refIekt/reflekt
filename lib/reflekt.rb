@@ -106,12 +106,15 @@ module Reflekt
             @@reflekt.stack.push(action)
           end
 
-          unless klass.class.reflekt_skipped?(method) || Reflekt.count(klass, method) >= @@reflekt.config.reflect_limit
+          ##
+          # Reflect.
+          ##
+
+          unless action.is_reflecting? && klass.class.reflekt_skipped?(method) || Reflekt.count(klass, method) >= @@reflekt.config.reflect_limit
             unless action.is_actioned?
               action.is_actioned = true
               action.is_reflecting = true
 
-              # Reflect.
               action.reflect(*args)
               if action.control.status == :error
                 @@reflekt.error = action.control.message
@@ -126,7 +129,10 @@ module Reflekt
             🔥"> Skip reflection of #{method}()", :skip, :reflect, klass.class
           end
 
+          ##
           # Execute.
+          ##
+
           unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
             🔥"> Execute #{method}()", :info, :execute, klass.class
             super *args

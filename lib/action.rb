@@ -73,12 +73,13 @@ module Reflekt
       @control = Control.new(self, 0, @aggregator)
 
       @control.reflect(*args)
-      🔥"> Reflected control for #{@method}()", @control.status, :control, @klass
+      🔥"> Reflected control for #{@method}(): #{args}", @control.status, :result, @klass
 
       # Stop reflecting when control fails to execute.
       unless @control.status == :error
 
-        # Save control as a reflection.
+        # Save control.
+        @db.get("controls").push(@control.serialize())
         @db.get("reflections").push(@control.serialize())
 
         # Multiple experiments per action.
@@ -91,14 +92,13 @@ module Reflekt
           # Reflect experiment.
           experiment.reflect(*args)
           Reflekt.increase_count(@caller_object, @method)
-          🔥"> Reflected experiment ##{index + 1} for #{@method}()", experiment.status, :experiment, @klass
+          🔥"> Reflected experiment ##{index + 1} for #{@method}()", experiment.status, :result, @klass
 
           # Save experiment.
           @db.get("reflections").push(experiment.serialize())
         end
 
         # Save results.
-        @db.get("controls").push(@control.serialize())
         @db.write()
       end
     end

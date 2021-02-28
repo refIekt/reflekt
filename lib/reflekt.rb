@@ -29,25 +29,12 @@ module Reflekt
   include LitCLI
 
   ##
-  # Reflect-Execute loop.
-  #
-  # Reflect each method before finally executing it.
-  #
-  # @loop
-  #   1. Reflekt is prepended to a class and setup
-  #   2. The method is overridden on class instantiation
-  #   3. An action is created on method call
-  #   4. A control is created per action
-  #   5. Many refections are created per action
-  #   6. Each Reflection executes on cloned data
-  #   7. The original method executes
-  #
-  # @see https://reflekt.dev/docs/reflect-execute-loop
+  # Setup Reflekt per class.
+  # Override methods on class instantiation.
   #
   # @scope self [Object] Refers to the class that Reflekt is prepended to.
   ##
   def initialize(*args)
-
     if @@reflekt.config.enabled
       @reflekt_initialized = false
 
@@ -64,7 +51,6 @@ module Reflekt
 
     # Continue initialization.
     super
-
   end
 
   ##
@@ -76,16 +62,12 @@ module Reflekt
   def self.get_methods(klass)
     child_instance_methods = klass.class.instance_methods(false)
     parent_instance_methods = klass.class.superclass.instance_methods(false)
+
     return child_instance_methods + parent_instance_methods
   end
 
   ##
   # Override a method.
-  #
-  # The first method call creates an action.
-  # The action creates reflections.
-  # Subsequent method calls execute these reflections.
-  # The final method call executes and returns real data to the original caller.
   #
   # @param klass [Dynamic] The class to override.
   # @param method [Method] The method to override.
@@ -95,6 +77,22 @@ module Reflekt
 
       # When method called in flow.
       if @reflekt_initialized
+
+        ##
+        # Reflect-Execute loop.
+        #
+        # Reflect each method before finally executing it.
+        #
+        # @loop
+        #   1. The first method call creates an action
+        #   2. The action creates reflections and calls the method again
+        #   3. Subsequent method calls execute these reflections
+        #   4. Each reflection executes on cloned data
+        #   5. The original method call completes execution
+        #
+        # @see https://reflekt.dev/docs/reflect-execute-loop
+        ##
+
         unless @@reflekt.error
 
           action = @@reflekt.stack.peek()
@@ -107,7 +105,7 @@ module Reflekt
           end
 
           ##
-          # Reflect.
+          # REFLECT
           ##
 
           unless action.is_reflecting? && klass.class.reflekt_skipped?(method) || Reflekt.count(klass, method) >= @@reflekt.config.reflect_limit
@@ -130,7 +128,7 @@ module Reflekt
           end
 
           ##
-          # Execute.
+          # EXECUTE
           ##
 
           unless action.is_reflecting? && klass.class.reflekt_skipped?(method)
@@ -146,7 +144,7 @@ module Reflekt
 
       # When method called in constructor.
       else
-        🔥"Reflection unsupported in constructor for #{method}()", :info, :setup, klass.class
+        p "Reflection unsupported in constructor for #{method}()", :info, :setup, klass.class
         super *args
       end
     end
@@ -239,6 +237,7 @@ module Reflekt
         :setup => { styles: [:dim, :bold, :capitalize] },
         :event => { color: :yellow, styles: [:bold, :capitalize] },
         :reflect => { color: :yellow, styles: [:bold, :capitalize] },
+        :result => { color: :yellow, styles: [:bold, :capitalize] },
         :action => { color: :red, styles: [:bold, :capitalize] },
         :control => { color: :blue, styles: [:bold, :capitalize] },
         :experiment => { color: :green, styles: [:bold, :capitalize] },

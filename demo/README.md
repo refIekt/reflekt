@@ -9,7 +9,15 @@ Run:
 ```
 gem install reflekt
 cd demo
-ruby RUNME.rb
+ruby run_me.rb
 ```
 
-View reflections at `demo/reflections/index.html`.
+## Viewing reflections
+
+### Command line
+
+See https://reflekt.dev/lit
+
+### Web UI
+
+In your browser visit `demo/reflections/index.html`. No server required.

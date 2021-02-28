@@ -38,6 +38,7 @@ module Reflekt
       # Fail when no trained rule sets.
       if input_rule_sets.nil?
         @status = :fail
+        🔥"> No trained rule sets", :fail, :reflect
       end
 
       # When arguments exist.
@@ -46,10 +47,11 @@ module Reflekt
         unless input_rule_sets.nil?
           unless @aggregator.test_inputs(args, input_rule_sets)
             @status = :fail
+            🔥"> Invalid inputs", @status, :reflect
           end
         end
 
-        # Create metadata for each argument.
+        🔥"> Create meta for #{@method}(): #{args}", :info, :meta, @klass
         # TODO: Create metadata for other inputs such as instance variables.
         @inputs = MetaBuilder.create_many(args)
       end
@@ -63,6 +65,7 @@ module Reflekt
         # Validate output with aggregated control rule sets.
         unless @aggregator.test_output(output, output_rule_set)
           @status = :fail
+          🔥"> Invalid output", @status, :reflect
         end
 
       # When a system error occurs.
@@ -71,12 +74,8 @@ module Reflekt
         @message = message
 
         # TODO: Write log entry to /reflections/errors.txt
-        p '--- REFLEKT ERROR: Method not reflected. ---'
-        p "Method: #{@method}"
-        p "Message: #{@message}"
+        🔥"#{@method}() not reflected", :error, :control, @klass.class
       end
-
     end
-
   end
 end

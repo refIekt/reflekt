@@ -31,7 +31,6 @@ module Reflekt
     # @param *args [Dynamic] The method's arguments.
     ##
     def reflect(*args)
-
       # Get aggregated rule sets.
       input_rule_sets = @aggregator.get_input_rule_sets(@klass, @method)
       output_rule_set = @aggregator.get_output_rule_set(@klass, @method)
@@ -50,6 +49,7 @@ module Reflekt
 
         # Create metadata for each argument.
         # TODO: Create metadata for other inputs such as instance variables.
+        🔥"> Create meta for #{@method}(): #{args}", :info, :meta, @klass
         @inputs = MetaBuilder.create_many(args)
       end
 
@@ -71,7 +71,6 @@ module Reflekt
         @status = :fail
         @message = message
       end
-
     end
 
     ##
@@ -96,6 +95,5 @@ module Reflekt
 
       return random_args
     end
-
   end
 end

@@ -22,6 +22,7 @@ require_relative 'meta_builder'
 
 module Reflekt
   class Reflection
+    include LitCLI
 
     attr_reader :status
 
@@ -34,7 +35,7 @@ module Reflekt
     ##
     def initialize(action, number, aggregator)
       @action = action
-      @unique_id = action.unique_id + number
+      @reflection_id = action.unique_id + number
       @number = number
 
       # Dependency.
@@ -80,7 +81,6 @@ module Reflekt
     # @return [Hash] Reflection metadata.
     ##
     def serialize()
-
       # Create execution ID from the ID of the first action in   the ActionStack.
       execution_id = @action.unique_id
       unless @action.base.nil?
@@ -91,7 +91,7 @@ module Reflekt
       reflection = {
         :eid => execution_id,
         :aid => @action.unique_id,
-        :rid => @unique_id,
+        :rid => @reflection_id,
         :num => @number,
         :time => @time,
         :class => @klass,
@@ -102,10 +102,14 @@ module Reflekt
         :output => nil,
       }
 
+      # TODO: After the last experiment for an action is completed, serialize()
+      #       appears to be called twice. Possibly due to inheritance.
+      🔥"> Save meta for #{@method}()", :save, :meta, @klass
+
       unless @inputs.nil?
         reflection[:inputs] = []
         @inputs.each do |meta|
-          reflection[:inputs] << meta.serialize()
+          meta.nil? ? nil : reflection[:inputs] << meta.serialize()
         end
       end
 
@@ -114,8 +118,6 @@ module Reflekt
       end
 
       return reflection
-
     end
-
   end
 end

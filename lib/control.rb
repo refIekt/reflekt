@@ -23,7 +23,6 @@ require_relative 'meta_builder'
 
 module Reflekt
   class Control < Reflection
-
     ##
     # Reflect on a method.
     #

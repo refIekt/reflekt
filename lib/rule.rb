@@ -13,7 +13,6 @@
 
 module Reflekt
   class Rule
-
     attr_reader :type
 
     ##
@@ -49,6 +48,5 @@ module Reflekt
     ##
     def random()
     end
-
   end
 end

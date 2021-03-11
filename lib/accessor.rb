@@ -10,7 +10,6 @@
 
 module Reflekt
   class Accessor
-
     attr_accessor :initialized
     attr_accessor :counts
     attr_accessor :error
@@ -40,6 +39,5 @@ module Reflekt
       @project_path = nil
       @output_path = nil
     end
-
   end
 end

@@ -6,7 +6,6 @@
 
 module Reflekt
   class ActionStack
-
     def initialize()
       @bottom = nil
       @top = nil
@@ -39,6 +38,5 @@ module Reflekt
       # Place action at top of stack.
       @top = action
     end
-
   end
 end

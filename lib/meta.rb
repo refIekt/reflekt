@@ -12,7 +12,6 @@
 
 module Reflekt
   class Meta
-
     ##
     # Each meta defines its type.
     ##
@@ -70,6 +69,5 @@ module Reflekt
     def self.numeric? value
       Float(value) != nil rescue false
     end
-
   end
 end

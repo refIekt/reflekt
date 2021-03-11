@@ -273,5 +273,4 @@ module Reflekt
       false
     end
   end
-
 end

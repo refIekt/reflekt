@@ -1,6 +1,5 @@
 module Reflekt
   class Config
-
     attr_accessor :enabled
     attr_accessor :reflect_amount
     attr_accessor :reflect_limit
@@ -9,7 +8,6 @@ module Reflekt
     attr_accessor :output_directory
 
     def initialize()
-
       # Reflekt is enabled by default and should be disabled on production.
       @enabled = true
 
@@ -41,8 +39,6 @@ module Reflekt
 
       # Name of output directory.
       @output_directory = "reflections"
-
     end
-
   end
 end

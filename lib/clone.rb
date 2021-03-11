@@ -14,7 +14,6 @@
 
 module Reflekt
   class Clone
-
     def initialize(action)
       # Clone the action's calling object.
       @caller_object_clone = action.caller_object.clone
@@ -26,6 +25,5 @@ module Reflekt
     def action(method, *new_args)
       @caller_object_clone.send(method, *new_args)
     end
-
   end
 end

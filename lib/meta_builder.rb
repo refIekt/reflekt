@@ -11,7 +11,6 @@ Dir[File.join(__dir__, 'meta', '*.rb')].each { |file| require_relative file }
 
 module Reflekt
   class MetaBuilder
-
     ##
     # Create meta type for matching data type.
     #
@@ -23,7 +22,6 @@ module Reflekt
     # @param value [Dynamic] Any input or output.
     ##
     def self.create(value)
-
       meta = nil
       data_type = value.class.to_s
 
@@ -48,8 +46,7 @@ module Reflekt
         meta.load(value)
       end
 
-      return meta
-
+      meta
     end
 
     ##
@@ -58,22 +55,19 @@ module Reflekt
     # @param values
     ##
     def self.create_many(values)
-
       meta = []
 
       values.each do |value|
         meta << self.create(value)
       end
 
-      return meta
-
+      meta
     end
 
     ##
     # @param data_type [Type]
     ##
     def self.data_type_to_meta_type(value)
-
       data_type = value.class
 
       meta_types = {
@@ -93,8 +87,6 @@ module Reflekt
       else
         return :object
       end
-
     end
-
   end
 end

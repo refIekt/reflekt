@@ -17,14 +17,12 @@ require_relative 'meta/null_meta.rb'
 
 module Reflekt
   class RuleSet
-
     attr_accessor :rules
 
     ##
     # @param meta_map [Hash] The rules to apply to each data type.
     ##
     def initialize(meta_map)
-
       # The rules that apply to meta types.
       @meta_map = meta_map
 
@@ -33,7 +31,6 @@ module Reflekt
       @meta_types = Set.new()
 
       @rules = {}
-
     end
 
     ##
@@ -42,7 +39,6 @@ module Reflekt
     # @param meta [Hash] The metadata to train on.
     ##
     def train(meta)
-
       # Track supported meta types.
       meta_type = meta[:type]
       @meta_types << meta_type
@@ -58,17 +54,14 @@ module Reflekt
 
           # Train rule.
           @rules[rule_type].train(meta)
-
         end
       end
-
     end
 
     ##
     # @param value [Dynamic]
     ##
     def test(value)
-
       result = true
       meta_type = MetaBuilder.data_type_to_meta_type(value)
 
@@ -85,26 +78,22 @@ module Reflekt
         end
       end
 
-      return result
-
+      result
     end
-  
+
     ##
     # Get the results of the rules.
     #
     # @return [Array] The rules.
     ##
     def result()
-
       rules = {}
 
       @rules.each do |key, rule|
         rules[rule.class] = rule.result()
       end
 
-      return rules
-
+      rules
     end
-
   end
 end

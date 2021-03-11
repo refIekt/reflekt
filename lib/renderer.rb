@@ -1,6 +1,5 @@
 module Reflekt
   class Renderer
-
     def initialize(package_path, output_path)
       @package_path = package_path
       @output_path = output_path
@@ -10,7 +9,6 @@ module Reflekt
     # Place files in output path.
     ##
     def render()
-
       filenames = [
         "bundle.js",
         "index.html",
@@ -31,8 +29,6 @@ module Reflekt
       File.open(File.join(@output_path, ".gitignore"), 'w+') do |f|
         f.write file
       end
-
     end
-
   end
 end

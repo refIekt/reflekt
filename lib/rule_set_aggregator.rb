@@ -14,7 +14,6 @@ require_relative 'rule_set'
 
 module Reflekt
   class RuleSetAggregator
-
     ##
     # @param meta_map [Hash] The rules that apply to each meta type.
     ##
@@ -32,12 +31,10 @@ module Reflekt
     # @TODO Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
     ##
     def train(controls)
-
       # On first use there are no previous controls.
       return if controls.nil?
 
       controls.each do |control|
-
         klass = control["class"].to_sym
         method = control["method"].to_sym
 
@@ -68,13 +65,10 @@ module Reflekt
 
         # Train on metadata.
         output_rule_set.train(Meta.deserialize(control["output"]))
-
       end
-
     end
 
     def train_input(klass, method, meta, arg_num)
-
       # Get deserialized meta.
       meta = Meta.deserialize(meta)
 
@@ -87,7 +81,6 @@ module Reflekt
 
       # Train on metadata.
       rule_set.train(meta)
-
     end
 
     ##
@@ -98,7 +91,6 @@ module Reflekt
     # @param input_rule_sets [Array] The RuleSets to validate each input with.
     ##
     def test_inputs(inputs, input_rule_sets)
-
       # Default result to PASS.
       result = true
 
@@ -106,18 +98,14 @@ module Reflekt
       inputs.each_with_index do |input, arg_num|
 
         unless input_rule_sets[arg_num].nil?
-
           rule_set = input_rule_sets[arg_num]
-
           unless rule_set.test(input)
             result = false
           end
-
         end
       end
 
-      return result
-
+      result
     end
 
     ##
@@ -128,21 +116,17 @@ module Reflekt
     # @param output_rule_set [RuleSet] The rule set to validate the output with.
     ##
     def test_output(output, output_rule_set)
-
       # Default to a PASS result.
       result = true
 
       unless output_rule_set.nil?
-
         # Validate output rule set for that argument.
         unless output_rule_set.test(output)
           result = false
         end
-
       end
 
-      return result
-
+      result
     end
 
     ##
@@ -173,7 +157,6 @@ module Reflekt
     # Get the base rule type for a data type.
     ##
     def self.value_to_rule_type(value)
-
       data_type = value.class
 
       rule_types = {
@@ -186,23 +169,18 @@ module Reflekt
         String     => StringRule
       }
 
-      return rule_types[data_type]
-
+      rule_types[data_type]
     end
 
     def self.testable?(args, input_rule_sets)
-
       args.each_with_index do |arg, arg_num|
-
         rule_type = value_to_rule_type(arg)
         if input_rule_sets[arg_num].rules[rule_type].nil?
           return false
         end
-
       end
 
-      return true
-
+      true
     end
 
     ##############################################################################
@@ -229,14 +207,12 @@ module Reflekt
     # @param method [Symbol]
     ##
     def set_input_rule_set(klass, method, arg_num, rule_set)
-
       # Set defaults.
       @rule_sets[klass] = {} unless @rule_sets.key? klass
       @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
       @rule_sets[klass][method][:inputs] = [] unless @rule_sets[klass][method].key? :inputs
       # Set value.
       @rule_sets[klass][method][:inputs][arg_num] = rule_set
-
     end
 
     ##
@@ -247,14 +223,11 @@ module Reflekt
     # @param rule_set [RuleSet]
     ##
     def set_output_rule_set(klass, method, rule_set)
-
       # Set defaults.
       @rule_sets[klass] = {} unless @rule_sets.key? klass
       @rule_sets[klass][method] = {} unless @rule_sets[klass].key? method
       # Set value.
       @rule_sets[klass][method][:output] = rule_set
-
     end
-
   end
 end

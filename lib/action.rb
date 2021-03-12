@@ -11,20 +11,24 @@ module Reflekt
   class Action
     include LitCLI
 
-    attr_accessor :unique_id
-    attr_accessor :caller_object
     attr_accessor :caller_id
     attr_accessor :caller_class
+    attr_accessor :caller_object
+
+    attr_accessor :unique_id
     attr_accessor :klass
     attr_accessor :method
+
     attr_accessor :base
-    attr_accessor :parent
     attr_accessor :child
+    attr_accessor :parent
+
     attr_accessor :control
     attr_accessor :experiments
+
+    attr_accessor :is_base
     attr_accessor :is_actioned
     attr_accessor :is_reflecting
-    attr_accessor :is_base
 
     ##
     # Create Action.

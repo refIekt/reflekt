@@ -92,9 +92,7 @@ module Reflekt
         #
         # @see https://reflekt.dev/docs/reflect-execute-loop
         ##
-
         unless @@reflekt.error
-
           action = @@reflekt.stack.peek()
 
           # New action when old action done reflecting.
@@ -108,17 +106,14 @@ module Reflekt
           # REFLECT
           ##
 
-          unless action.is_reflecting? && klass.class.reflekt_skipped?(method) || Reflekt.count(klass, method) >= @@reflekt.config.reflect_limit
+          unless action.is_reflecting? && klass.class.reflekt_skipped?(method) || Reflekt.reached_count?(klass, method)
             unless action.is_actioned?
               action.is_actioned = true
               action.is_reflecting = true
 
               action.reflect(*args)
-              if action.control.status == :error
-                @@reflekt.error = action.control.message
-              end
+              @@reflekt.error = action.control.message if action.control.status == :error
 
-              # Render results.
               @@reflekt.renderer.render()
 
               action.is_reflecting = false
@@ -166,6 +161,10 @@ module Reflekt
     @@reflekt.counts[caller_id][method] = @@reflekt.counts[caller_id][method] + 1
   end
 
+  def self.reached_count?(klass, method)
+    Reflekt.count(klass, method) >= @@reflekt.config.reflect_limit
+  end
+
   ##
   # Configure Config singleton.
   ##
@@ -193,8 +192,6 @@ module Reflekt
   #   - output_path [String] Absolute path to the reflections directory.
   ##
   def self.reflekt_setup_class()
-
-    # Only setup once.
     return if defined? @@reflekt
 
     @@reflekt = Accessor.new()
@@ -246,7 +243,7 @@ module Reflekt
       }
     end
 
-    return true
+    true
   end
 
   ##

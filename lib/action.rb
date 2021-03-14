@@ -35,7 +35,7 @@ module Reflekt
     #
     # @param object [Object] The calling object.
     # @param method [Symbol] The calling method.
-    # @param reflect_amount [Integer] The number of experiments to create per action.
+    # @param reflect_amount [Integer] The number of experiments to create.
     # @param stack [ActionStack] The shadow action call stack.
     ##
     def initialize(caller_object, method, config, db, stack, aggregator)
@@ -46,6 +46,7 @@ module Reflekt
       @parent = nil
 
       # Dependencies.
+      @config = config
       @db = db
       @stack = stack
       @aggregator = aggregator
@@ -59,16 +60,29 @@ module Reflekt
 
       # Reflections.
       @control = nil
-      @experiments = Array.new(config.reflect_amount)
+      @experiments = Array.new(@config.reflect_amount)
 
       # State.
       @is_reflecting = false
-      if @stack.peek() == nil
+
+      setup_base()
+    end
+
+    def setup_base()
+      if @stack.peek().nil?
         @is_base = true
       else
         @is_base = false
         @base = @stack.base()
       end
+
+      # TEMP: Fix Rowdb.get("path") returning Rowdb instance instead of results.
+      #       This issues likely occurs after calling Rowdb.push()
+      db = @db.value()
+
+      # Train aggregated rule sets.
+      @aggregator = RuleSetAggregator.new(@config.meta_map)
+      @aggregator.train(db[:controls])
     end
 
     def reflect(*args)
@@ -111,7 +125,6 @@ module Reflekt
       @is_actioned
     end
 
-    # Is the action currently reflecting methods?
     def is_reflecting?
       @is_reflecting
     end

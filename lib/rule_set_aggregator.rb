@@ -28,26 +28,28 @@ module Reflekt
     #
     # @stage Called on setup.
     # @param controls [Array] Controls with metadata.
-    # @TODO Revert string keys to symbols once "Fix Rowdb.get(path)" bug fixed.
     ##
     def train(controls)
-      # On first use there are no previous controls.
+      # On first use there are no previously existing controls.
       return if controls.nil?
 
       controls.each do |control|
-        klass = control["class"].to_sym
-        method = control["method"].to_sym
+        # TODO: Remove once "Fix Rowdb.get(path)" bug fixed.
+        control = control.transform_keys(&:to_sym)
+
+        klass = control[:class].to_sym
+        method = control[:method].to_sym
 
         ##
         # INPUT
         ##
 
         # Singular null input.
-        if control["inputs"].nil?
+        if control[:inputs].nil?
           train_input(klass, method, nil, 0)
         # Multiple inputs.
         else
-          control["inputs"].each_with_index do |meta, arg_num|
+          control[:inputs].each_with_index do |meta, arg_num|
             train_input(klass, method, meta, arg_num)
           end
         end
@@ -64,7 +66,7 @@ module Reflekt
         end
 
         # Train on metadata.
-        output_rule_set.train(Meta.deserialize(control["output"]))
+        output_rule_set.train(Meta.deserialize(control[:output]))
       end
     end
 

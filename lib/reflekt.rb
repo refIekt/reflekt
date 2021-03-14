@@ -29,7 +29,6 @@ module Reflekt
   include LitCLI
 
   ##
-  # Setup Reflekt per class.
   # Override methods on class instantiation.
   #
   # @scope self [Object] Refers to the class that Reflekt is prepended to.
@@ -113,7 +112,6 @@ module Reflekt
 
               action.reflect(*args)
               @@reflekt.error = action.control.message if action.control.status == :error
-
               @@reflekt.renderer.render()
 
               action.is_reflecting = false
@@ -133,9 +131,11 @@ module Reflekt
 
         # Finish execution if control encounters unrecoverable error.
         else
-          🔥"Reflection error, finishing original execution...", :error, :reflect, klass.class
+          🔥"Handle unrecoverable error and finish original execution", :error, :reflect, klass.class
           super *args
         end
+
+        Reflekt.cleanup()
 
       # When method called in constructor.
       else
@@ -174,6 +174,10 @@ module Reflekt
     yield(@@reflekt.config)
   end
 
+  def self.cleanup()
+    @@reflekt.stack.empty!
+  end
+
   private
 
   def self.prepended(base)
@@ -209,16 +213,11 @@ module Reflekt
     # Setup database.
     @@reflekt.db = Rowdb.new(@@reflekt.output_path + '/db.js')
     @@reflekt.db.defaults({ :reflekt => { :api_version => 1 }})
-    # TODO: Fix Rowdb.get(path) not returning values at path after Rowdb.push()
-    db = @@reflekt.db.value()
-
-    # Train aggregated rule sets.
-    @@reflekt.aggregator = RuleSetAggregator.new(@@reflekt.config.meta_map)
-    @@reflekt.aggregator.train(db[:controls])
 
     # Setup renderer.
     @@reflekt.renderer = Renderer.new(@@reflekt.package_path, @@reflekt.output_path)
 
+    # Setup console.
     LitCLI.configure do |config|
       config.statuses = {
         :info => { icon: "ℹ", color: :blue, styles: [:upcase] },

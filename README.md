@@ -12,6 +12,9 @@
   </a>
   <img src="https://img.shields.io/github/languages/code-size/refIekt/reflekt" alt="GitHub code size in bytes">
   <img src="https://img.shields.io/gem/dt/reflekt">
+  <a href="https://www.codetriage.com/refiekt/reflekt" alt="Open Source Helpers">
+    <img src="https://www.codetriage.com/refiekt/reflekt/badges/users.svg" />
+  </a>
 </p>
 
 *Reflective testing.*

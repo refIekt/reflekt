@@ -38,5 +38,9 @@ module Reflekt
       # Place action at top of stack.
       @top = action
     end
+
+    def empty!
+      @bottom = nil
+    end
   end
 end

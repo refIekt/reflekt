@@ -39,6 +39,12 @@ Use the application as usual and test results will start showing up in the `refl
   <img src="./assets/Screenshot.png" raw=true style="margin-left: auto; margin-right: auto;"/>
 </p>
 
+Or <a href="https://github.com/refIekt/lit">install Lit</a> to see reflections via the command line:
+
+<p align="center">
+  <img src="./assets/Lit.png" raw=true style="margin-left: auto; margin-right: auto;" width="850"/>
+</p>
+
 ## Installation
 
 In Gemfile add:

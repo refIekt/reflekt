@@ -29,7 +29,7 @@ Add `prepend Reflekt` inside a class:
 ```ruby
 require 'reflekt'
 
-class ExampleClass
+class Example
   prepend Reflekt
 ```  
 
@@ -39,7 +39,7 @@ Use the application as usual and test results will start showing up in the `refl
   <img src="./assets/Screenshot.png" raw=true style="margin-left: auto; margin-right: auto;"/>
 </p>
 
-Or <a href="https://github.com/refIekt/lit">install Lit</a> to see reflections via the command line:
+Or enable <a href="https://github.com/refIekt/lit">Lit</a> (included with Reflekt) to see reflections via the command line:
 
 <p align="center">
   <img src="./assets/Lit.png" raw=true style="margin-left: auto; margin-right: auto;" width="850"/>
@@ -66,13 +66,11 @@ gem install reflekt
 
 ```ruby
 Reflekt.configure do |config|
-
   # Reflekt is enabled by default and should be disabled on production.
   config.enabled = true
 
   # The amount of reflections to create per method call.
   config.reflect_amount = 5
-
 end
 ```
 
@@ -83,7 +81,7 @@ See `Config.rb` for more configuration options.
 You can configure Reflekt to skip "no undo" methods like deletion and sending email:
 
 ```ruby
-class ExampleClass
+class Example
   reflekt_skip :method_name
 ```
 
@@ -92,9 +90,8 @@ Use `reflekt_skip` on the method that saves to the database to avoid persisting 
 ## Skipping render
 
 Use `reflekt_skip` on methods that do the final render to the UI to avoid a visual mess of duplicated elements.
-Separate the final output from the rendering logic so that Reflekt can track changes in output.
 
-**Don't do:**
+**❌ Don't do:**
 ```ruby
 def show(product)
   # Business logic.
@@ -105,7 +102,7 @@ def show(product)
 end
 ```
 
-**Do:**
+**✅ Do:**
 ```ruby
 reflekt_skip :render
 
